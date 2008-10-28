@@ -1,0 +1,6 @@
+Options FollowSymLinks
+RewriteEngine On
+RewriteRule ^$ index.php [QSA]
+RewriteRule ^([^.]+)$ $1.html [QSA]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ /dispatch.php [QSA,L]

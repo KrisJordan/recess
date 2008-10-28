@@ -1,4 +1,6 @@
 <?php
+// Recess Bootstrap File
+
 $_ENV['recess_base_dir'] = substr(__FILE__, 0, strrpos(str_replace('\\','/',__FILE__) ,'/') + 1);
 require_once($_ENV['recess_base_dir'] . 'Library.class.php');
 Library::addClassPath($_ENV['recess_base_dir']);

@@ -1,5 +1,5 @@
 <?php
-
+// Pre-release, mockup
 class Model extends Box {
 	public function __construct(){
 		if(!isset($this->table))

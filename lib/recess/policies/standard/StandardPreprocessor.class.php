@@ -32,8 +32,6 @@ class StandardPreprocessor extends Preprocessor {
 				// TODO: Exception Case - Need a means of shortcutting a "METHOD NOT SUPPORTED" 
 			}
 		}
-		
-		// TODO: Use $request->meta
 
 		return $request;
 	}

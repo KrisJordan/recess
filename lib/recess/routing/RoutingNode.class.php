@@ -148,7 +148,7 @@ class RoutingNode {
 			$result = $child->findRouteRecursively($pathParts, $index - 1, $method);
 		}
 		
-		if(!$result->routeExists) {
+		if(!$result->routeExists && !empty($this->parametric_children)) {
 			foreach($this->parametric_children as $child) {
 				if($child->matches($nextPart)) {
 					$result = $child->findRouteRecursively($pathParts, $index - 1, $method);

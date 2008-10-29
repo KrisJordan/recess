@@ -1,23 +1,45 @@
 <?php
-
 Library::import('recess.http.Methods');
 Library::import('recess.http.Request');
 Library::import('recess.http.Formats');
 Library::import('recess.http.responses.BadRequestResponse');
-Library::import('recess.interfaces.IController');
 
-abstract class Controller implements IController {
+/**
+ * The controller is responsible for interpretting a preprocessed Request,
+ * performing some action in response to the Request (usually CRUDS), and
+ * returning a Response which contains relevant state for a view to render
+ * the Response.
+ * 
+ * @author Kris Jordan
+ */
+abstract class Controller {
+	/**
+	 * The routes which map to a controller's methods
+	 * @todo Refactor this out and use reflection in getRoutes() with Recess! Annotations
+	 */
 	protected $routes = array();
+	
+	/** The formats/content-types which a controller responds to. */
 	protected $formats = array(Formats::xhtml);
 	
-	public function __construct() {
-		
-	}
+	public function __construct() {	}
 	
+	/**
+	 * Routes map URIs to a Controller's method.
+	 * @todo Refactor this to use Recess! Annotations. In fact, factor this out of controller.
+	 * @return array(Routes)
+	 */
 	public function getRoutes() {
 		return $this->routes;
 	}
 	
+	/**
+	 * The entry point from the Coordinator into a Controller. The Controller is responsible
+	 * for the Inversion-of-Control dispatch to one of its own methods.
+	 * @todo Should the meat of this logic be refactored out for a clean base class?
+	 * @param Request $request The preprocessed recess.http.Request
+	 * @return Response
+	 */
 	public function serve(Request $request) {
 		// TODO: Beautify this code, break it up into steps.
 		$response = null;

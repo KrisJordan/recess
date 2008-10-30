@@ -70,9 +70,9 @@ class SqlBuilderTest extends UnitTestCase  {
 		$this->assertEqual($this->builder->getSql(), $expected);
 	}
 	
-	function testLeftJoin() {
-		$this->builder->from('authors')->equal('first_name', 'John')->from('books')->leftJoin('authors','authors.id','books.author_id');
-		$expected = 'SELECT books.* FROM books LEFT JOIN authors ON authors.id = books.author_id WHERE authors.first_name = :authors__first_name';
+	function testLeftOuterJoin() {
+		$this->builder->from('authors')->equal('first_name', 'John')->from('books')->leftOuterJoin('authors','authors.id','books.author_id');
+		$expected = 'SELECT books.* FROM books LEFT OUTER JOIN authors ON authors.id = books.author_id WHERE authors.first_name = :authors_first_name';
 		$this->assertEqual($this->builder->getSql(), $expected);
 	}
 	

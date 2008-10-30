@@ -1,8 +1,8 @@
 <?php
 
 class Criterion {
-	public $lhs;
-	public $rhs;
+	public $column;
+	public $value;
 	public $operator;
 	
 	const GREATER_THAN = '>';
@@ -16,10 +16,14 @@ class Criterion {
 	
 	const LIKE = 'LIKE';
 	
-	public function __construct($lhs, $rhs, $operator){
-		$this->lhs = $lhs;
-		$this->rhs = $rhs;
+	public function __construct($column, $value, $operator){
+		$this->column = $column;
+		$this->value = $value;
 		$this->operator = $operator;
+	}
+	
+	public function getQueryParameter() {
+		return str_replace('.', '_', $this->column);
 	}
 }
 

@@ -1,9 +1,10 @@
 <?php
 Library::import('recess.sources.db.sql.Criterion');
+Library::import('recess.sources.db.sql.Join');
 
 class SqlBuilder  {
 	public $from;
-	public $joins;
+	public $joins = array();
 	public $where = array();
 	public $limit;
 	public $offset;
@@ -19,15 +20,35 @@ class SqlBuilder  {
 		if($this->select == '*' && !isset($this->from)) return '';
 			
 		$query = 'SELECT ' . $this->select . ' FROM ' . $this->from;
+		
+		if(!empty($this->joins)) {
+			foreach($this->joins as $join) {
+				if(isset($join->natural)) {
+					$query .= $join->natural . ' ';
+				}
+				if(isset($join->leftRightOrFull)) {
+					$query .= $join->leftRightOrFull . ' ';
+				}
+				if(isset($join->innerOuterOrCross)) {
+					$query .= $join->innerOuterOrCross . ' ';
+				}
+				$query .= 'JOIN ';
+				$query .= $join->table . ' ON ' . $join->tablePrimaryKey . ' = ' . $join->fromTableForeignKey;
+			}
+		} else { 
+			
+		}
+		
 		if(!empty($this->where)) {
 			$query .= ' WHERE ';
 			$first = true;
 			foreach($this->where as $clause) {
 				if(!$first) { $query .= ' AND '; } else { $first = false; }
 				//we're not binding here becuase we haven't decided how that will work
-				$query .= $clause->lhs . ' ' . $clause->operator . ' :' . $clause->lhs;
+				$query .= $clause->column . ' ' . $clause->operator . ' :' . $clause->getQueryParameter();
 			}
 		}
+	
 		if(!empty($this->orderBy)){
 			$query .= ' ORDER BY ';
 			$first = true;
@@ -49,31 +70,45 @@ class SqlBuilder  {
 			throw new RecessException('Must define limit if using offset.', get_defined_vars());
 	}
 	
-	public function from($table) { $this->from = $table; return $this; }
+	public function from($table) { 
+		if(isset($this->from)) { 
+			foreach($this->where as $criterion) {
+				if(strpos($criterion->column, '.') === false) {
+					$criterion->column = $this->from . '.' . $criterion->column;
+				}
+			}
+		}
+		
+		$this->from = $table; 
 	
-	public function leftJoin($table, $tablePrimaryKey, $fromTableForeignKey) { }
+		return $this; 
+	}
+	
+	public function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) {
+		$this->select = $this->from . '.*';
+		$this->joins[] = new Join(Join::LEFT, Join::OUTER, $table, $tablePrimaryKey, $fromTableForeignKey);
+	}
 	
 	public function key($column) { $this->key = $column; }
 	
 	public function count() { $this->select = "COUNT(*)"; return $this; }
 	
 	// Criteria
-	public function equal($lhs, $rhs)       { return $this->where($lhs, $rhs, Criterion::EQUAL_TO); }
-	public function notEqual($lhs, $rhs)    { return $this->where($lhs, $rhs, Criterion::NOT_EQUAL_TO); }
+	public function equal($column, $value)       { return $this->where($column, $value, Criterion::EQUAL_TO); }
+	public function notEqual($column, $value)    { return $this->where($column, $value, Criterion::NOT_EQUAL_TO); }
 	public function between ($column, $lhs, $rhs) { $this->greaterThan($column, $lhs); return $this->lessThan($column, $rhs); }
-	public function greaterThan($lhs, $rhs)          { return $this->where($lhs, $rhs, Criterion::GREATER_THAN); }
-	public function greaterThanOrEqualTo($lhs, $rhs)         { return $this->where($lhs, $rhs, Criterion::GREATER_THAN_EQUAL_TO); }
-	public function lessThan($lhs, $rhs)          { return $this->where($lhs, $rhs, Criterion::LESS_THAN); }
-	public function lessThanOrEqualTo($lhs, $rhs)         { return $this->where($lhs, $rhs, Criterion::LESS_THAN_EQUAL_TO); }
-	public function like($lhs, $rhs)        { return $this->where($lhs, $rhs, Criterion::LIKE); }
+	public function greaterThan($column, $value)          { return $this->where($column, $value, Criterion::GREATER_THAN); }
+	public function greaterThanOrEqualTo($column, $value)         { return $this->where($column, $value, Criterion::GREATER_THAN_EQUAL_TO); }
+	public function lessThan($column, $value)          { return $this->where($column, $value, Criterion::LESS_THAN); }
+	public function lessThanOrEqualTo($column, $value)         { return $this->where($column, $value, Criterion::LESS_THAN_EQUAL_TO); }
+	public function like($column, $value)        { return $this->where($column, $value, Criterion::LIKE); }
 	
-	protected function where($lhs, $rhs, $operator) { $this->where[] = new Criterion($lhs, $rhs, $operator); return $this; }
+	protected function where($column, $value, $operator) { $this->where[] = new Criterion($column, $value, $operator); return $this; }
 	
 	public function limit($size)           { $this->limit = $size; return $this; }
 	public function offset($offset)        { $this->offset = $offset; return $this; }
 	public function range($start, $finish) { $this->offset = $start; $this->limit = $finish - $start; return $this; }
 	
 	public function orderBy($clause)       { $this->orderBy[] = $clause; return $this; }
-	
 }
 ?>

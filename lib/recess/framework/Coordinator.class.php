@@ -1,5 +1,5 @@
 <?php
-Library::import('application.Application');
+Library::import('app.Application');
 Library::import('recess.http.Environment');
 /**
  * Entry into Recess! Framework occurs in the coordinator. It is responsible

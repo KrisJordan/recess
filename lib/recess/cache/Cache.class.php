@@ -1,4 +1,7 @@
 <?php
+require_once('ICacheProvider.class.php');
+require_once('NoOpCacheProvider.class.php');
+
 /**
  * Cache is a low level service offering volatile key-value pair
  * storage. 
@@ -9,8 +12,12 @@
 class Cache {
 	protected static $reportsTo;
 
-	static function reportsTo(Cache $cache) {
-		if(isset($this->reportsTo)) {
+	static function reportsTo(ICacheProvider $cache) {
+		if(!is_a($cache, 'ICacheProvider')) {
+			$cache = new NoOpCacheProvider();
+		}
+		
+		if(isset(self::$reportsTo)) {
 			$temp = self::$reportsTo;
 			self::$reportsTo = $cache;
 			self::$reportsTo->reportsTo($temp);
@@ -35,5 +42,6 @@ class Cache {
 		return self::$reportsTo->flush();
 	}
 }
-Cache::reportsTo(new NoOpCache());
+
+Cache::reportsTo(new NoOpCacheProvider());
 ?>

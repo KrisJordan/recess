@@ -5,7 +5,7 @@ Library::import('recess.utility.Box');
 /**
  * Unit Tests for recess/Box.class.php
  * @author Kris Jordan
- * @see lib/recess/Box.class.php
+ * @see lib/recess/framework/utility/Box.class.php
  */
 class BoxTest extends UnitTestCase  {
 	protected $box;

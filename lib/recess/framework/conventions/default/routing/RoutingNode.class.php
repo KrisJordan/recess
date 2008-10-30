@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.routing.RoutingResult');
+Library::import('recess.framework.conventions.default.routing.RoutingResult');
 
 /**
  * Routing nodes are used to build a routing tree which maps a requested

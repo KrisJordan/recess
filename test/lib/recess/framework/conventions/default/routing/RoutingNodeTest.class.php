@@ -1,6 +1,7 @@
 <?php
-Library::import('recess.routing.RoutingNode');
-Library::import('recess.routing.Route');
+Library::import('recess.framework.conventions.default.routing.RoutingNode');
+Library::import('recess.framework.conventions.default.routing.Route');
+
 Library::import('recess.http.Request');
 Library::import('recess.http.Methods');
 

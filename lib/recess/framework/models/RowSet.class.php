@@ -1,6 +1,4 @@
 <?php
-
-Library::import('recess.Box');
 Library::import('recess.data.QueryModel');
 
 class RowSet implements Iterator, Countable, ArrayAccess {

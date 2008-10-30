@@ -1,6 +1,6 @@
 <?php
-require_once('Cache.class.php');
-require_once('diagnostics/Diagnostics.class.php');
+require_once('recess/diagnostics/Diagnostics.class.php');
+require_once('recess/cache/Cache.class.php');
 
 /**
  * Used to include class files into the system

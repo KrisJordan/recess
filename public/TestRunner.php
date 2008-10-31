@@ -14,6 +14,7 @@ class AllTests extends TestSuite {
 		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/sources/db/sql/SelectSqlBuilderTest.class.php');
 		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/sources/db/SelectedSetTest.class.php');
 		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/sources/db/pdo/SqlitePdoDataSourceTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/lang/RecessReflectionClassTest.class.php');
 	}
 }
 

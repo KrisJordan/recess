@@ -9,27 +9,23 @@ Library::import('recess.sources.db.pdo.PdoDataSource');
  */
 class SqlitePdoDataSourceTest extends UnitTestCase  {
 	
-	const DSN = 'sqlite:test.db';
-	const FILE = 'test.db';
+	const DSN = 'sqlite::memory:';
 	const FAIL_DSN = 'slqite:test.db';
 	
 	protected $source = null;
 	
-	function setUp() {
-		@unlink(self::FILE);
-		
-		$pdo = new PDO(self::DSN);
+	function setUp() {		
+		$pdo = new PdoDataSource(self::DSN);
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		$pdo->beginTransaction();
 		$pdo->exec('CREATE TABLE table_b (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, column_b STRING)');
 		$pdo->exec('CREATE TABLE table_a (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, column_a STRING)');
 		$pdo->commit();
-		unset($pdo);
+		$this->source = $pdo;
 	}
 
 	function testConstructor() {
-		$this->source = new PdoDataSource(self::DSN);
-		$this->assertTrue(file_exists(self::FILE), 'DB file should exist.');
+		$this->assertEqual($this->source->errorCode(), 0);
 	}
 	
 	function testConstructorException() {
@@ -43,7 +39,6 @@ class SqlitePdoDataSourceTest extends UnitTestCase  {
 	}
 	
 	function testGetTables() {
-		$this->source = new PdoDataSource(self::DSN);
 		$tables = $this->source->getTables();
 		
 		$expected = array('table_a', 'table_b');
@@ -52,7 +47,6 @@ class SqlitePdoDataSourceTest extends UnitTestCase  {
 	}
 	
 	function testGetColumns() {
-		$this->source = new PdoDataSource(self::DSN);
 		$table_a_columns = $this->source->getColumns('table_a');
 		$table_b_columns = $this->source->getColumns('table_b');
 		$table_a_columns_expected = array('column_a', 'id');
@@ -62,17 +56,17 @@ class SqlitePdoDataSourceTest extends UnitTestCase  {
 		$this->assertEqual($table_b_columns, $table_b_columns_expected);
 	}
 	
+	function testSelect() {
+		$selectedSet = $this->source->select();
+		$this->assertTrue(is_a($selectedSet, 'SelectedSet'));
+	}
+	
 	function tearDown() {
-		$pdo = new PDO(self::DSN);
-		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$pdo->beginTransaction();
-		$pdo->exec('DROP TABLE table_b');
-		$pdo->exec('DROP TABLE table_a');
-		$pdo->commit();
-		
-		unset($pdo);
+		$this->source->beginTransaction();
+		$this->source->exec('DROP TABLE table_b');
+		$this->source->exec('DROP TABLE table_a');
+		$this->source->commit();
 		unset($this->source);
-		@unlink(self::FILE);
 	}	
 }
 ?>

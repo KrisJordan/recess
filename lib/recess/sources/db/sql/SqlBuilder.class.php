@@ -35,8 +35,6 @@ class SqlBuilder  {
 				$query .= 'JOIN ';
 				$query .= $join->table . ' ON ' . $join->tablePrimaryKey . ' = ' . $join->fromTableForeignKey;
 			}
-		} else { 
-			
 		}
 		
 		if(!empty($this->where)) {
@@ -45,7 +43,7 @@ class SqlBuilder  {
 			foreach($this->where as $clause) {
 				if(!$first) { $query .= ' AND '; } else { $first = false; }
 				//we're not binding here becuase we haven't decided how that will work
-				$query .= $clause->column . ' ' . $clause->operator . ' :' . $clause->getQueryParameter();
+				$query .= $clause->column . ' ' . $clause->operator . ' ' . $clause->getQueryParameter();
 			}
 		}
 	
@@ -68,6 +66,10 @@ class SqlBuilder  {
 		
 		if( isset($this->offset) && !isset($this->limit))
 			throw new RecessException('Must define limit if using offset.', get_defined_vars());
+	}
+	
+	public function getWhereArguments() {
+		return $this->where;
 	}
 	
 	public function from($table) { 

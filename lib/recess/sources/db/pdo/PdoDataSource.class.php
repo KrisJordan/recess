@@ -1,6 +1,7 @@
 <?php
 Library::import('recess.sources.db.pdo.exceptions.DataSourceCouldNotConnectException');
 Library::import('recess.sources.db.pdo.exceptions.ProviderDoesNotExistException');
+Library::import('recess.sources.db.SelectedSet');
 
 /**
  * A PDO wrapper in the Recess! Framework that provides a single interface for commonly 
@@ -42,6 +43,45 @@ class PdoDataSource extends PDO {
 		} else {
 			throw new ProviderDoesNotExistException($provider, get_defined_vars());	
 		}
+	}
+	
+	/**
+	 * Begin a select operation by returning a new, unrealized SelectedSet
+	 *
+	 * @param string $table Optional parameter that sets the from clause of the select to a table.
+	 * @return SelectedSet
+	 */
+	function select($table = '') {
+		if($table != '') {
+			$selectedSet = new SelectedSet($this);
+			return $selectedSet->from($table);
+		} else {
+			return new SelectedSet($this);
+		}
+	}
+	
+	/**
+	 * Takes the SQL and parameters from SqlBuilder and returns an array
+	 * of objects of type $className.
+	 * 
+	 * @todo Determine edge conditions and throws.
+	 * @param SqlBuilder $sqlBuilder
+	 * @param string $className the type to fill from query results.
+	 * @return array($className)
+	 */
+	function queryFromSqlBuilder(SqlBuilder $sqlBuilder, $className) {
+		$query = $sqlBuilder->getSql();
+		if($query == '') return array();
+		
+		$statement = $this->query($query, PDO::FETCH_CLASS, $className);
+		
+		$arguments = $sqlBuilder->getWhereArguments();
+		foreach($arguments as $argument) {
+			$statement->bindValue($argument->getQueryParameter(), $argument->value);
+		}
+		$statement->execute();
+		
+		return $statement->fetchAll();
 	}
 	
 	/**

@@ -79,6 +79,5 @@ class SqlBuilderTest extends UnitTestCase  {
 	function tearDown() {
 		unset($this->builder);
 	}
-	
 }
 ?>

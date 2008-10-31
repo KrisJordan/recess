@@ -9,8 +9,11 @@ require_once('../lib/Recess.php');
 class AllTests extends TestSuite {
 	function __construct() {
 		$this->TestSuite('All Tests');
-		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/BoxTest.class.php');
-		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/routing/RoutingNodeTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/utility/BoxTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/framework/conventions/default/routing/RoutingNodeTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/sources/db/sql/SqlBuilderTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/sources/db/SelectedSetTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/../test/lib/recess/sources/db/pdo/SqlitePdoDataSourceTest.class.php');
 	}
 }
 

@@ -16,6 +16,8 @@ class Criterion {
 	
 	const LIKE = 'LIKE';
 	
+	const COLON = ':';
+	
 	public function __construct($column, $value, $operator){
 		$this->column = $column;
 		$this->value = $value;
@@ -23,7 +25,7 @@ class Criterion {
 	}
 	
 	public function getQueryParameter() {
-		return str_replace('.', '_', $this->column);
+		return self::COLON . str_replace('.', '_', $this->column);
 	}
 }
 

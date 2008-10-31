@@ -18,6 +18,7 @@ class PdoDataSource extends PDO {
 	function __construct($dsn, $username = '', $password = '', $driver_options = array()) {
 		try {
 			parent::__construct($dsn, $username, $password, $driver_options);
+			parent::setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (PDOException $exception) {
 			throw new DataSourceCouldNotConnectException($exception->getMessage(), get_defined_vars());
 		}
@@ -69,11 +70,15 @@ class PdoDataSource extends PDO {
 	 * @param string $className the type to fill from query results.
 	 * @return array($className)
 	 */
-	function queryFromSqlBuilder(SqlBuilder $sqlBuilder, $className) {
+	function queryFromSqlBuilder(SelectSqlBuilder $sqlBuilder, $className) {
 		$query = $sqlBuilder->getSql();
 		if($query == '') return array();
 		
-		$statement = $this->query($query, PDO::FETCH_CLASS, $className);
+		try {
+			$statement = $this->query($query, PDO::FETCH_CLASS, $className);
+		} catch(PDOException $e) {
+			throw new RecessException($e->getMessage(),get_defined_vars());		
+		}
 		
 		$arguments = $sqlBuilder->getWhereArguments();
 		foreach($arguments as $argument) {

@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.sources.db.sql.SqlBuilder');
+Library::import('recess.sources.db.sql.SelectSqlBuilder');
 
 class SelectedSet implements Iterator, Countable, ArrayAccess {
 	protected $hasResults = false;
@@ -12,7 +12,7 @@ class SelectedSet implements Iterator, Countable, ArrayAccess {
 	private $source;
 	
 	public function __construct(PdoDataSource $source) {
-		$this->sqlBuilder = new SqlBuilder();
+		$this->sqlBuilder = new SelectSqlBuilder();
 		$this->source = $source;
 	}
 	
@@ -89,6 +89,7 @@ class SelectedSet implements Iterator, Countable, ArrayAccess {
 	
 	function from($table) { $this->reset(); $this->sqlBuilder->from($table); return $this; }
 	function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }
+	function innerJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->innerJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }
 	function select($options) { $this->reset(); $this->sqlBuilder->select($select); return $this; }
 	function equal($lhs, $rhs){ $this->reset(); $this->sqlBuilder->equal($lhs,$rhs); return $this; }
 	function notEqual($lhs, $rhs) { $this->reset(); $this->sqlBuilder->notEqual($lhs,$rhs); return $this; }

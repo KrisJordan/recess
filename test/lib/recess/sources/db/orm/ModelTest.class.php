@@ -11,8 +11,15 @@ class Person extends Model { }
 
 /**
  * !BelongsTo author, Class: Person
+ * !HasAndBelongsToMany generas, Class: Genera
  */
 class Book extends Model { }
+
+/**
+ * !HasAndBelongsToMany books, Class: Book
+ * !Table genera
+ */
+class Genera extends Model { }
 
 class ModelTest extends UnitTestCase {
 	protected $source;
@@ -105,6 +112,17 @@ class ModelTest extends UnitTestCase {
 						
 		$this->assertEqual(count($generas), 3);
 	}
+	
+	function testBelongsTo() {
+		$book = new Book();
+		$book->id = 1;
+		$barack = $book->author();
+		$this->assertEqual(get_class($barack), 'Person');
+		$this->assertEqual($barack->first_name, 'Barack');
+		$baracksBooks = $barack->books();
+		$this->assertEqual(count($baracksBooks), 3);
+	}
+	
 	
 	function tearDown() {
 		unset($this->source);

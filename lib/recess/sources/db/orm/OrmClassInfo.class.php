@@ -1,6 +1,7 @@
 <?php
 
 Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
+Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
 
 class OrmClassInfo {
 	public $source;
@@ -27,11 +28,24 @@ class OrmClassInfo {
 		}
 		$annotations = $reflection->getAnnotations();
 		foreach($annotations as $annotation) {
-			if(is_a($annotation, 'HasManyAnnotation')) {
-				$relationship = new HasManyRelationship();
-				$relationship->fromAnnotationForClass($annotation, $class);
-				$this->relationships[$relationship->name] = $relationship;
+			$annotationClass = get_class($annotation);
+			unset($relationship);
+			switch($annotationClass) {
+				case 'HasManyAnnotation':
+					$relationship = new HasManyRelationship();
+					break;
+				case 'BelongsToAnnotation':
+					$relationship = new BelongsToRelationship();
+					break;
+				case 'TableAnnotation':
+					$this->table = $annotation->table;
+					unset($relationship);
+					break;
 			}
+			if(!isset($relationship)) continue;
+			
+			$relationship->fromAnnotationForClass($annotation, $class);
+			$this->relationships[$relationship->name] = $relationship;
 		}
 	}
 }

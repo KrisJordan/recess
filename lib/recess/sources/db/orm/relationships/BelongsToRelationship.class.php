@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.sources.db.orm.relationships.Relationship');
 
-class HasManyRelationship extends Relationship {
+class BelongsToRelationship extends Relationship {
 	
 	function fromAnnotationForClass(Annotation $annotation, $class) {
 		$this->localClass = $class;
@@ -14,7 +14,9 @@ class HasManyRelationship extends Relationship {
 			if(isset($settings['ForeignKey'])) {
 				$this->foreignKey = $settings['ForeignKey'];
 			} else {
-				$this->foreignKey = Inflector::toUnderscores($class) . '_id';
+				$this->foreignKey = $this->name . '_id';
+//				echo $this->name;
+//				print_r(debug_backtrace());
 			}
 			
 			if(isset($settings['Class'])) {
@@ -24,7 +26,7 @@ class HasManyRelationship extends Relationship {
 			}
 			
 		} else {
-			throw new RecessException('Invalid HasMany Relationship', get_defined_vars());
+			throw new RecessException('Invalid BelongsTo Relationship', get_defined_vars());
 		}
 		
 	}
@@ -32,10 +34,15 @@ class HasManyRelationship extends Relationship {
 	function augmentSelect(SelectedSet $select) {
 		$select	->from(OrmRegistry::tableFor($this->foreignClass))
 				->innerJoin(OrmRegistry::tableFor($this->localClass), 
-							OrmRegistry::primaryKeyFor($this->localClass), 
-							OrmRegistry::tableFor($this->foreignClass) . '.' . $this->foreignKey);
+							OrmRegistry::primaryKeyFor($this->foreignClass), 
+							$this->foreignKey);
 		$select->rowClass = $this->foreignClass;
-		return $select;
+		
+		if(isset($select[0])) {
+			return $select[0];
+		} else { 
+			return null;
+		}
 	}
 
 }

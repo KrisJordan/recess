@@ -5,6 +5,8 @@ Library::import('recess.sources.db.orm.OrmRegistry');
 
 Library::import('recess.sources.db.orm.annotations.HasManyAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.BelongsToAnnotation', true);
+Library::import('recess.sources.db.orm.annotations.HasAndBelongsToManyAnnotation', true);
+Library::import('recess.sources.db.orm.annotations.TableAnnotation', true);
 
 abstract class Model extends stdClass {
 	

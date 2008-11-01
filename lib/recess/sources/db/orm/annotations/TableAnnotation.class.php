@@ -2,10 +2,10 @@
 Library::import('recess.lang.Annotation');
 
 class TableAnnotation extends Annotation {
-	public $name;
+	public $table;
 	
 	function init($array) {
-		$this->name = $array[0];	
+		$this->table = $array[0];	
 	}
 }
 

@@ -77,7 +77,7 @@ class PdoDataSource extends PDO {
 		try {
 			$statement = $this->query($query, PDO::FETCH_CLASS, $className);
 		} catch(PDOException $e) {
-			throw new RecessException($e->getMessage(),get_defined_vars());		
+			throw new RecessException($e->getMessage() . ' SQL: ' . $query,get_defined_vars());		
 		}
 		
 		$arguments = $sqlBuilder->getWhereArguments();

@@ -158,6 +158,19 @@ class SelectedSetTest extends UnitTestCase {
 		$this->assertEqual($results->count(), 2);		
 	}
 	
+	function testMultipleJoins() {
+		$results = $this->source
+						->select('people')
+						->equal('first_name','Barack')
+						->from('books')
+						->innerJoin('people','people.id','books.author_id')
+						->from('genera')
+						->innerJoin('books_genera','genera.id','books_genera.genera_id')
+						->innerJoin('books','books.id','books_genera.book_id');
+
+		$this->assertEqual(count($results), 1);
+	}
+	
 	function tearDown() {
 		unset($this->source);
 	}

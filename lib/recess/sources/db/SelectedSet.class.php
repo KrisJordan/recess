@@ -29,6 +29,10 @@ class SelectedSet implements Iterator, Countable, ArrayAccess {
 		}
 	}
 	
+	public function toSql() {
+		return $this->sqlBuilder->getSql();
+	}
+	
 	public function count() { return iterator_count($this); }
 	
 	protected $index = 0;

@@ -1,19 +1,20 @@
 <?php
 
-Library::import('recess.framework.orm.ModelBase');
 Library::import('recess.sources.db.DbSources');
+Library::import('recess.sources.db.orm.Model');
 
 /**
- * !HasMany books, ForeignKey: author_id, OrderBy: title
+ * !HasMany books, ForeignKey: author_id
+ * !HasMany novels, ForeignKey: author_id, Class: Book
  */
-class Person extends ModelBase { }
+class Person extends Model { }
 
 /**
  * !BelongsTo author, Class: Person
  */
-class Book extends ModelBase { }
+class Book extends Model { }
 
-class ModelBaseTest extends UnitTestCase {
+class ModelTest extends UnitTestCase {
 	protected $source;
 	
 	function setUp() {
@@ -28,10 +29,12 @@ class ModelBaseTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Joel", "Sutherland", 23)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Clay", "Schossow", 22)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Barack", "Obama", 47)');
-		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"The Audacity of Hope")');
+		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"The Audacity of Hope: Thoughts on Reclaiming the American Dream")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (3,"How to Be a Sketch Ball")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (2,"Steve Nash: A Modern Day Hero")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (1,"How Michael Scott Touched My Life, and Could Touch Yours Too")');
+		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"Dreams from My Father: A Story of Race and Inheritance")');
+		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"Barack Obama: What He Believes In - From His Own Works")');
 		$this->source->exec('INSERT INTO genera (title) VALUES ("Sports Healing")'); // 1
 		$this->source->exec('INSERT INTO genera (title) VALUES ("Political Healing")'); // 2
 		$this->source->exec('INSERT INTO genera (title) VALUES ("Social Healing")'); // 3
@@ -41,6 +44,8 @@ class ModelBaseTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (2,4)');
 		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (3,1)');
 		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (4,4)');
+		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (5,3)');
+		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (6,3)');
 		$this->source->commit();
 	}
 	
@@ -59,10 +64,46 @@ class ModelBaseTest extends UnitTestCase {
 		$this->assertEqual(get_class($people[0]), 'Person');
 	}
 	
-	function testRelationship() {
+	function testFindTailCriteria() {
 		$person = new Person();
-		$person->id = 1;
+		$people = $person->find()->greaterThan('age',22);
+		$this->assertEqual(count($people),3);
+	}
+	
+	function testHasManyRelationship() {
+		$person = new Person();
+		$person->id = 4;
 		$books = $person->books()->orderBy('title');
+		$this->assertEqual(count($books), 3);
+	}
+	
+	function testHasManyRelationshipCriteria() {
+		$person = new Person();
+		$person->first_name = 'Barack';
+		$person->last_name = 'Obama';
+		$books = $person->books()->like('title','%Dream%')->orderBy('title ASC');
+		$this->assertEqual(count($books), 2);	
+		$this->assertEqual($books[0]->title, 'Dreams from My Father: A Story of Race and Inheritance');
+	}
+	
+	function testAliasHasManyRelationship() {
+		$person = new Person();
+		$person->id = 4;
+		$novels = $person->novels();
+		$this->assertEqual(count($novels),3);
+	}
+	
+	function testChainMultipleRelationships() {
+		$person = new Person();
+		$person->id = 4;
+		// $generas = $person->books()->generas()
+		$generas = $person
+						->books()
+						->from('genera')
+						->innerJoin('books_genera','genera.id','books_genera.genera_id')
+						->innerJoin('books','books.id','books_genera.book_id');
+						
+		$this->assertEqual(count($generas), 3);
 	}
 	
 	function tearDown() {

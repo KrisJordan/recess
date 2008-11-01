@@ -35,11 +35,15 @@ class Library {
 		}
 	}
 	
-	static function import($fullyQualifiedClassName) {
+	static function import($fullyQualifiedClassName, $forceLoad = false) {
 		$className = self::getClassName($fullyQualifiedClassName);
 	
 		if(!isset(self::$loaded[$className])) {
 			self::$loaded[$className] = $fullyQualifiedClassName;
+		}
+		
+		if($forceLoad) {
+			self::load($className);
 		}
 	}
 	

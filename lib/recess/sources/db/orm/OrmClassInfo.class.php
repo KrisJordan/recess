@@ -2,6 +2,7 @@
 
 Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
 Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
+Library::import('recess.sources.db.orm.relationships.HasAndBelongsToManyRelationship');
 
 class OrmClassInfo {
 	public $source;
@@ -23,7 +24,6 @@ class OrmClassInfo {
 		try {
 			$reflection = new RecessReflectionClass($class);
 		} catch(ReflectionException $e) {
-			print_r(debug_backtrace());
 			throw new RecessException('Class "' . $class . '" has not been declared.', get_defined_vars());
 		}
 		$annotations = $reflection->getAnnotations();
@@ -36,6 +36,9 @@ class OrmClassInfo {
 					break;
 				case 'BelongsToAnnotation':
 					$relationship = new BelongsToRelationship();
+					break;
+				case 'HasAndBelongsToManyAnnotation':
+					$relationship = new HasAndBelongsToManyRelationship();
 					break;
 				case 'TableAnnotation':
 					$this->table = $annotation->table;

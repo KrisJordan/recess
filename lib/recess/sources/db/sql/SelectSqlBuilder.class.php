@@ -11,6 +11,7 @@ class SelectSqlBuilder  {
 	public $orderBy = array();
 	public $select = '*';
 	public $key;
+	public $distinct = ' ';
 	
 	public function __toString(){ $this->getSql(); }
 	
@@ -19,7 +20,7 @@ class SelectSqlBuilder  {
 					
 		if($this->select == '*' && !isset($this->from)) return '';
 			
-		$query = 'SELECT ' . $this->select . ' FROM ' . $this->from;
+		$query = 'SELECT' . $this->distinct . $this->select . ' FROM ' . $this->from;
 		
 		if(!empty($this->joins)) {
 			foreach($this->joins as $join) {
@@ -97,6 +98,8 @@ class SelectSqlBuilder  {
 	public function key($column) { $this->key = $column; }
 	
 	public function count() { $this->select = "COUNT(*)"; return $this; }
+	
+	public function distinct() { $this->distinct = ' DISTINCT '; return $this; }
 	
 	// Criteria
 	public function equal($column, $value)       { return $this->where($column, $value, Criterion::EQUAL_TO); }

@@ -8,7 +8,7 @@ abstract class Relationship {
 	
 	abstract function fromAnnotationForClass(Annotation $attribute, $class);
 	
-	abstract function augmentSelect(SelectedSet $select);
+	abstract function augmentSelect(MutableSelectSet $select);
 }
 
 ?>

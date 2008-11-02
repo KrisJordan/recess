@@ -11,13 +11,12 @@ class Person extends Model { }
 
 /**
  * !BelongsTo author, Class: Person
- * !HasAndBelongsToMany generas, Class: Genera
+ * !HasAndBelongsToMany generas
  */
 class Book extends Model { }
 
 /**
- * !HasAndBelongsToMany books, Class: Book
- * !Table genera
+ * !HasAndBelongsToMany books
  */
 class Genera extends Model { }
 
@@ -30,8 +29,8 @@ class ModelTest extends UnitTestCase {
 		$this->source->beginTransaction();
 		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, first_name STRING, last_name STRING, age INTEGER)');
 		$this->source->exec('CREATE TABLE books (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title STRING)');
-		$this->source->exec('CREATE TABLE genera (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, title INTEGER)');
-		$this->source->exec('CREATE TABLE books_genera (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, genera_id INTEGER)');
+		$this->source->exec('CREATE TABLE generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, title INTEGER)');
+		$this->source->exec('CREATE TABLE books_generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, genera_id INTEGER)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Kris", "Jordan", 23)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Joel", "Sutherland", 23)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Clay", "Schossow", 22)');
@@ -42,17 +41,17 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (1,"How Michael Scott Touched My Life, and Could Touch Yours Too")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"Dreams from My Father: A Story of Race and Inheritance")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"Barack Obama: What He Believes In - From His Own Works")');
-		$this->source->exec('INSERT INTO genera (title) VALUES ("Sports Healing")'); // 1
-		$this->source->exec('INSERT INTO genera (title) VALUES ("Political Healing")'); // 2
-		$this->source->exec('INSERT INTO genera (title) VALUES ("Social Healing")'); // 3
-		$this->source->exec('INSERT INTO genera (title) VALUES ("Comedy Healing")'); // 4
-		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (1,3)');
-		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (2,3)');
-		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (2,4)');
-		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (3,1)');
-		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (4,4)');
-		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (5,3)');
-		$this->source->exec('INSERT INTO books_genera (book_id,genera_id) VALUES (6,3)');
+		$this->source->exec('INSERT INTO generas (title) VALUES ("Sports Healing")'); // 1
+		$this->source->exec('INSERT INTO generas (title) VALUES ("Political Healing")'); // 2
+		$this->source->exec('INSERT INTO generas (title) VALUES ("Social Healing")'); // 3
+		$this->source->exec('INSERT INTO generas (title) VALUES ("Comedy Healing")'); // 4
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (1,3)');
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (2,3)');
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (2,4)');
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (3,1)');
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (4,4)');
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (5,3)');
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (6,3)');
 		$this->source->commit();
 	}
 	
@@ -106,9 +105,9 @@ class ModelTest extends UnitTestCase {
 		// $generas = $person->books()->generas()
 		$generas = $person
 						->books()
-						->from('genera')
-						->innerJoin('books_genera','genera.id','books_genera.genera_id')
-						->innerJoin('books','books.id','books_genera.book_id');
+						->from('generas')
+						->innerJoin('books_generas','generas.id','books_generas.genera_id')
+						->innerJoin('books','books.id','books_generas.book_id');
 						
 		$this->assertEqual(count($generas), 3);
 	}
@@ -123,6 +122,21 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual(count($baracksBooks), 3);
 	}
 	
+	function testHasAndBelongsToMany() {
+		$book = new Book();
+		$book->id = 2;
+		$generas = $book->generas();
+		$this->assertEqual(count($generas), 2);
+		
+		$books = $generas[0]->books();
+		$this->assertEqual(count($books),4);
+	}
+	
+	function testHasAndBelongsToManyWithCriteria() {
+		$book = new Book();
+		$generas = $book->generas()->like('books.title', '%Dream%');
+		$this->assertEqual(count($generas),1);
+	}
 	
 	function tearDown() {
 		unset($this->source);

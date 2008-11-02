@@ -22,7 +22,7 @@ class BelongsToRelationship extends Relationship {
 			if(isset($settings['Class'])) {
 				$this->foreignClass = $settings['Class'];
 			} else {
-				$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($this->name));
+				$this->foreignClass = Inflector::toProperCaps($this->name);
 			}
 			
 		} else {
@@ -31,7 +31,7 @@ class BelongsToRelationship extends Relationship {
 		
 	}
 	
-	function augmentSelect(SelectedSet $select) {
+	function augmentSelect(MutableSelectSet $select) {
 		$select	->from(OrmRegistry::tableFor($this->foreignClass))
 				->innerJoin(OrmRegistry::tableFor($this->localClass), 
 							OrmRegistry::primaryKeyFor($this->foreignClass), 

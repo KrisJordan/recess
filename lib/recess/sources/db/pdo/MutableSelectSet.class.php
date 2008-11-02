@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.sources.db.sql.SelectSqlBuilder');
 
-class SelectedSet implements Iterator, Countable, ArrayAccess {
+class MutableSelectSet implements Iterator, Countable, ArrayAccess {
 	protected $hasResults = false;
 	
 	protected $sqlBuilder;
@@ -95,6 +95,7 @@ class SelectedSet implements Iterator, Countable, ArrayAccess {
 	function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }
 	function innerJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->innerJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }
 	function select($options) { $this->reset(); $this->sqlBuilder->select($select); return $this; }
+	function distinct() { $this->reset(); $this->sqlBuilder->distinct(); return $this; }
 	function equal($lhs, $rhs){ $this->reset(); $this->sqlBuilder->equal($lhs,$rhs); return $this; }
 	function notEqual($lhs, $rhs) { $this->reset(); $this->sqlBuilder->notEqual($lhs,$rhs); return $this; }
 	function between ($column, $lhs, $rhs) { $this->reset(); $this->sqlBuilder->between($column, $lhs, $hrs); return $this; }

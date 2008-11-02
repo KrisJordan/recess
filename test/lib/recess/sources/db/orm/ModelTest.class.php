@@ -2,6 +2,7 @@
 
 Library::import('recess.sources.db.DbSources');
 Library::import('recess.sources.db.orm.Model');
+Library::import('recess.sources.db.orm.ModelDataSource');
 
 /**
  * !HasMany books, ForeignKey: author_id
@@ -16,31 +17,45 @@ class Person extends Model { }
 class Book extends Model { }
 
 /**
- * !HasAndBelongsToMany books
+ * !HasAndBelongsToMany books, CascadeDelete: true
+ * !HasAndBelongsToMany movies
  */
 class Genera extends Model { }
+
+/**
+ * !HasAndBelongsToMany generas
+ */
+class Movie extends Model { }
 
 class ModelTest extends UnitTestCase {
 	protected $source;
 	
 	function setUp() {
-		$this->source = new PdoDataSource('sqlite::memory:');
+		$this->source = new ModelDataSource('sqlite::memory:');
 		DbSources::setDefaultSource($this->source);
 		$this->source->beginTransaction();
 		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, first_name STRING, last_name STRING, age INTEGER)');
 		$this->source->exec('CREATE TABLE books (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title STRING)');
+		$this->source->exec('CREATE TABLE movies (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title STRING)');
 		$this->source->exec('CREATE TABLE generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, title INTEGER)');
 		$this->source->exec('CREATE TABLE books_generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, genera_id INTEGER)');
+		$this->source->exec('CREATE TABLE generas_movies (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, movie_id INTEGER, genera_id INTEGER)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Kris", "Jordan", 23)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Joel", "Sutherland", 23)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Clay", "Schossow", 22)');
 		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Barack", "Obama", 47)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Josh", "Lockhart", 22)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("John", "McCain", 72)');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"The Audacity of Hope: Thoughts on Reclaiming the American Dream")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (3,"How to Be a Sketch Ball")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (2,"Steve Nash: A Modern Day Hero")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (1,"How Michael Scott Touched My Life, and Could Touch Yours Too")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"Dreams from My Father: A Story of Race and Inheritance")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"Barack Obama: What He Believes In - From His Own Works")');
+		$this->source->exec('INSERT INTO books (author_id, title) VALUES (3,"Hoop Dreams, The Clay Schossow Story")');
+		$this->source->exec('INSERT INTO movies (author_id, title) VALUES (3,"Hoop Dreams, The Clay Schossow Story, The Movie")');
+		$this->source->exec('INSERT INTO movies (author_id, title) VALUES (3,"Clay Schossow: Unleashed")');
+		$this->source->exec('INSERT INTO movies (author_id, title) VALUES (3,"LeBron James and Other Assorted Dreams of Clay Schossow")');
 		$this->source->exec('INSERT INTO generas (title) VALUES ("Sports Healing")'); // 1
 		$this->source->exec('INSERT INTO generas (title) VALUES ("Political Healing")'); // 2
 		$this->source->exec('INSERT INTO generas (title) VALUES ("Social Healing")'); // 3
@@ -52,28 +67,58 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (4,4)');
 		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (5,3)');
 		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (6,3)');
+		$this->source->exec('INSERT INTO books_generas (book_id,genera_id) VALUES (7,1)');
+		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (1,1)');
+		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (1,4)');
+		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (2,4)');
+		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (3,1)');
 		$this->source->commit();
 	}
 	
 	function testFind() {
 		$person = new Person();
 		$people = $person->find();
-		$this->assertEqual(count($people),4);	
-	}
+		$this->assertEqual(count($people),6);	
+		
+		$genera = Make::a('Genera')->equal('title','Social Healing')->first();
+		$this->assertEqual($genera->title, 'Social Healing');
+		$this->assertEqual($genera->id, 3);
+		
+// Prototype code:
+//		$book = new Book();
+//		$book->title = 'Hark the raven, nevermore.';
+//		$book->generas()->add($genera);
+//		$book->save();
+//		
+//		$book->addTo('generas',$genera);
+//		
+//		$author = $people[0];
+//		$author->books()->add($book);
+//		$author->books()->remove($book);
+//		$author->books()->clear();
+// if modelset carried around the last used relation, this could work
+		
+//		SELECT books.* FROM books 
+//		INNER JOIN people ON people.id = books.author_id 
+//		WHERE people.id = 1
+//		
+//		$author->addTo('books', $book);
+
+	}	
 	
 	function testFindCriteria() {
 		$person = new Person();
 		$person->age = 23;
-		$people = $person->find()->orderBy('last_name DESC');
+		$people = $person->orderBy('last_name DESC');
 		$this->assertEqual(count($people),2);
 		$this->assertEqual($people[0]->last_name, 'Sutherland');
 		$this->assertEqual(get_class($people[0]), 'Person');
 	}
-	
+
 	function testFindTailCriteria() {
 		$person = new Person();
 		$people = $person->find()->greaterThan('age',22);
-		$this->assertEqual(count($people),3);
+		$this->assertEqual(count($people),4);
 	}
 	
 	function testHasManyRelationship() {
@@ -101,15 +146,27 @@ class ModelTest extends UnitTestCase {
 	
 	function testChainMultipleRelationships() {
 		$person = new Person();
-		$person->id = 4;
-		// $generas = $person->books()->generas()
-		$generas = $person
-						->books()
-						->from('generas')
-						->innerJoin('books_generas','generas.id','books_generas.genera_id')
-						->innerJoin('books','books.id','books_generas.book_id');
-						
+		$person->id = 3;
+		$generas = $person->books()->generas();
 		$this->assertEqual(count($generas), 3);
+		
+		$person = new Person();
+		$generas = $person->equal('age',22)->books()->generas();
+		$this->assertEqual(count($generas), 3);
+		
+		$person = new Person();
+		$generas = $person->equal('age',22)->books()->like('title','%Dream%')->generas();
+		$this->assertEqual(count($generas), 1);
+	}
+	
+	function testMultipleJoinTables() {
+		$movies = Make::a('Person')
+						->equal('age',22)
+						->books()
+						->like('title','%Dream%')
+						->generas()
+						->movies();
+		$this->assertEqual(count($movies),2);		
 	}
 	
 	function testBelongsTo() {
@@ -135,7 +192,7 @@ class ModelTest extends UnitTestCase {
 	function testHasAndBelongsToManyWithCriteria() {
 		$book = new Book();
 		$generas = $book->generas()->like('books.title', '%Dream%');
-		$this->assertEqual(count($generas),1);
+		$this->assertEqual(count($generas),2);
 	}
 	
 	function tearDown() {

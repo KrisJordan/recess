@@ -36,6 +36,7 @@ class BelongsToRelationship extends Relationship {
 				->innerJoin(OrmRegistry::tableFor($this->localClass), 
 							OrmRegistry::primaryKeyFor($this->foreignClass), 
 							$this->foreignKey);
+
 		$select->rowClass = $this->foreignClass;
 		
 		if(isset($select[0])) {

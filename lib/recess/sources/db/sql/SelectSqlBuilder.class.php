@@ -24,17 +24,26 @@ class SelectSqlBuilder  {
 		
 		if(!empty($this->joins)) {
 			foreach($this->joins as $join) {
-				if(isset($join->natural)) {
-					$query .= $join->natural . ' ';
+				if($join->table != $this->from) { // Heuristic, Need to try relationships to same table
+					$joinStatement = '';
+					
+					if(isset($join->natural)) {
+						$joinStatement .= $join->natural . ' ';
+					}
+					if(isset($join->leftRightOrFull)) {
+						$joinStatement .= $join->leftRightOrFull . ' ';
+					}
+					if(isset($join->innerOuterOrCross)) {
+						$joinStatement .= $join->innerOuterOrCross . ' ';
+					}
+					
+					$onStatement = ' ON ' . $join->tablePrimaryKey . ' = ' . $join->fromTableForeignKey;
+					$joinStatement .= 'JOIN ' . $join->table . $onStatement;
+					
+					if(strpos($query, $joinStatement) === false && strpos($query, $onStatement) === false) { // Remove Redundant Joins
+						$query .= $joinStatement;
+					}
 				}
-				if(isset($join->leftRightOrFull)) {
-					$query .= $join->leftRightOrFull . ' ';
-				}
-				if(isset($join->innerOuterOrCross)) {
-					$query .= $join->innerOuterOrCross . ' ';
-				}
-				$query .= 'JOIN ';
-				$query .= $join->table . ' ON ' . $join->tablePrimaryKey . ' = ' . $join->fromTableForeignKey;
 			}
 		}
 		

@@ -91,6 +91,15 @@ class MutableSelectSet implements Iterator, Countable, ArrayAccess {
 		return !isset($this[0]);
 	}
 	
+	function first() {
+		if(isset($this[0])) {
+			return $this[0];
+		} else {
+			return null; // TODO: This should probably throw something.
+		}
+	}
+	
+	
 	function from($table) { $this->reset(); $this->sqlBuilder->from($table); return $this; }
 	function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }
 	function innerJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->innerJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }

@@ -1,10 +1,10 @@
 <?php
 /**
- * Unit Tests for recess.sources.db.SelectedSet
+ * Unit Tests for recess.sources.db.pdo.MutableSelectSet
  * @author Kris Jordan
  * @see recess/sources/db/SelectedSet.class.php
  */
-class SelectedSetTest extends UnitTestCase {
+class MutableSelectSetTest extends UnitTestCase {
 	protected $source = null;
 	
 	function setUp() {

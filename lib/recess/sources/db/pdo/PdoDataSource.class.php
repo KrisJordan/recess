@@ -62,31 +62,40 @@ class PdoDataSource extends PDO {
 	}
 	
 	/**
-	 * Takes the SQL and parameters from SqlBuilder and returns an array
+	 * Takes the SQL and arguments (array of Criterion) and returns an array
 	 * of objects of type $className.
 	 * 
 	 * @todo Determine edge conditions and throws.
-	 * @param SqlBuilder $sqlBuilder
+	 * @param string $query
+	 * @param array(Criterion) $arguments 
 	 * @param string $className the type to fill from query results.
 	 * @return array($className)
 	 */
-	function queryFromSqlBuilder(SelectSqlBuilder $sqlBuilder, $className) {
-		$query = $sqlBuilder->getSql();
+	function queryForClass($query, $arguments, $className) {
 		if($query == '') return array();
-		
+		$statement = $this->prepareStatement($query, $arguments);
+		$statement->setFetchMode(PDO::FETCH_CLASS, $className, array());
+		$statement->execute();	
+		return $statement->fetchAll();
+	}
+	
+	function executeStatement($statement, $arguments) {
+		$statement = $this->prepareStatement($statement, $arguments);
+		return $statement->execute();
+	}
+	
+	function prepareStatement($statement, $arguments) {
 		try {
-			$statement = $this->query($query, PDO::FETCH_CLASS, $className);
+			$statement = $this->prepare($statement);
 		} catch(PDOException $e) {
-			throw new RecessException($e->getMessage() . ' SQL: ' . $query,get_defined_vars());		
+			throw new RecessException($e->getMessage() . ' SQL: ' . $query,get_defined_vars());
 		}
 		
-		$arguments = $sqlBuilder->getWhereArguments();
 		foreach($arguments as $argument) {
 			$statement->bindValue($argument->getQueryParameter(), $argument->value);
 		}
-		$statement->execute();
 		
-		return $statement->fetchAll();
+		return $statement;
 	}
 	
 	/**

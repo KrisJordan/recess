@@ -59,8 +59,12 @@ class MutableSelectSetTest extends UnitTestCase {
 
 	function testEmptySelect() {
 		$results = $this->source->select();
-		$this->assertTrue($results->isEmpty());
-		$this->assertEqual($results->count(), 0);
+		try {
+			$this->assertTrue($results->isEmpty());
+			$this->fail('Selection without specifying a table should fail.');
+		} catch(RecessException $e) {
+			$this->pass('Select without specified table correctly threw an exception.');
+		}
 	}
 	
 	function testJoin() {

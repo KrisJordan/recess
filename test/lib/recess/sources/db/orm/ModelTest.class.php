@@ -75,9 +75,9 @@ class ModelTest extends UnitTestCase {
 		$this->source->commit();
 	}
 	
-	function testFind() {
+	function testAll() {
 		$person = new Person();
-		$people = $person->find();
+		$people = $person->all();
 		$this->assertEqual(count($people),6);	
 		
 		$genera = Make::a('Genera')->equal('title','Social Healing')->first();
@@ -109,7 +109,7 @@ class ModelTest extends UnitTestCase {
 	function testFindCriteria() {
 		$person = new Person();
 		$person->age = 23;
-		$people = $person->orderBy('last_name DESC');
+		$people = $person->find()->orderBy('last_name DESC');
 		$this->assertEqual(count($people),2);
 		$this->assertEqual($people[0]->last_name, 'Sutherland');
 		$this->assertEqual(get_class($people[0]), 'Person');
@@ -159,14 +159,15 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual(count($generas), 1);
 	}
 	
-	function testMultipleJoinTables() {
+	function testMultipleJoinTables() {		
 		$movies = Make::a('Person')
 						->equal('age',22)
 						->books()
-						->like('title','%Dream%')
+						->like('title','%Dream%') 
 						->generas()
 						->movies();
-		$this->assertEqual(count($movies),2);		
+		
+		$this->assertEqual(count($movies),2);
 	}
 	
 	function testBelongsTo() {
@@ -193,6 +194,42 @@ class ModelTest extends UnitTestCase {
 		$book = new Book();
 		$generas = $book->generas()->like('books.title', '%Dream%');
 		$this->assertEqual(count($generas),2);
+	}
+	
+	function testDelete() {
+		$people = Make::a('Person')->all();
+		$people_count = count($people);
+		$this->assertTrue($people[0]->delete());
+		
+		$people = Make::a('Person')->all();
+		$this->assertEqual($people_count - 1, count($people));
+	}
+	
+	function testInsert() {
+		$people = Make::a('Person')->all();
+		$people_count = count($people);
+		
+		$person = new Person();
+		$person->first_name = 'Joe';
+		$person->last_name = 'Biden';
+		$person->age = 65;
+		$person->insert();
+		
+		$people = Make::a('Person')->all();
+		$this->assertEqual($people_count + 1, count($people));
+	}
+	
+	function testUpdate() {
+		$people = Make::a('Person')->all();
+		$person = $people[0];
+		$name = $person->first_name;
+		
+		$person->first_name = 'UPDATE!';
+		$person->update();
+		
+		$people = Make::a('Person')->all();
+		
+		$this->assertEqual($person->first_name, $people[0]->first_name);
 	}
 	
 	function tearDown() {

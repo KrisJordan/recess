@@ -1,7 +1,7 @@
 <?php
-Library::import('recess.sources.db.sql.SelectSqlBuilder');
+Library::import('recess.sources.db.sql.SqlBuilder');
 
-class MutableSelectSet implements Iterator, Countable, ArrayAccess {
+class MutableSelectSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions, ISqlConditions {
 	protected $hasResults = false;
 	
 	protected $sqlBuilder;
@@ -12,7 +12,7 @@ class MutableSelectSet implements Iterator, Countable, ArrayAccess {
 	private $source;
 	
 	public function __construct(PdoDataSource $source) {
-		$this->sqlBuilder = new SelectSqlBuilder();
+		$this->sqlBuilder = new SqlBuilder();
 		$this->source = $source;
 	}
 	
@@ -24,13 +24,17 @@ class MutableSelectSet implements Iterator, Countable, ArrayAccess {
 	protected function realize() {
 		if(!$this->hasResults) {
 			unset($this->results);
-			$this->results = $this->source->queryFromSqlBuilder($this->sqlBuilder, $this->rowClass);
+			$this->results = $this->source->queryForClass($this->sqlBuilder->select(), $this->sqlBuilder->getPdoArguments(), $this->rowClass);
 			$this->hasResults = true;
 		}
 	}
 	
+	function update() {
+		
+	}
+	
 	public function toSql() {
-		return $this->sqlBuilder->getSql();
+		return $this->sqlBuilder->select();
 	}
 	
 	public function count() { return iterator_count($this); }
@@ -99,6 +103,16 @@ class MutableSelectSet implements Iterator, Countable, ArrayAccess {
 		}
 	}
 	
+
+	
+	
+	
+	
+	
+	
+	
+	function assign($column, $value) { $this->reset(); $this->sqlBuilder->assign($column, $value); return $this; }
+	function useAssignmentsAsConditions($bool) { $this->sqlBuilder->useAssignmentsAsConditions($bool); return $this; }
 	
 	function from($table) { $this->reset(); $this->sqlBuilder->from($table); return $this; }
 	function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }

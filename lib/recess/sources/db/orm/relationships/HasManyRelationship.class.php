@@ -34,6 +34,7 @@ class HasManyRelationship extends Relationship {
 				->innerJoin(OrmRegistry::tableFor($this->localClass), 
 							OrmRegistry::primaryKeyFor($this->localClass), 
 							OrmRegistry::tableFor($this->foreignClass) . '.' . $this->foreignKey);
+				
 		$select->rowClass = $this->foreignClass;
 		return $select;
 	}

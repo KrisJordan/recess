@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.sources.db.sql.SelectSqlBuilder');
+Library::import('recess.sources.db.sql.SqlBuilder');
 Library::import('recess.sources.db.sql.Criterion');
 /**
  * Unit Tests for recess.sources.db.sql.SqlBuilder
@@ -11,27 +11,31 @@ class SqlBuilderTest extends UnitTestCase  {
 	protected $builder = null;
 	
 	function setUp() {
-		$this->builder = new SelectSqlBuilder();
+		$this->builder = new SqlBuilder();
 	}
 	
 	function testEmpty() {
-		$this->assertEqual('', $this->builder->getSql());
+		try {
+			$this->builder->select();
+			$this->fail('Should throw.');
+		} catch(RecessException $e) { 
+			$this->pass('Empty select properly throws.');
+		}
 	}
 	
 	function testFrom() {
 		$this->builder->from('table');
-		$this->assertEqual($this->builder->getSql(), 'SELECT * FROM table');
+		$this->assertEqual($this->builder->select(), 'SELECT * FROM table');
 	}
 	
 	function testFromChain() {
 		$this->builder->from('table_a')->from('table_b');
-		$this->assertEqual($this->builder->getSql(), 'SELECT * FROM table_b');
+		$this->assertEqual($this->builder->select(), 'SELECT * FROM table_b');
 	}
 	
 	function testWhereWithoutFrom() {
-		$this->builder->like('name','value');
 		try {
-			echo $this->builder->getSql(); 
+			$this->builder->like('name','value');
 			$this->fail('Should throw cannot have where without from exception.');
 		} catch(Exception $e) {
 			$this->pass('Exception Caught');
@@ -41,13 +45,13 @@ class SqlBuilderTest extends UnitTestCase  {
 	function testMultipleWheres() {
 		$this->builder->from('table')->greaterThan('height',5.2)->lessThan('age',100);
 		$expected = 'SELECT * FROM table WHERE table.height > :table_height AND table.age < :table_age';
-		$this->assertEqual($this->builder->getSql(), $expected);
+		$this->assertEqual($this->builder->select(), $expected);
 	}
 	
 	function testOrderByFail() {
 		$this->builder->orderBy('name ASC');
 		try {
-			$this->builder->getSql();
+			$this->builder->select();
 			$this->fail('Should throw, cannot have orderby without from.');
 		} catch (Exception $e) {
 			$this->pass();
@@ -57,7 +61,7 @@ class SqlBuilderTest extends UnitTestCase  {
 	function testOffsetWithoutLimit() {
 		$this->builder->from('table')->offset(25);
 		try {
-			$this->builder->getSql();
+			$this->builder->select();
 			$this->fail('Should throw, cannot have offset without limit.');
 		} catch (Exception $e) {
 			$this->pass();
@@ -67,13 +71,37 @@ class SqlBuilderTest extends UnitTestCase  {
 	function testLimitOffset() {
 		$this->builder->from('table')->limit(10)->offset(1);
 		$expected = 'SELECT * FROM table LIMIT 10 OFFSET 1';
-		$this->assertEqual($this->builder->getSql(), $expected);
+		$this->assertEqual($this->builder->select(), $expected);
 	}
 	
 	function testLeftOuterJoin() {
 		$this->builder->from('authors')->equal('first_name', 'John')->from('books')->leftOuterJoin('authors','authors.id','books.author_id');
-		$expected = 'SELECT books.* FROM books LEFT OUTER JOIN authors ON authors.id = books.author_id WHERE authors.first_name = :authors_first_name';
-		$this->assertEqual($this->builder->getSql(), $expected);
+		$expected = 'SELECT books.* FROM books LEFT OUTER JOIN authors ON authors.id = books.author_id WHERE authors.first_name == :authors_first_name';
+		$this->assertEqual($this->builder->select(), $expected);
+	}
+	
+	function testInsert() {
+		$this->builder->into('authors')->assign('first_name','Kris');
+		$expected = 'INSERT INTO authors (first_name) VALUES (:assgn_authors_first_name)';
+		$this->assertEqual($this->builder->insert(),$expected);
+	}
+	
+	function testUpdate() {
+		$this->builder->table('authors')->equal('id',1)->assign('first_name','John');
+		$expected = 'UPDATE authors SET first_name = :assgn_authors_first_name WHERE authors.id == :authors_id';
+		$this->assertEqual($this->builder->update(),$expected);
+	}
+	
+	function testDelete() {
+		$this->builder->from('authors');
+		$expected = 'DELETE FROM authors';
+		$this->assertEqual($this->builder->delete(), $expected);
+	}
+
+	function testDeleteWhere() {
+		$this->builder->from('authors')->equal('id',1);
+		$expected = 'DELETE FROM authors WHERE authors.id == :authors_id';
+		$this->assertEqual($this->builder->delete(), $expected);
 	}
 	
 	function tearDown() {

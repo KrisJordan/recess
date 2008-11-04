@@ -31,7 +31,7 @@ class BelongsToRelationship extends Relationship {
 		
 	}
 	
-	function augmentSelect(PdoDataSet $select) {
+	protected function augmentSelect(PdoDataSet $select) {
 		$select	->from(OrmRegistry::tableFor($this->foreignClass))
 				->innerJoin(OrmRegistry::tableFor($this->localClass), 
 							OrmRegistry::primaryKeyFor($this->foreignClass), 
@@ -44,6 +44,14 @@ class BelongsToRelationship extends Relationship {
 		} else { 
 			return null;
 		}
+	}
+	
+	function selectModel(Model $model) {
+		return $this->augmentSelect($model->select());
+	}
+	
+	function selectModelSet(ModelSet $modelSet) {
+		return $this->augmentSelect($modelSet);
 	}
 
 }

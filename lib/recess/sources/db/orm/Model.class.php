@@ -14,7 +14,7 @@ abstract class Model extends stdClass implements ISqlConditions {
 	public function __call($name, $args) {
 		$thisOrm = OrmRegistry::infoForObject($this);
 		if(isset($thisOrm->relationships[$name])) {
-			return $thisOrm->relationships[$name]->augmentSelect($this->select());
+			return $thisOrm->relationships[$name]->selectModel($this);
 		} else {
 			throw new RecessException('Relationship "' . $name . '" does not exist.', get_defined_vars());
 		}

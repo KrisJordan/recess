@@ -8,7 +8,10 @@ abstract class Relationship {
 	
 	abstract function fromAnnotationForClass(Annotation $attribute, $class);
 	
-	abstract function augmentSelect(PdoDataSet $select);
+	// abstract function augmentSelect(PdoDataSet $select);
+	
+	abstract function selectModel(Model $model);
+	abstract function selectModelSet(ModelSet $modelSet);
 }
 
 ?>

@@ -73,7 +73,13 @@ class Inflector {
 	 * @return string camelCapsForm
 	 */
 	public static function toCamelCaps($word) {
-		$word = preg_replace('/_([a-z])/', 'ucfirst(${1})', $word);
+		$word = preg_replace_callback(
+			'/_([a-z])/', 
+			create_function(
+	            '$matches',
+	            'return ucfirst($matches[1]);'
+	        ),
+			$word);
 		$word[0] = strtolower($word[0]);
 		return $word;
 	}
@@ -86,7 +92,13 @@ class Inflector {
 	 */
 	public static function toUnderscores($word) {
 		$word[0] = strtolower($word[0]);
-		$word = preg_replace('/([A-Z])/', 'strtolower(${1})_', $word);
+		$word = preg_replace_callback(
+					'/([A-Z])/', 
+					create_function(
+			            '$matches',
+			            'return \'_\' . strtolower($matches[0]);'
+			        ),
+					$word);
 		return $word;
 	}
 	
@@ -97,7 +109,13 @@ class Inflector {
 	 * @return string in English Form
 	 */
 	public static function toEnglish($word) {
-		$word = preg_replace('/(?:(^.)|_([a-z])|([A-Z]))/', ' strtoupper(${1}${2}${3})', $word);
+		$word = preg_replace_callback(
+					'/(?:(^.)|_([a-z])|([A-Z]))/', 
+					create_function(
+			            '$matches',
+			            'return \' \' . strtoupper(array_pop($matches));'
+			        ),
+					$word);
 		return substr($word, 1);
 	}
 }

@@ -117,12 +117,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	}
 	
 	public function getPdoArguments() {
-		if(!$this->useAssignmentsAsConditions) {
-			return $this->conditions;
-		} else {
-			$merged = array_merge($this->conditions, $this->assignments);
-			return array_merge($this->conditions, $this->assignments);
-		}
+		return array_merge($this->conditions, $this->assignments);
 	}
 	
 	public function from($table) { return $this->table($table); }

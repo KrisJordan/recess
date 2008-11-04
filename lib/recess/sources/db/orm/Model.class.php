@@ -43,16 +43,25 @@ abstract class Model extends stdClass implements ISqlConditions {
 		return $this->getModelSet()->useAssignmentsAsConditions(true);
 	}
 	
-	function delete() {
-		$thisOrm = OrmRegistry::infoForObject($this);
-		
+	protected function assignmentSqlForThisObject(OrmClassInfo $thisOrm, $useAssignment = true, $excludePrimaryKey = false) {
 		$sqlBuilder = new SqlBuilder();
 		$sqlBuilder->from($thisOrm->table);
 		foreach($this as $column => $value) {
-			if(in_array($column,$thisOrm->columns)) {
-				$sqlBuilder->equal($column,$value);
+			if($excludePrimaryKey && $thisOrm->primaryKey == $column) continue;
+			if(in_array($column, $thisOrm->columns)) {
+				if($useAssignment)
+					$sqlBuilder->assign($column,$value);
+				else
+					$sqlBuilder->equal($column,$value);
 			}
 		}
+		return $sqlBuilder;
+	}
+	
+	function delete() {
+		$thisOrm = OrmRegistry::infoForObject($this);
+		
+		$sqlBuilder = $this->assignmentSqlForThisObject($thisOrm, false);
 		
 		return $thisOrm->source->executeStatement($sqlBuilder->delete(), $sqlBuilder->getPdoArguments());	
 	}
@@ -60,13 +69,7 @@ abstract class Model extends stdClass implements ISqlConditions {
 	function insert() {
 		$thisOrm = OrmRegistry::infoForObject($this);
 		
-		$sqlBuilder = new SqlBuilder();
-		$sqlBuilder->from($thisOrm->table);
-		foreach($this as $column => $value) {
-			if(in_array($column,$thisOrm->columns)) {
-				$sqlBuilder->assign($column,$value);
-			}
-		}
+		$sqlBuilder = $this->assignmentSqlForThisObject($thisOrm);
 		
 		return $thisOrm->source->executeStatement($sqlBuilder->insert(), $sqlBuilder->getPdoArguments());
 	}
@@ -74,32 +77,12 @@ abstract class Model extends stdClass implements ISqlConditions {
 	function update() {
 		$thisOrm = OrmRegistry::infoForObject($this);
 		
-		$sqlBuilder = new SqlBuilder();
-		$sqlBuilder->from($thisOrm->table);
-		foreach($this as $column => $value) {
-			if($thisOrm->primaryKey == $column) continue;
-			if(in_array($column,$thisOrm->columns)) {
-				$sqlBuilder->assign($column,$value);
-			}
-		}
+		$sqlBuilder = $this->assignmentSqlForThisObject($thisOrm, true, true);
 		$pk = str_replace($thisOrm->table . '.', '', $thisOrm->primaryKey);
 		$sqlBuilder->equal($thisOrm->primaryKey, $this->$pk);
 		
 		return $thisOrm->source->executeStatement($sqlBuilder->update(), $sqlBuilder->getPdoArguments());
 	}
-	
-	/**
-	 *
-	 * $person = new Person();
-	 * $person->id = 5;
-	 * $person->city = 'Ohio';
-	 * $person->update();
-	 *
-	 * $person = new Person();
-	 * $person->age = 23;
-	 * $person->greaterThan('month', 2)->update(); // what if this flips the bit back?
-	 * 
-	 */
 	
 	function save()   {  }
 	

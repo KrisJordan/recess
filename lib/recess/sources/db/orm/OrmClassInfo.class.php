@@ -1,5 +1,6 @@
 <?php
 
+Library::import('recess.lang.Inflector');
 Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
 Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
 Library::import('recess.sources.db.orm.relationships.HasAndBelongsToManyRelationship');

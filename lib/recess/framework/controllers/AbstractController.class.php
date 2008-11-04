@@ -3,6 +3,7 @@ Library::import('recess.http.Methods');
 Library::import('recess.http.Request');
 Library::import('recess.http.Formats');
 Library::import('recess.http.responses.BadRequestResponse');
+Library::import('recess.lang.Inflector');
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,

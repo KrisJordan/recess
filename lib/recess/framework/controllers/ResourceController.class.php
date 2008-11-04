@@ -4,6 +4,7 @@ Library::import('recess.Controller');
 Library::import('recess.http.Request');
 Library::import('recess.http.responses.OkResponse');
 Library::import('recess.routing.Route');
+Library::import('recess.lang.Inflector');
 
 abstract class ResourceController extends Controller {
 	protected $resourceName;

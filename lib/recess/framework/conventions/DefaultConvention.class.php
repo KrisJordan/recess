@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.interfaces.IPolicy');
-Library::import('recess.utility.Inflector');
+Library::import('recess.lang.Inflector');
 Library::import('recess.controllers.PluggableController');
 Library::import('recess.controllers.ErrorController');
 Library::import('recess.policies.standard.StandardPreprocessor');

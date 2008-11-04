@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.utility.Inflector');
+Library::import('recess.lang.Inflector');
 Library::import('recess.sources.db.DbSources');
 Library::import('recess.sources.db.orm.OrmRegistry');
 Library::import('recess.sources.db.sql.ISqlConditions');

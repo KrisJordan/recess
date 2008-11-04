@@ -1,16 +1,16 @@
 <?php
 
 Library::import('recess.sources.db.pdo.PdoDataSource');
-Library::import('recess.sources.db.orm.MutableModelSet');
+Library::import('recess.sources.db.orm.ModelSet');
 
 class ModelDataSource extends PdoDataSource {
 	
 	function selectModelSet($table = '') {
 		if($table != '') {
-			$mutableModelSet = new MutableModelSet($this);
-			return $mutableModelSet->from($table);
+			$ModelSet = new ModelSet($this);
+			return $ModelSet->from($table);
 		} else {
-			return new MutableModelSet($this);
+			return new ModelSet($this);
 		}
 	}
 	

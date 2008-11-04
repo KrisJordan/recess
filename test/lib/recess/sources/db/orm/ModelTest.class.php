@@ -30,9 +30,12 @@ class Movie extends Model { }
 class ModelTest extends UnitTestCase {
 	protected $source;
 	
+	function __construct() {
+		parent::UnitTestCase('Model Test');
+	}
+	
 	function setUp() {
 		$this->source = new ModelDataSource('sqlite::memory:');
-		DbSources::setDefaultSource($this->source);
 		$this->source->beginTransaction();
 		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT, age TEXT)');
 		$this->source->exec('CREATE TABLE books (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title TEXT)');
@@ -73,6 +76,9 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (2,4)');
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (3,1)');
 		$this->source->commit();
+		$this->source->beginTransaction();
+		DbSources::setDefaultSource($this->source);
+		OrmRegistry::clear();
 	}
 	
 	function testAll() {
@@ -196,13 +202,33 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual(count($generas),2);
 	}
 	
-	function testDelete() {
+	function testUpdate() {
 		$people = Make::a('Person')->all();
-		$people_count = count($people);
-		$this->assertTrue($people[0]->delete());
+		$person = $people[0];
+		$name = $person->first_name;
+		
+		$person->first_name = 'UPDATE!';
+		$person->update();
 		
 		$people = Make::a('Person')->all();
-		$this->assertEqual($people_count - 1, count($people));
+		
+		$this->assertEqual($person->first_name, $people[0]->first_name);
+	}
+	
+	function testUpdateOnCollection() {
+		$person = new Person();
+		$person->age = 23;
+		$person->lessThan('age',23)->update();
+		
+		$people = $person->find();
+		$this->assertEqual(count($people), 4);
+	
+		$person = new Person();
+		$person->age = 100;
+		$person->all()->update();
+		
+		$people = $person->find();
+		$this->assertEqual(count($people),6);
 	}
 	
 	function testInsert() {
@@ -219,20 +245,35 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual($people_count + 1, count($people));
 	}
 	
-	function testUpdate() {
+	function testDelete() {
 		$people = Make::a('Person')->all();
-		$person = $people[0];
-		$name = $person->first_name;
-		
-		$person->first_name = 'UPDATE!';
-		$person->update();
+		$people_count = count($people);
+		$this->assertTrue($people[0]->delete());
 		
 		$people = Make::a('Person')->all();
+		$this->assertEqual($people_count - 1, count($people));
+	}
+	
+	function testDeleteOnCollection() {
+		Make::a('Person')->greaterThanOrEqualTo('age',23)->delete();
+		$people = Make::a('Person')->all();
+		$this->assertEqual(count($people), 2);
 		
-		$this->assertEqual($person->first_name, $people[0]->first_name);
+		Make::a('Person')->all()->delete();
+		$people = Make::a('Person')->all();
+		$this->assertEqual(count($people), 0);
 	}
 	
 	function tearDown() {
+		$this->source->commit();
+		$this->source->beginTransaction();
+	 	$this->source->exec('DROP TABLE persons');
+		$this->source->exec('DROP TABLE books');
+		$this->source->exec('DROP TABLE movies');
+		$this->source->exec('DROP TABLE generas');
+		$this->source->exec('DROP TABLE generas_movies');
+		$this->source->exec('DROP TABLE books_generas');
+		$this->source->commit();
 		unset($this->source);
 	}
 	

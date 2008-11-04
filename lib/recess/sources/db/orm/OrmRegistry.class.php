@@ -27,5 +27,9 @@ abstract class OrmRegistry {
 		return $info->primaryKey;
 	}
 	
+	public static function clear() {
+		self::$registry = array();
+	}
+	
 }
 ?>

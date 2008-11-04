@@ -21,10 +21,7 @@ abstract class Model extends stdClass implements ISqlConditions {
 	}
 	
 	function all() { 
-		$thisOrm = OrmRegistry::infoForObject($this);
-		$result = $thisOrm->source->selectModelSet($thisOrm->table);
-		$result->rowClass = $thisOrm->class;
-		return $result;
+		return $this->getModelSet()->useAssignmentsAsConditions(false);
 	}
 
 	protected function getModelSet() {

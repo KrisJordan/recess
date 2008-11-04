@@ -49,7 +49,7 @@ class HasAndBelongsToManyRelationship extends Relationship {
 		
 	}
 	
-	function augmentSelect(MutableSelectSet $select) {
+	function augmentSelect(PdoDataSet $select) {
 		$select	->from(OrmRegistry::tableFor($this->foreignClass))
 				->distinct()
 				->innerJoin($this->joinTable, 

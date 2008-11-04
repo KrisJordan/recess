@@ -29,7 +29,7 @@ class HasManyRelationship extends Relationship {
 		
 	}
 	
-	function augmentSelect(MutableSelectSet $select) {
+	function augmentSelect(PdoDataSet $select) {
 		$select	->from(OrmRegistry::tableFor($this->foreignClass))
 				->innerJoin(OrmRegistry::tableFor($this->localClass), 
 							OrmRegistry::primaryKeyFor($this->localClass), 

@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.sources.db.pdo.exceptions.DataSourceCouldNotConnectException');
 Library::import('recess.sources.db.pdo.exceptions.ProviderDoesNotExistException');
-Library::import('recess.sources.db.pdo.MutableSelectSet');
+Library::import('recess.sources.db.pdo.PdoDataSet');
 
 /**
  * A PDO wrapper in the Recess! Framework that provides a single interface for commonly 
@@ -47,17 +47,17 @@ class PdoDataSource extends PDO {
 	}
 	
 	/**
-	 * Begin a select operation by returning a new, unrealized MutableSelectSet
+	 * Begin a select operation by returning a new, unrealized PdoDataSet
 	 *
 	 * @param string $table Optional parameter that sets the from clause of the select to a table.
-	 * @return MutableSelectSet
+	 * @return PdoDataSet
 	 */
 	function select($table = '') {
 		if($table != '') {
-			$mutableSelectSet = new MutableSelectSet($this);
-			return $mutableSelectSet->from($table);
+			$PdoDataSet = new PdoDataSet($this);
+			return $PdoDataSet->from($table);
 		} else {
-			return new MutableSelectSet($this);
+			return new PdoDataSet($this);
 		}
 	}
 	

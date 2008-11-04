@@ -18,12 +18,7 @@ class Inflector {
 	}
 	
 	public static function toCamelCaps($word) {
-		for($i = 0; $i < strlen($word) ; $i++) {
-			if($word[$i] == '_') {
-				$word[$i+1] = strtoupper($word[$i+1]);
-			}
-		}
-		return str_replace('_', '', $word);
+		return preg_replace('/_([a-z])/', 'ucfirst(${1})', $word);
 	}
 	
 	public static function toEnglish($word) {
@@ -37,20 +32,8 @@ class Inflector {
 	}
 	
 	public static function toUnderscores($word) {
-		$UPPER_A = ord('A');
-		$UPPER_Z = ord('Z');
-		for($i = 0; $i < strlen($word) ; $i++) {
-			$ord = ord($word[$i]);
-			if($ord >= $UPPER_A &&
-				 $ord <= $UPPER_Z) {
-				 	
-				 if($i == 0) { $word[$i] = strtolower($word[$i]); continue; }
-				 	
-				 $word[$i] = strtolower($word[$i]);
-				 $word = substr_replace($word, '_' . $word[$i], $i, 1);
-				 ++$i;
-			}
-		}
+		$word[0] = strtolower($word[0]);
+		$word = preg_replace('/([A-Z])/', 'strtolower(${1})_', $word);
 		return $word;
 	}
 }

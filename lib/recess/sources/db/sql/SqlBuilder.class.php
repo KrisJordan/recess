@@ -121,7 +121,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	}
 	
 	public function from($table) { return $this->table($table); }
-	public function useAssignmentsAsConditions($bool) { $this->useAssignmentsAsConditions = $bool; }
+	public function useAssignmentsAsConditions($bool) { $this->useAssignmentsAsConditions = $bool; return $this; }
 	
 	/* ISqlConditions */
 	public function equal($column, $value)       { return $this->addCondition($column, $value, Criterion::EQUAL_TO); }

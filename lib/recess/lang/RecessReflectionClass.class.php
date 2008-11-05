@@ -46,7 +46,7 @@ class RecessReflectionClass extends ReflectionClass {
 				
 				@eval('$array = ' . $value);
 				if(!isset($array)) { 
-					Library::import('recess.lang.InvalidAnnotationValueException');
+					Library::import('recess.lang.exceptions.InvalidAnnotationValueException');
 					throw new InvalidAnnotationValueException('In class "' . $this->name . '", there is an unparseable attribute value: "!' . $attribute . ': ' . $values[$key] . '"',0,0,$this->getFileName(),$this->getStartLine(),get_defined_vars());
 				}
 				
@@ -56,7 +56,7 @@ class RecessReflectionClass extends ReflectionClass {
 					$annotation = new $annotationClass;
 					$annotation->init($array);
 				} else {
-					Library::import('recess.lang.UnknownAnnotationException');
+					Library::import('recess.lang.exceptions.UnknownAnnotationException');
 					throw new UnknownAnnotationException('In class "' . $this->name . '", there is an unknown annotation: "' . $attribute . '"',0,0,$this->getFileName(),$this->getStartLine(),get_defined_vars());
 				}
 				

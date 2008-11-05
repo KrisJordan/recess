@@ -3,30 +3,16 @@ Library::import('recess.sources.db.orm.relationships.Relationship');
 
 class HasManyRelationship extends Relationship {
 	
-	function fromAnnotationForClass(Annotation $annotation, $class) {
-		$this->localClass = $class;
-		
-		$settings = $annotation->settings;
-		
-		if(is_array($settings) && count($settings > 0)) {
-			$this->name = $settings[0];
-			
-			if(isset($settings['ForeignKey'])) {
-				$this->foreignKey = $settings['ForeignKey'];
-			} else {
-				$this->foreignKey = Inflector::toUnderscores($class) . '_id';
-			}
-			
-			if(isset($settings['Class'])) {
-				$this->foreignClass = $settings['Class'];
-			} else {
-				$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($this->name));
-			}
-			
-		} else {
-			throw new RecessException('Invalid HasMany Relationship', get_defined_vars());
-		}
-		
+	function init($modelClassName, $relationshipName) {
+		$this->localClass = $modelClassName;
+		$this->name = $relationshipName;
+		$this->foreignKey = Inflector::toUnderscores($modelClassName) . '_id';
+		$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($relationshipName));
+	}
+	
+	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
+		$attachedMethod = new RecessClassAttachedMethod($this,'selectModel');
+		$descriptor->addAttachedMethod($this->name, $attachedMethod);
 	}
 	
 	function selectModel(Model $model) {

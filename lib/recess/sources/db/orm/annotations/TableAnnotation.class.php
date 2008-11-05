@@ -1,12 +1,14 @@
 <?php
-Library::import('recess.lang.Annotation');
-
-class TableAnnotation extends Annotation {
+Library::import('recess.sources.db.orm.annotations');
+class TableAnnotation extends ModelAnnotation {
 	public $table;
 	
 	function init($array) {
 		$this->table = $array[0];	
 	}
+	
+	function massage(ModelDescriptor &$descriptor) {
+		$descriptor->table = $table;
+	}
 }
-
 ?>

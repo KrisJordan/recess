@@ -6,47 +6,27 @@ class HasAndBelongsToManyRelationship extends Relationship {
 	protected $joinTableForeignClassKey;
 	protected $joinTableLocalClassKey;
 	
-	function fromAnnotationForClass(Annotation $annotation, $class) {
-		$this->localClass = $class;
+	function init($modelClassName, $relationshipName) {
+		$this->localClass = $modelClassName;
+		$this->name = $relationshipName;
+		$this->foreignKey = $relationshipName . '_id';
 		
-		$settings = $annotation->settings;
+		$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($this->name));
 		
-		if(is_array($settings) && count($settings > 0)) {
-			$this->name = $settings[0];
-			
-			if(isset($settings['ForeignKey'])) {
-				$this->foreignKey = $settings['ForeignKey'];
-			} else {
-				$this->foreignKey = Inflector::toUnderscores($class) . '_id';
-			}
-			
-			if(isset($settings['Class'])) {
-				$this->foreignClass = $settings['Class'];
-			} else {
-				$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($this->name));
-			}
-			
-			if(isset($settings['Through'])) {
-				$this->joinTable = $settings['Through'];	
-			} else {
-				// TODO: This is a poor heuristic, there's a circular dependency
-				//		 in doing this correctly. Could be solved lazily.
-				$tables = array($this->localClass, $this->foreignClass);
-				sort($tables);
-				$this->joinTable = Inflector::toPlural(Inflector::toUnderscores($tables[0])) 
-									. '_' 
-									. Inflector::toPlural(Inflector::toUnderscores($tables[1]));
-			}
-			
-			$this->joinTableForeignClassKey = $this->joinTable . '.' . Inflector::toUnderscores($this->foreignClass) . '_id';
-			$this->joinTableLocalClassKey = $this->joinTable . '.' . Inflector::toUnderscores($class) . '_id';
-			
-			
-			
-		} else {
-			throw new RecessException('Invalid HasMany Relationship', get_defined_vars());
-		}
+		$tables = array($this->localClass, $this->foreignClass);
 		
+		sort($tables);
+		$this->joinTable = Inflector::toPlural(Inflector::toUnderscores($tables[0])) 
+							. '_' 
+							. Inflector::toPlural(Inflector::toUnderscores($tables[1]));
+
+		$this->joinTableForeignClassKey = $this->joinTable . '.' . Inflector::toUnderscores($this->foreignClass) . '_id';
+		$this->joinTableLocalClassKey = $this->joinTable . '.' . Inflector::toUnderscores($this->localClass) . '_id';
+	}
+	
+	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
+		$attachedMethod = new RecessClassAttachedMethod($this, 'selectModel');
+		$descriptor->addAttachedMethod($this->name, $attachedMethod);
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {

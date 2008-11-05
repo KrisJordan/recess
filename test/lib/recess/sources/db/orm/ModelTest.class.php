@@ -19,7 +19,7 @@ class Person extends Model { }
 class Book extends Model { }
 
 /**
- * !HasAndBelongsToMany books, CascadeDelete: true
+ * !HasAndBelongsToMany books
  * !HasAndBelongsToMany movies
  */
 class Genera extends Model { }

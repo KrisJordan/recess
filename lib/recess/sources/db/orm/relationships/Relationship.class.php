@@ -6,9 +6,10 @@ abstract class Relationship {
 	public $foreignClass;
 	public $foreignKey;
 	
-	abstract function fromAnnotationForClass(Annotation $attribute, $class);
-	
-	// abstract function augmentSelect(PdoDataSet $select);
+	// TODO: Get rid of following line
+	function fromAnnotationForClass(Annotation $attribute, $class) {}
+	// TODO: make this abstract
+	function init(ModelDescriptor $descriptor) {}
 	
 	abstract function selectModel(Model $model);
 	abstract function selectModelSet(ModelSet $modelSet);

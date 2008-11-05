@@ -3,32 +3,16 @@ Library::import('recess.sources.db.orm.relationships.Relationship');
 
 class BelongsToRelationship extends Relationship {
 	
-	function fromAnnotationForClass(Annotation $annotation, $class) {
-		$this->localClass = $class;
-		
-		$settings = $annotation->settings;
-		
-		if(is_array($settings) && count($settings > 0)) {
-			$this->name = $settings[0];
-			
-			if(isset($settings['ForeignKey'])) {
-				$this->foreignKey = $settings['ForeignKey'];
-			} else {
-				$this->foreignKey = $this->name . '_id';
-//				echo $this->name;
-//				print_r(debug_backtrace());
-			}
-			
-			if(isset($settings['Class'])) {
-				$this->foreignClass = $settings['Class'];
-			} else {
-				$this->foreignClass = Inflector::toProperCaps($this->name);
-			}
-			
-		} else {
-			throw new RecessException('Invalid BelongsTo Relationship', get_defined_vars());
-		}
-		
+	function init($modelClassName, $relationshipName) {
+		$this->localClass = $modelClassName;
+		$this->name = $relationshipName;
+		$this->foreignKey = $relationshipName . '_id';
+		$this->foreignClass = Inflector::toProperCaps($relationshipName);
+	}
+	
+	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
+		$attachedMethod = new RecessClassAttachedMethod($this, 'selectModel');
+		$descriptor->addAttachedMethod($this->name, $attachedMethod);
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {

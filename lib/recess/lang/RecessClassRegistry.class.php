@@ -16,18 +16,37 @@ abstract class RecessClassRegistry {
 	 * @param RecessClass $recessObject
 	 * @return RecessClassInfo
 	 */
-	static function infoForObject($recessObject) {
-		$class = get_class($recessObject);
+	static function infoForObject($recessClassInstance) {
+		$class = get_class($recessClassInstance);
 		
 		if(isset(self::$registry[$class])) {
 			return self::$registry[$class];
 		} else {
 			if(is_a($recessObject, 'RecessClass')) {
-				return self::$registry[$class] = call_user_func(array($class, 'getRecessClassInfo'));
+				return self::$registry[$class] = call_user_func(array($class, 'getRecessClassInfo'), $class);
 			} else {
 				throw new RecessException('RecessClassRegistry only retains information on classes derived from RecessClass. Class of type "' . $class . '" given.', get_defined_vars());
 			}
 		}
+	}
+	
+	static function infoForClass($recessClass) {
+		if(isset(self::$registry[$recessClass])) {
+			return self::$registry[$recessClass];
+		} else {
+			if(is_a($recessObject, 'RecessClass')) {
+				return self::$registry[$class] = call_user_func(array($class, 'getRecessClassInfo'), $class);
+			} else {
+				throw new RecessException('RecessClassRegistry only retains information on classes derived from RecessClass. Class of type "' . $class . '" given.', get_defined_vars());
+			}
+		}
+	}
+	
+	/**
+	 * Clear the registry cache.
+	 */
+	static function clear() {
+		self::$registry = array();
 	}
 	
 }

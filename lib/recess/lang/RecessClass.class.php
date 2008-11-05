@@ -23,6 +23,7 @@ abstract class RecessClass extends stdClass {
 		if($attachedMethod !== false) {
 			$object = $attachedMethod->object;
 			$method = $attachedMethod->method;
+			array_unshift($arguments, $this);
 			return call_user_method_array($method, $object, $arguments);
 		} else {
 			throw new RecessException(get_class($this) . ' does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
@@ -33,9 +34,10 @@ abstract class RecessClass extends stdClass {
 	 * Returns instance of RecessClassInfo which describes
 	 * this class.
 	 * 
+	 * @param string $class Classname
 	 * @return RecessClassInfo
 	 */
-	static function getRecessClassInfo() {
+	static function getRecessClassInfo($class) {
 		return new RecessClassInfo();
 	}
 }

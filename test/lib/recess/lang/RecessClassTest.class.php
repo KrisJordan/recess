@@ -26,12 +26,15 @@ class RecessClassTest extends UnitTestCase {
 		}
 		
 		$recessClassInfo = RecessClassRegistry::infoForObject($myRecessObject);
+		
 		$attachedMethodProvider = new MyNewClassMethodProvider();
 		$attachedMethod = new RecessAttachedMethod($attachedMethodProvider, 'callMe');
 		$recessClassInfo->addAttachedMethod(
 							'helloWorld', 
 							$attachedMethod);
-							
+		$model->books();
+		$model->addBook();
+		
 		try {
 			$this->assertEqual(
 				$myRecessObject->helloWorld(),

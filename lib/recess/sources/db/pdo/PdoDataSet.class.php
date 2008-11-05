@@ -96,6 +96,7 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	}
 	
 	function first() {
+		$this->range(0,1);
 		if(isset($this[0])) {
 			return $this[0];
 		} else {

@@ -7,8 +7,15 @@ Library::import('recess.sources.db.orm.Model');
 Library::import('recess.sources.db.orm.ModelDataSource');
 
 /**
+ * !BelongsTo owner, Class: Person, ForeignKey: person_id
+ * !PrimaryKey pk
+ */
+class Car extends Model {}
+
+/**
  * !HasMany books, ForeignKey: author_id
  * !HasMany novels, ForeignKey: author_id, Class: Book
+ * !HasMany cars
  */
 class Person extends Model { }
 
@@ -41,6 +48,7 @@ class ModelTest extends UnitTestCase {
 		$this->source->beginTransaction();
 		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT, age TEXT)');
 		$this->source->exec('CREATE TABLE books (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title TEXT)');
+		$this->source->exec('CREATE TABLE cars (pk INTEGER PRIMARY KEY ASC AUTOINCREMENT, person_id INTEGER, make TEXT)');
 		$this->source->exec('CREATE TABLE movies (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title TEXT)');
 		$this->source->exec('CREATE TABLE generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, title INTEGER)');
 		$this->source->exec('CREATE TABLE books_generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, genera_id INTEGER)');
@@ -77,6 +85,7 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (1,4)');
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (2,4)');
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (3,1)');
+		$this->source->exec('INSERT INTO cars (person_id,make) VALUES (1,"VW")');
 		$this->source->commit();
 		$this->source->beginTransaction();
 		DbSources::setDefaultSource($this->source);
@@ -264,6 +273,34 @@ class ModelTest extends UnitTestCase {
 		Make::a('Person')->all()->delete();
 		$people = Make::a('Person')->all();
 		$this->assertEqual(count($people), 0);
+	}
+	
+	function testAddToHasManyRelationship() {
+		$person = new Person;
+		$person->first_name = 'John';
+		$person->age = 22; 
+		
+		$book = new Book();
+		$book->title = 'Obama Wins!';
+		
+		$person->addToBooks($book);
+		
+		$this->assertEqual($book->author()->id, $person->id);
+	}
+	
+	function testNonDefaultPrimaryKey() {
+		$person = new Person;
+		$person->first_name = 'Katie';
+		$person->age = 22;
+		
+		$car = new Car();
+		$car->make = 'Honda';
+		$car->insert();
+		
+		$person->addToCars($car);
+		
+		$this->assertEqual($car->pk, 2);
+		$this->assertEqual($car->owner()->id, $person->id);
 	}
 	
 	function tearDown() {

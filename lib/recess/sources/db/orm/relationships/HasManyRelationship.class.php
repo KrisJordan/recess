@@ -13,6 +13,21 @@ class HasManyRelationship extends Relationship {
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
 		$attachedMethod = new RecessClassAttachedMethod($this,'selectModel');
 		$descriptor->addAttachedMethod($this->name, $attachedMethod);
+		
+		$attachedMethod = new RecessClassAttachedMethod($this,'addToRelationship');
+		$descriptor->addAttachedMethod('addTo' . ucfirst($this->name), $attachedMethod);
+	}
+	
+	function addToRelationship(Model $model, Model $relatedModel) {
+		if(!$model->primaryKeyIsSet()) {
+			$model->insert();
+		}
+		
+		$foreignKey = $this->foreignKey;
+		$localKey = Model::primaryKeyName($model);	
+		$relatedModel->$foreignKey = $model->$localKey;
+		$relatedModel->save();
+		return $model;
 	}
 	
 	function selectModel(Model $model) {

@@ -42,7 +42,7 @@ abstract class RecessClass extends stdClass {
 			array_unshift($arguments, $this);
 			return call_user_method_array($method, $object, $arguments);
 		} else {
-			throw new RecessException(get_class($this) . ' does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
+			throw new RecessException('"' . get_class($this) . '" class does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
 		}
 	}
 	

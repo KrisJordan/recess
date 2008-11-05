@@ -1,8 +1,6 @@
 <?php
 Library::import('recess.lang.Inflector');
 Library::import('recess.lang.RecessClass');
-Library::import('recess.lang.RecessClassInfo');
-Library::import('recess.lang.RecessAttachedMethod');
 
 Library::import('recess.sources.db.DbSources');
 Library::import('recess.sources.db.sql.ISqlConditions');
@@ -18,16 +16,23 @@ Library::import('recess.sources.db.orm.relationships.HasAndBelongsToManyRelation
 
 abstract class Model extends RecessClass implements ISqlConditions {
 	
-//	public function __call($name, $args) {
-//		$thisOrm = OrmRegistry::infoForObject($this);
-//		if(isset($thisOrm->relationships[$name])) {
-//			return $thisOrm->relationships[$name]->selectModel($this);
-//		} else {
-//			throw new RecessException('Relationship "' . $name . '" does not exist.', get_defined_vars());
-//		}
-//	}
+	static function tableFor($class) {
+		return self::getClassDescriptor($class)->modelInfo->table;
+	}
 	
-	static function getRecessClassInfo($class) {
+	static function primaryKeyFor($class) {
+		return self::getClassDescriptor($class)->modelInfo->primaryKey;
+	}
+	
+	static function getRelationship($class, $name) {
+		if(isset(self::getClassDescriptor($class)->modelInfo->relationships[$name])) {
+			return self::getClassDescriptor($class)->modelInfo->relationships[$name];
+		} else {
+			return false;
+		}
+	}
+	
+	static protected function buildClassDescriptor($class) {
 		$modelClassInfo = new ModelClassInfo();
 		$modelClassInfo->table = Inflector::toPlural(Inflector::toUnderscores($class));
 		$modelClassInfo->relationships = array();
@@ -35,8 +40,8 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		$modelClassInfo->columns = $modelClassInfo->source->getColumns($modelClassInfo->table);
 		$modelClassInfo->primaryKey = $modelClassInfo->table . '.id';
 		
-		$classInfo = new RecessClassInfo();
-		$classInfo->modelInfo = $modelClassInfo;
+		$descriptor = new RecessClassDescriptor();
+		$descriptor->modelInfo = $modelClassInfo;
 		
 		Library::import('recess.lang.RecessReflectionClass');
 		try {
@@ -72,11 +77,11 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		
 		// attach methods
 		foreach($modelClassInfo->relationships as $name => $relationship) {
-			$attachedMethod = new RecessAttachedMethod($relationship,'selectModel');
-			$classInfo->addAttachedMethod($name, $attachedMethod);
+			$attachedMethod = new RecessClassAttachedMethod($relationship,'selectModel');
+			$descriptor->addAttachedMethod($name, $attachedMethod);
 		}
 		
-		return $classInfo;
+		return $descriptor;
 	}
 	
 	function all() { 
@@ -84,7 +89,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 	}
 
 	protected function getModelSet() {
-		$thisOrm = RecessClassRegistry::infoForObject($this)->modelInfo;
+		$thisOrm = self::getClassDescriptor($this)->modelInfo;
 		$result = $thisOrm->source->selectModelSet($thisOrm->table);
 		foreach($this as $column => $value) {
 			if(in_array($column,$thisOrm->columns)) {
@@ -115,15 +120,15 @@ abstract class Model extends RecessClass implements ISqlConditions {
 	}
 	
 	function delete() {
-		$modelClassInfo = RecessClassRegistry::infoForObject($this)->modelInfo;
+		$thisOrm = self::getClassDescriptor($this)->modelInfo;
 		
-		$sqlBuilder = $this->assignmentSqlForThisObject($modelClassInfo, false);
+		$sqlBuilder = $this->assignmentSqlForThisObject($thisOrm, false);
 		
 		return $thisOrm->source->executeStatement($sqlBuilder->delete(), $sqlBuilder->getPdoArguments());	
 	}
 	
 	function insert() {
-		$thisOrm = RecessClassRegistry::infoForObject($this)->modelInfo;
+		$thisOrm = self::getClassDescriptor($this)->modelInfo;
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisOrm);
 		
@@ -131,7 +136,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 	}
 	
 	function update() {
-		$thisOrm = RecessClassRegistry::infoForObject($this)->modelInfo;
+		$thisOrm = self::getClassDescriptor($this)->modelInfo;
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisOrm, true, true);
 		$pk = str_replace($thisOrm->table . '.', '', $thisOrm->primaryKey);

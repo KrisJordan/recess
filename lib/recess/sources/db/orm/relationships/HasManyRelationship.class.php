@@ -38,10 +38,10 @@ class HasManyRelationship extends Relationship {
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {
-		$select	->from(OrmRegistry::tableFor($this->foreignClass))
-				->innerJoin(OrmRegistry::tableFor($this->localClass), 
-							OrmRegistry::primaryKeyFor($this->localClass), 
-							OrmRegistry::tableFor($this->foreignClass) . '.' . $this->foreignKey);
+		$select	->from(Model::tableFor($this->foreignClass))
+				->innerJoin(Model::tableFor($this->localClass), 
+							Model::primaryKeyFor($this->localClass), 
+							Model::tableFor($this->foreignClass) . '.' . $this->foreignKey);
 				
 		$select->rowClass = $this->foreignClass;
 		return $select;

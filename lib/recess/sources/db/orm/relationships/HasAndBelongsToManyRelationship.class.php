@@ -50,13 +50,13 @@ class HasAndBelongsToManyRelationship extends Relationship {
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {
-		$select	->from(OrmRegistry::tableFor($this->foreignClass))
+		$select	->from(Model::tableFor($this->foreignClass))
 				->distinct()
 				->innerJoin($this->joinTable, 
-							OrmRegistry::primaryKeyFor($this->foreignClass), 
+							Model::primaryKeyFor($this->foreignClass), 
 							$this->joinTableForeignClassKey)
-				->innerJoin(OrmRegistry::tableFor($this->localClass),
-							OrmRegistry::primaryKeyFor($this->localClass),
+				->innerJoin(Model::tableFor($this->localClass),
+							Model::primaryKeyFor($this->localClass),
 							$this->joinTableLocalClassKey);
 		$select->rowClass = $this->foreignClass;
 		return $select;

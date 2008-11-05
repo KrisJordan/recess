@@ -80,7 +80,7 @@ class ModelTest extends UnitTestCase {
 		$this->source->commit();
 		$this->source->beginTransaction();
 		DbSources::setDefaultSource($this->source);
-		RecessClassRegistry::clear();
+		RecessClass::clearDescriptors();
 	}
 	
 	function testAll() {

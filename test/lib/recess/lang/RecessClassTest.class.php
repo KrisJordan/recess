@@ -1,8 +1,6 @@
 <?php
 
 Library::import('recess.lang.RecessClass');
-Library::import('recess.lang.RecessClassRegistry');
-Library::import('recess.lang.RecessAttachedMethod');
 
 class MyRecessClass extends RecessClass {}
 
@@ -25,15 +23,8 @@ class RecessClassTest extends UnitTestCase {
 			$this->pass('Successfully threw method undefined exception.');
 		}
 		
-		$recessClassInfo = RecessClassRegistry::infoForObject($myRecessObject);
-		
 		$attachedMethodProvider = new MyNewClassMethodProvider();
-		$attachedMethod = new RecessAttachedMethod($attachedMethodProvider, 'callMe');
-		$recessClassInfo->addAttachedMethod(
-							'helloWorld', 
-							$attachedMethod);
-		$model->books();
-		$model->addBook();
+		MyRecessClass::attachMethod('MyRecessClass','helloWorld',$attachedMethodProvider,'callMe');
 		
 		try {
 			$this->assertEqual(

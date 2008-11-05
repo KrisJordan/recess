@@ -5,9 +5,9 @@ Library::import('recess.sources.db.pdo.PdoDataSet');
 class ModelSet extends PdoDataSet {
 	
 	function __call($name, $arguments) {
-		$thisOrm = OrmRegistry::infoForClass($this->rowClass);
-		if(isset($thisOrm->relationships[$name])) {
-			return $thisOrm->relationships[$name]->selectModelSet($this);
+		$relationship = Model::getRelationship($this->rowClass, $name);
+		if($relationship !== false) {
+			return $relationship->selectModelSet($this);
 		} else {
 			throw new RecessException('Relationship "' . $name . '" does not exist.', get_defined_vars());
 		}

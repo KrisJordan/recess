@@ -504,6 +504,12 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual($booksCount - $sportsCount, count(Make::a('Book')->all()));
 	}
 	
+	function testNoLongerByReference() {
+		$people = Make::a('Person')->all();
+		$kris = $people->equal('first_name','Kris');
+		$this->assertNotEqual(count($people),count($kris));
+	}
+	
 	function tearDown() {
 		$this->source->commit();
 		$this->source->beginTransaction();

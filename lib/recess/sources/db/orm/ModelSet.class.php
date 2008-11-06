@@ -17,9 +17,9 @@ class ModelSet extends PdoDataSet {
 		return $this->source->executeStatement($this->sqlBuilder->useAssignmentsAsConditions(false)->update(), $this->sqlBuilder->getPdoArguments());
 	}
 	
-	function delete() {
+	function delete($cascade = true) {
 		foreach($this as $model) {
-			$model->delete();
+			$model->delete($cascade);
 		}
 	}
 }

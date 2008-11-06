@@ -6,6 +6,7 @@ class BelongsToRelationship extends Relationship {
 	function init($modelClassName, $relationshipName) {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
+		$this->onDelete = Relationship::NULLIFY;
 		$this->foreignKey = $relationshipName . '_id';
 		$this->foreignClass = Inflector::toProperCaps($relationshipName);
 	}
@@ -64,7 +65,21 @@ class BelongsToRelationship extends Relationship {
 	function selectModelSet(ModelSet $modelSet) {
 		return $this->augmentSelect($modelSet);
 	}
-
+	
+	function onDeleteCascade(Model $model) {
+		$this->selectModel($model)->delete();
+	}
+	
+	function onDeleteDelete(Model $model) {
+		$relatedModel = $this->selectModel($model);
+		if($relatedModel != null) {
+			$relatedModel->delete(false);		
+		}
+	}
+	
+	function onDeleteNullify(Model $model) {
+		// no-op
+	}
 }
 
 ?>

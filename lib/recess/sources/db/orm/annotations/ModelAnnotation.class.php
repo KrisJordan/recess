@@ -8,16 +8,28 @@ abstract class ModelAnnotation extends Annotation {
 		$relationship->init($descriptor->modelClass, $this->relationshipName);
 		
 		foreach($this->settings as $key => $value) {
-			switch($key) {
-				case 'ForeignKey':
+			switch(strtolower($key)) {
+				case Relationship::FOREIGN_KEY:
 					$relationship->foreignKey = $value;
 					break;
-				case 'Class':
+				case Relationship::FOREIGN_CLASS:
 					$relationship->foreignClass = $value;
 					break;
-				case 'Through':
+				case Relationship::THROUGH:
 					$relationship->joinTable = $value;
-					break;		
+					break;
+				case Relationship::ON_DELETE:
+					$lowerValue = strtolower($value);
+					switch(strtolower($lowerValue)) {
+						case Relationship::CASCADE:
+						case Relationship::DELETE:
+						case Relationship::NULLIFY:
+							break;
+						default:
+							throw new RecessException('Invalid OnDelete setting: "' . $value . '".', get_defined_vars());
+					}
+					$relationship->onDelete = strtolower($lowerValue);
+					break;
 			}
 		}
 

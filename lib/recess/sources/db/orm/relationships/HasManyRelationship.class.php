@@ -8,6 +8,7 @@ class HasManyRelationship extends Relationship {
 		$this->name = $relationshipName;
 		$this->foreignKey = Inflector::toUnderscores($modelClassName) . '_id';
 		$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($relationshipName));
+		$this->onDelete = Relationship::CASCADE;
 	}
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
@@ -56,6 +57,37 @@ class HasManyRelationship extends Relationship {
 				
 		$select->rowClass = $this->foreignClass;
 		return $select;
+	}
+	
+	function onDeleteCascade(Model $model) {
+		$this->selectModel($model)->delete();
+	}
+	
+	function onDeleteDelete(Model $model) {		
+		$modelPk = Model::primaryKeyName($model);
+		
+		$queryBuilder = new SqlBuilder();
+		$queryBuilder
+			->from(Model::tableFor($this->foreignClass))
+			->equal($this->foreignKey, $model->$modelPk);
+		
+		$source = Model::sourceFor($model);
+		
+		$source->executeStatement($queryBuilder->delete(), $queryBuilder->getPdoArguments());
+	}
+	
+	function onDeleteNullify(Model $model) {
+		$modelPk = Model::primaryKeyName($model);
+		
+		$queryBuilder = new SqlBuilder();
+		$queryBuilder
+			->from(Model::tableFor($this->foreignClass))
+			->assign($this->foreignKey, null)
+			->equal($this->foreignKey, $model->$modelPk);
+			
+		$source = Model::sourceFor($model);
+		
+		$source->executeStatement($queryBuilder->update(), $queryBuilder->getPdoArguments());
 	}
 
 }

@@ -29,10 +29,6 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 		}
 	}
 	
-	function update() {
-		
-	}
-	
 	public function toSql() {
 		return $this->sqlBuilder->select();
 	}

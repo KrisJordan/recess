@@ -10,7 +10,7 @@ class HasAndBelongsToManyRelationship extends Relationship {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
 		$this->foreignKey = $relationshipName . '_id';
-		
+		$this->onDelete = Relationship::DELETE;
 		$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($this->name));
 		
 		$tables = array($this->localClass, $this->foreignClass);
@@ -96,6 +96,18 @@ class HasAndBelongsToManyRelationship extends Relationship {
 	
 	function selectModelSet(ModelSet $modelSet) {
 		return $this->augmentSelect($modelSet);
+	}
+	
+	function onDeleteCascade(Model $model) {
+		
+	}
+	
+	function onDeleteDelete(Model $model) {
+			
+	}
+	
+	function onDeleteNullify(Model $model) {
+		// no-op
 	}
 
 }

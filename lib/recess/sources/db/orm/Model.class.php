@@ -98,8 +98,21 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		return $sqlBuilder;
 	}
 	
-	function delete() {
+	function delete($cascade = true) {
+		if(!isset($this->inDeleteState)) 
+			$this->inDeleteState = true;
+		else {
+			echo 'Circularity!<br />';
+			return;
+		}
+		
 		$thisClassDescriptor = self::getClassDescriptor($this);
+		
+		if($cascade) {
+			foreach($thisClassDescriptor->relationships as $relationship) {
+				$relationship->delete($this);
+			}
+		}
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor, false);
 		

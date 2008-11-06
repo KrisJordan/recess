@@ -7,23 +7,41 @@ Library::import('recess.sources.db.orm.Model');
 Library::import('recess.sources.db.orm.ModelDataSource');
 
 /**
- * !BelongsTo owner, Class: Person, ForeignKey: person_id
+ * !BelongsTo owner, Class: Person, ForeignKey: person_id, OnDelete: Cascade
  * !PrimaryKey pk
  */
 class Car extends Model {}
 
 /**
- * !HasMany books, ForeignKey: author_id
+ * !HasMany persons
+ */
+class PoliticalParty extends Model {}
+
+/**
+ * !HasAndBelongsToMany persons
+ */
+class Group extends Model {}
+
+/**
+ * !HasMany books, ForeignKey: author_id, OnDelete: Cascade
  * !HasMany novels, ForeignKey: author_id, Class: Book
- * !HasMany cars
+ * !HasMany cars, OnDelete: Nullify
+ * !HasAndBelongsToMany groups
+ * !BelongsTo politicalParty
  */
 class Person extends Model { }
 
 /**
- * !BelongsTo author, Class: Person
+ * !BelongsTo author, Class: Person, OnDelete: Delete
+ * !HasMany chapters, OnDelete: Delete
  * !HasAndBelongsToMany generas
  */
 class Book extends Model { }
+
+/**
+ * !BelongsTo book, OnDelete: Nullify
+ */
+class Chapter extends Model { }
 
 /**
  * !HasAndBelongsToMany books
@@ -46,20 +64,36 @@ class ModelTest extends UnitTestCase {
 	function setUp() {
 		$this->source = new ModelDataSource('sqlite::memory:');
 		$this->source->beginTransaction();
-		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT, age TEXT)');
+		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY AUTOINCREMENT, first_name TEXT, last_name TEXT, age TEXT, political_party_id INTEGER)');
+		$this->source->exec('CREATE TABLE groups (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT)');
+		$this->source->exec('CREATE TABLE groups_persons (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, group_id INTEGER, person_id INTEGER)');
 		$this->source->exec('CREATE TABLE books (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title TEXT)');
+		$this->source->exec('CREATE TABLE chapters (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, title TEXT)');
 		$this->source->exec('CREATE TABLE cars (pk INTEGER PRIMARY KEY ASC AUTOINCREMENT, person_id INTEGER, make TEXT)');
 		$this->source->exec('CREATE TABLE movies (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title TEXT)');
 		$this->source->exec('CREATE TABLE generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, title INTEGER)');
 		$this->source->exec('CREATE TABLE books_generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, genera_id INTEGER)');
+		$this->source->exec('CREATE TABLE political_partys (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, party TEXT)');
 		$this->source->exec('CREATE TABLE generas_movies (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, movie_id INTEGER, genera_id INTEGER)');
-		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Kris", "Jordan", 23)');
-		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Joel", "Sutherland", 23)');
-		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Clay", "Schossow", 22)');
-		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Barack", "Obama", 47)');
-		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("Josh", "Lockhart", 22)');
-		$this->source->exec('INSERT INTO persons (first_name, last_name, age) VALUES ("John", "McCain", 72)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age, political_party_id) VALUES ("Kris", "Jordan", 23, 1)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age, political_party_id) VALUES ("Joel", "Sutherland", 23, 1)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age, political_party_id) VALUES ("Clay", "Schossow", 22, 2)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age, political_party_id) VALUES ("Barack", "Obama", 47, 1)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age, political_party_id) VALUES ("Josh", "Lockhart", 22, 1)');
+		$this->source->exec('INSERT INTO persons (first_name, last_name, age, political_party_id) VALUES ("John", "McCain", 72, 3)');
+		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Democrat")');
+		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Independent")');
+		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Republican")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (4,"The Audacity of Hope: Thoughts on Reclaiming the American Dream")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Republicans and Democrats")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Values")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Our Constitution")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Politics")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Opportunity")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Faith")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Race")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"The World Beyond our Borders")');
+		$this->source->exec('INSERT INTO chapters (book_id, title) VALUES (1,"Family")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (3,"How to Be a Sketch Ball")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (2,"Steve Nash: A Modern Day Hero")');
 		$this->source->exec('INSERT INTO books (author_id, title) VALUES (1,"How Michael Scott Touched My Life, and Could Touch Yours Too")');
@@ -85,7 +119,20 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (1,4)');
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (2,4)');
 		$this->source->exec('INSERT INTO generas_movies (movie_id,genera_id) VALUES (3,1)');
+		$this->source->exec('INSERT INTO groups (name) VALUES ("NRA")'); // 1
+		$this->source->exec('INSERT INTO groups (name) VALUES ("Tree Huggers")'); // 2
+		$this->source->exec('INSERT INTO groups (name) VALUES ("Hackers")'); // 3
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (2,1)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (3,2)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (2,2)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (3,2)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (1,3)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (2,4)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (2,5)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (3,5)');
+		$this->source->exec('INSERT INTO groups_persons (group_id,person_id) VALUES (1,6)');
 		$this->source->exec('INSERT INTO cars (person_id,make) VALUES (1,"VW")');
+		$this->source->exec('INSERT INTO cars (person_id,make) VALUES (2,"Toyota")');
 		$this->source->commit();
 		$this->source->beginTransaction();
 		DbSources::setDefaultSource($this->source);
@@ -312,7 +359,7 @@ class ModelTest extends UnitTestCase {
 		
 		$person->addToCars($car);
 		
-		$this->assertEqual($car->pk, 2);
+		$this->assertEqual($car->pk, 3);
 		$this->assertEqual($car->owner()->id, $person->id);
 	}
 	
@@ -340,6 +387,58 @@ class ModelTest extends UnitTestCase {
 		
 		$this->assertEqual($generasCount - 1, count($book->generas()));
 	}
+	
+	function testHasManyOnDeleteDelete() {
+		$audacity = Make::a('Book')->like('title', '%Audacity%')->first();
+		
+		$allChaptersCount = count(Make::a('Chapter')->all());
+		$audacityChaptersCount = count($audacity->chapters());
+
+		$audacity->delete();
+		
+		$this->assertEqual(count(Make::a('Chapter')->all()), $allChaptersCount - $audacityChaptersCount);
+	}
+	
+	function testHasManyOnDeleteCascade() {
+		$barack = Make::a('Person')->like('first_name','%Barack%')->first();
+		$barack->delete();
+		$this->assertEqual(count(Make::a('Chapter')->all()), 0);
+	}
+	
+	function testHasManyOnDeleteNullify() {
+		$kris = Make::a('Person')->equal('first_name', 'Kris')->first();
+		
+		$allCarsCount = count(Make::a('Car')->all());
+		
+		$kris->delete();
+		
+		$this->assertEqual($allCarsCount, count(Make::a('Car')->all()));
+	}
+	
+	function testBelongsToDeleteNullify() {
+		$audacity = Make::a('Book')->like('title','%Audacity%')->first();
+		$audacity->chapters()->first()->delete();
+		
+		$audacity = Make::a('Book')->like('title','%Audacity%');
+		$this->assertEqual(1, count($audacity));
+	}
+	
+	function testBelongsToDeleteDelete() {
+		$audacity = Make::a('Book')->like('title','%Audacity%')->first();
+		$audacity->delete();
+		$barack = Make::a('Person')->equal('first_name','Barack');
+		$this->assertEqual(0, count($barack));
+	}
+	
+	function testBelongsToDeleteCascade() {
+		$car = Make::a('Car')->equal('make','VW')->first();
+		$car->delete();
+		
+		$book = Make::a('Book')->like('title','%Michael Scott%');
+		$this->assertEqual(0, count($book));
+	}
+	
+	// make the hasmanybelongsto delete settings tests
 	
 	function tearDown() {
 		$this->source->commit();

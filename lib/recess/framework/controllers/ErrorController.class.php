@@ -1,6 +1,6 @@
 <?php
 
-Library::import('recess.interfaces.IController');
+Library::import('recess.framework.interfaces.IController');
 Library::import('recess.http.responses.NotFoundResponse');
 
 class ErrorController implements IController {

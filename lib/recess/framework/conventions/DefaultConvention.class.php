@@ -1,15 +1,15 @@
 <?php
-Library::import('recess.interfaces.IPolicy');
+Library::import('recess.framework.interfaces.IConvention');
 Library::import('recess.lang.Inflector');
-Library::import('recess.controllers.PluggableController');
-Library::import('recess.controllers.ErrorController');
-Library::import('recess.policies.standard.StandardPreprocessor');
-Library::import('recess.views.ErrorView');
+Library::import('recess.framework.controllers.PluggableController');
+Library::import('recess.framework.controllers.ErrorController');
+Library::import('recess.framework.conventions.default.DefaultPreprocessor');
+Library::import('recess.framework.views.ErrorView');
 
-class StandardPolicy implements IConvention {
+class DefaultConvention implements IConvention {
 
-	public $applicationControllersPrefix = 'application.controllers.';
-	public $applicationViewsPrefix = 'application.views.';
+	public $applicationControllersPrefix = 'app.controllers.';
+	public $applicationViewsPrefix = 'app.views.';
 
 	protected $plugins = array();
 	
@@ -18,7 +18,7 @@ class StandardPolicy implements IConvention {
 	}
 	
 	public function getPreprocessor() {
-		return new StandardPreprocessor();	
+		return new DefaultPreprocessor();	
 	}
 
 	public function getControllerFor(Request $request) {
@@ -33,6 +33,7 @@ class StandardPolicy implements IConvention {
 			// i.e.: /pages/1 => PagesController
 			if(isset($request->resourceParts[0])) {
 				$className = $this->applicationControllersPrefix . Inflector::toProperCaps($request->resourceParts[0]) . 'Controller';
+				echo $className;
 				if(Library::classExists($className)) {
 					$className = Library::getClassName($className);
 					return new $className;

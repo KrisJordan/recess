@@ -13,7 +13,7 @@ Library::import('recess.lang.Inflector');
  * 
  * @author Kris Jordan
  */
-abstract class Controller {
+abstract class AbstractController {
 	/**
 	 * The routes which map to a controller's methods
 	 * @todo Refactor this out and use reflection in getRoutes() with Recess! Annotations

@@ -1,7 +1,7 @@
 <?php
 
 Library::import('smarty.Smarty');
-Library::import('recess.views.AbstractView');
+Library::import('recess.framework.views.AbstractView');
 Library::import('recess.http.Response');
 
 abstract class SmartyView extends AbstractView {

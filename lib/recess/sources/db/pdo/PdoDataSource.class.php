@@ -88,7 +88,7 @@ class PdoDataSource extends PDO {
 		try {
 			$statement = $this->prepare($statement);
 		} catch(PDOException $e) {
-			throw new RecessException($e->getMessage() . ' SQL: ' . $query,get_defined_vars());
+			throw new RecessException($e->getMessage() . ' SQL: ' . $statement,get_defined_vars());
 		}
 		
 		foreach($arguments as $argument) {

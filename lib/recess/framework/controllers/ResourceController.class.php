@@ -1,12 +1,12 @@
 <?php
 
-Library::import('recess.Controller');
+Library::import('recess.framework.controllers.AbstractController');
 Library::import('recess.http.Request');
 Library::import('recess.http.responses.OkResponse');
-Library::import('recess.routing.Route');
+Library::import('recess.framework.conventions.default.routing.Route');
 Library::import('recess.lang.Inflector');
 
-abstract class ResourceController extends Controller {
+abstract class ResourceController extends AbstractController {
 	protected $resourceName;
 	
 	public function __construct() {

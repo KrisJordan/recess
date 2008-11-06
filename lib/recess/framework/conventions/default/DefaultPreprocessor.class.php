@@ -1,8 +1,8 @@
 <?php
 
-Library::import('recess.interfaces.IPreprocessor');
+Library::import('recess.framework.interfaces.IPreprocessor');
 
-class StandardPreprocessor extends IPreprocessor {
+class DefaultPreprocessor implements IPreprocessor {
 	
 	/**
 	 * Used to pre-process a request.
@@ -22,6 +22,7 @@ class StandardPreprocessor extends IPreprocessor {
 		}
 		
 		$router = Application::getRouter();
+		
 		$routerResult = $router->findRouteFor($request);
 		if($routerResult->routeExists) {
 			if($routerResult->methodIsSupported) {

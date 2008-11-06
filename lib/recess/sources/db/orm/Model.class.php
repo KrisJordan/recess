@@ -6,6 +6,7 @@ Library::import('recess.lang.RecessReflectionClass');
 Library::import('recess.sources.db.DbSources');
 Library::import('recess.sources.db.sql.ISqlConditions');
 Library::import('recess.sources.db.orm.ModelClassInfo');
+Library::import('recess.sources.db.sql.SqlBuilder');
 
 Library::import('recess.sources.db.orm.annotations.HasManyAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.BelongsToAnnotation', true);
@@ -16,6 +17,12 @@ Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
 Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
 
 abstract class Model extends RecessClass implements ISqlConditions {
+	
+	function copy($keyValuePair) {
+		foreach($keyValuePair as $key => $value) {
+			$this->$key = $value;
+		}
+	}
 	
 	static function sourceFor($class) {
 		return self::getClassDescriptor($class)->source;

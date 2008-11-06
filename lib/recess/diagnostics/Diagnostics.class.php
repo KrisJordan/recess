@@ -52,7 +52,7 @@ class RecessErrorException extends ErrorException {
 class RecessTraceException extends RecessErrorException {
 	public $trace;
 	public function __construct($message, $trace = array()) {
-		parent::__construct($message, 0, 0, $trace[0]['file'], $trace[0]['line'], array());
+		parent::__construct($message, 0, 0, isset($trace[0]['file']) ? $trace[0]['file'] : '', isset($trace[0]['line']) ? $trace[0]['line'] : 0, array());
 		$this->trace = $trace;
 	}
 	

@@ -6,7 +6,7 @@ Library::import('recess.sources.db.sql.Criterion');
 Library::import('recess.sources.db.sql.Join');
 
 class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
-	
+		
 	/* INSERT */
 	protected $table;
 	protected $assignments = array();

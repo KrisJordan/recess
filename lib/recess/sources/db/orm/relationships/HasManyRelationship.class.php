@@ -96,16 +96,17 @@ class HasManyRelationship extends Relationship {
 			$relatedClass = $this->through;
 		}
 		
-		$select	->from(Model::tableFor($relatedClass))
-				->innerJoin(Model::tableFor($this->localClass), 
-							Model::primaryKeyFor($this->localClass), 
-							Model::tableFor($relatedClass) . '.' . $this->foreignKey);
+		$select = $select	
+					->from(Model::tableFor($relatedClass))
+					->innerJoin(Model::tableFor($this->localClass), 
+								Model::primaryKeyFor($this->localClass), 
+								Model::tableFor($relatedClass) . '.' . $this->foreignKey);
 		$select->rowClass = $relatedClass;
 		
 		if(!isset($this->through)) {
 			return $select;
 		} else {
-			$select->distinct();
+			$select = $select->distinct();
 			$relationship = $this->name;
 			return $select->$relationship();
 		}

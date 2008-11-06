@@ -70,7 +70,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		$result = $thisClassDescriptor->source->selectModelSet($thisClassDescriptor->table);
 		foreach($this as $column => $value) {
 			if(in_array($column,$thisClassDescriptor->columns)) {
-				$result->assign($column, $value);
+				$result = $result->assign($column, $value);
 			}
 		}
 		$result->rowClass = get_class($this);

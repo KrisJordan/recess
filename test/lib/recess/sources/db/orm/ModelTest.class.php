@@ -490,8 +490,9 @@ class ModelTest extends UnitTestCase {
 	}
 	
 	function testHasManyThroughOnFind() {
-		$nraMembers = Make::a('Group')->equal('name','NRA')->persons();
-		$nraMembers2 = Make::a('Group')->equal('name','NRA')->first()->persons();
+		$nra = Make::a('Group')->equal('name','NRA');
+		$nraMembers = $nra->persons();
+		$nraMembers2 = $nra->first()->persons();
 		$this->assertEqual(count($nraMembers), count($nraMembers2));
 	}
 	
@@ -499,7 +500,7 @@ class ModelTest extends UnitTestCase {
 		$booksCount = count(Make::a('Book')->all());
 		$sports = Make::a('Genera')->like('title','%Sports%');
 		$sportsCount = count($sports->books());
-		Make::a('Genera')->like('title','%Sports%')->delete();
+		$sports->delete();
 		$this->assertEqual($booksCount - $sportsCount, count(Make::a('Book')->all()));
 	}
 	

@@ -16,6 +16,13 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 		$this->source = $source;
 	}
 	
+	public function __clone() {
+		$this->sqlBuilder = clone $this->sqlBuilder;
+		$this->hasResults = false;
+		$this->results = array();
+		$this->index = 0;
+	}
+	
 	protected function reset() {
 		$this->hasResults = false;
 		$this->index = 0;
@@ -103,26 +110,26 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 		}
 	}
 	
-	function assign($column, $value) { $this->reset(); $this->sqlBuilder->assign($column, $value); return $this; }
-	function useAssignmentsAsConditions($bool) { $this->sqlBuilder->useAssignmentsAsConditions($bool); return $this; }
+	function assign($column, $value) { $copy = clone $this; $copy->sqlBuilder->assign($column, $value); return $copy; }
+	function useAssignmentsAsConditions($bool) { $copy = clone $this; $copy->sqlBuilder->useAssignmentsAsConditions($bool); return $copy; }
 	
-	function from($table) { $this->reset(); $this->sqlBuilder->from($table); return $this; }
-	function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }
-	function innerJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $this->reset(); $this->sqlBuilder->innerJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $this; }
-	function select($options) { $this->reset(); $this->sqlBuilder->select($select); return $this; }
-	function distinct() { $this->reset(); $this->sqlBuilder->distinct(); return $this; }
-	function equal($lhs, $rhs){ $this->reset(); $this->sqlBuilder->equal($lhs,$rhs); return $this; }
-	function notEqual($lhs, $rhs) { $this->reset(); $this->sqlBuilder->notEqual($lhs,$rhs); return $this; }
-	function between ($column, $lhs, $rhs) { $this->reset(); $this->sqlBuilder->between($column, $lhs, $hrs); return $this; }
-	function greaterThan($lhs, $rhs) { $this->reset(); $this->sqlBuilder->greaterThan($lhs,$rhs); return $this; }
-	function greaterThanOrEqualTo($lhs, $rhs) { $this->reset(); $this->sqlBuilder->greaterThanOrEqualTo($lhs,$rhs); return $this; }
-	function lessThan($lhs, $rhs) { $this->reset(); $this->sqlBuilder->lessThan($lhs,$rhs); return $this; }
-	function lessThanOrEqualTo($lhs, $rhs) { $this->reset(); $this->sqlBuilder->lessThanOrEqualTo($lhs,$rhs); return $this; }
-	function like($lhs, $rhs) { $this->reset(); $this->sqlBuilder->like($lhs,$rhs); return $this; }
-	function where($lhs, $rhs, $operator) { $this->reset(); $this->sqlBuilder->where($lhs,$rhs,$operator); return $this; }
-	function limit($size) { $this->reset(); $this->sqlBuilder->limit($size); return $this; }
-	function offset($offset) { $this->reset(); $this->sqlBuilder->offset($offset); return $this; }
-	function range($start, $finish) { $this->reset(); $this->sqlBuilder->range($start,$finish); return $this; }
-	function orderBy($clause) { $this->reset(); $this->sqlBuilder->orderBy($clause); return $this; }
+	function from($table) { $copy = clone $this; $copy->sqlBuilder->from($table); return $copy; }
+	function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $copy = clone $this; $copy->sqlBuilder->leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $copy; }
+	function innerJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $copy = clone $this; $copy->sqlBuilder->innerJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $copy; }
+	function select($options) { $copy = clone $this; $copy->sqlBuilder->select($select); return $copy; }
+	function distinct() { $copy = clone $this; $copy->sqlBuilder->distinct(); return $copy; }
+	function equal($lhs, $rhs){ $copy = clone $this; $copy->sqlBuilder->equal($lhs,$rhs); return $copy; }
+	function notEqual($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->notEqual($lhs,$rhs); return $copy; }
+	function between ($column, $lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->between($column, $lhs, $hrs); return $copy; }
+	function greaterThan($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->greaterThan($lhs,$rhs); return $copy; }
+	function greaterThanOrEqualTo($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->greaterThanOrEqualTo($lhs,$rhs); return $copy; }
+	function lessThan($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->lessThan($lhs,$rhs); return $copy; }
+	function lessThanOrEqualTo($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->lessThanOrEqualTo($lhs,$rhs); return $copy; }
+	function like($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->like($lhs,$rhs); return $copy; }
+	function where($lhs, $rhs, $operator) { $copy = clone $this; $copy->sqlBuilder->where($lhs,$rhs,$operator); return $copy; }
+	function limit($size) { $copy = clone $this; $copy->sqlBuilder->limit($size); return $copy; }
+	function offset($offset) { $copy = clone $this; $copy->sqlBuilder->offset($offset); return $copy; }
+	function range($start, $finish) { $copy = clone $this; $copy->sqlBuilder->range($start,$finish); return $copy; }
+	function orderBy($clause) { $copy = clone $this; $copy->sqlBuilder->orderBy($clause); return $copy; }
 }
 ?>

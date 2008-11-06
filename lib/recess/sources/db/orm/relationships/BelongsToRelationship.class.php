@@ -44,10 +44,11 @@ class BelongsToRelationship extends Relationship {
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {
-		$select	->from(Model::tableFor($this->foreignClass))
-				->innerJoin(Model::tableFor($this->localClass), 
-							Model::primaryKeyFor($this->foreignClass), 
-							Model::tableFor($this->localClass) . '.' . $this->foreignKey);
+		$select = $select	
+					->from(Model::tableFor($this->foreignClass))
+					->innerJoin(Model::tableFor($this->localClass), 
+								Model::primaryKeyFor($this->foreignClass), 
+								Model::tableFor($this->localClass) . '.' . $this->foreignKey);
 		$select->rowClass = $this->foreignClass;
 		return $select;
 	}

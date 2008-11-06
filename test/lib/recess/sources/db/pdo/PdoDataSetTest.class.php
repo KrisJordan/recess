@@ -175,6 +175,14 @@ class PdoDataSetTest extends UnitTestCase {
 		$this->assertEqual(count($results), 1);
 	}
 	
+	function testClone() {
+		$results = $this->source->select('people');
+		$count = count($results);
+		$results2 = clone $results;
+		$results2 = $results2->equal('first_name','Barack');
+		$this->assertNotEqual(count($results),count($results2));
+	}
+	
 	function tearDown() {
 		unset($this->source);
 	}

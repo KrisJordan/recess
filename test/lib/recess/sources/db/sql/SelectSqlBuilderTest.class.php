@@ -104,6 +104,13 @@ class SqlBuilderTest extends UnitTestCase  {
 		$this->assertEqual($this->builder->delete(), $expected);
 	}
 	
+	function testClone() {
+		$this->builder->from('authors')->equal('first_name', 'John')->from('books')->leftOuterJoin('authors','authors.id','books.author_id');
+		$anotherBuilder = clone $this->builder;
+		$anotherBuilder->leftOuterJoin('authors','authors.id','books.author_id');
+		$this->assertNotEqual($this->builder->select(), $anotherBuilder->select());
+	}
+	
 	function tearDown() {
 		unset($this->builder);
 	}

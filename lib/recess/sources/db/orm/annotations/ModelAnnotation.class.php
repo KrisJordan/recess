@@ -16,7 +16,7 @@ abstract class ModelAnnotation extends Annotation {
 					$relationship->foreignClass = $value;
 					break;
 				case Relationship::THROUGH:
-					$relationship->joinTable = $value;
+					$relationship->through = $value;
 					break;
 				case Relationship::ON_DELETE:
 					$lowerValue = strtolower($value);

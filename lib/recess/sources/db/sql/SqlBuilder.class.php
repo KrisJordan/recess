@@ -118,7 +118,28 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	}
 	
 	public function getPdoArguments() {
-		return array_merge($this->conditions, $this->assignments);
+		if($this->useAssignmentsAsConditions)
+			return array_merge($this->conditions, $this->cleansedAssignmentsAsConditions());
+		else
+			return array_merge($this->conditions, $this->assignments);
+	}
+	
+	/**
+	 * Method for when using assignments as conditions. This purges
+	 * assignments which have null values.
+	 *  
+	 * @return array
+	 */
+	protected function cleansedAssignmentsAsConditions() {
+		$assignments = array();
+		
+		$count = count($this->assignments);
+		for($i = 0; $i < $count; $i++) {
+			if(isset($this->assignments[$i]->value))
+				$assignments[] = $this->assignments[$i];
+		}
+		
+		return $assignments;
 	}
 	
 	public function from($table) { return $this->table($table); }
@@ -225,7 +246,8 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		}
 		
 		if($this->useAssignmentsAsConditions && !empty($this->assignments)) {
-			foreach($this->assignments as $clause) {
+			$assignments = $this->cleansedAssignmentsAsConditions();
+			foreach($assignments as $clause) {
 				if(!$first) { $sql .= ' AND '; } else { $first = false; } // TODO: Figure out how we'll do ORing
 				$sql .= $clause->column . ' == ' . $clause->getQueryParameter();
 			}

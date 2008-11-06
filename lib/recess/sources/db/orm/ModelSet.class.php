@@ -6,6 +6,14 @@ class ModelSet extends PdoDataSet {
 	
 	function __call($name, $arguments) {
 		$relationship = Model::getRelationship($this->rowClass, $name);
+		if($relationship === false && Inflector::isPlural($name)) {
+			$name = Inflector::toSingular($name);
+			$relationship = Model::getRelationship($this->rowClass, $name);
+			if(!$relationship instanceof BelongsToRelationship) {
+				$relationship = false;
+			}
+		}
+		
 		if($relationship !== false) {
 			return $relationship->selectModelSet($this);
 		} else {

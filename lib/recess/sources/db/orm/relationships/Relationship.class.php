@@ -6,6 +6,7 @@ abstract class Relationship {
 	const THROUGH = 'through';
 	const ON_DELETE = 'ondelete';
 	
+	const UNSPECIFIED = 'unspecified';
 	const CASCADE = 'cascade';
 	const DELETE = 'delete';
 	const NULLIFY = 'nullify';
@@ -15,11 +16,17 @@ abstract class Relationship {
 	public $foreignClass;
 	public $foreignKey;
 	public $onDelete;
+	public $through;
 	
 	abstract function init($modelClassName, $relationshipName);
 	
+	function getDefaultOnDeleteMode() { return Relationship::NULLIFY; }
+	
 	function delete(Model $model) {
-		echo $this->onDelete . ' ' . get_class($model) . '->' . $this->name . '<br />';
+		if($this->onDelete == Relationship::UNSPECIFIED) {
+			$this->onDelete = $this->getDefaultOnDeleteMode();
+		}
+		
 		switch($this->onDelete) {
 			case Relationship::CASCADE:
 				$this->onDeleteCascade($model);

@@ -9,13 +9,11 @@ Library::import('recess.sources.db.orm.ModelClassInfo');
 
 Library::import('recess.sources.db.orm.annotations.HasManyAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.BelongsToAnnotation', true);
-Library::import('recess.sources.db.orm.annotations.HasAndBelongsToManyAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.TableAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.PrimaryKeyAnnotation', true);
 
 Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
 Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
-Library::import('recess.sources.db.orm.relationships.HasAndBelongsToManyRelationship');
 
 abstract class Model extends RecessClass implements ISqlConditions {
 	
@@ -98,14 +96,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		return $sqlBuilder;
 	}
 	
-	function delete($cascade = true) {
-		if(!isset($this->inDeleteState)) 
-			$this->inDeleteState = true;
-		else {
-			echo 'Circularity!<br />';
-			return;
-		}
-		
+	function delete($cascade = true) {		
 		$thisClassDescriptor = self::getClassDescriptor($this);
 		
 		if($cascade) {

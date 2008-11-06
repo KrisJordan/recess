@@ -8,7 +8,15 @@ class HasManyRelationship extends Relationship {
 		$this->name = $relationshipName;
 		$this->foreignKey = Inflector::toUnderscores($modelClassName) . '_id';
 		$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($relationshipName));
-		$this->onDelete = Relationship::CASCADE;
+		$this->onDelete = Relationship::UNSPECIFIED;
+	}
+	
+	function getDefaultOnDeleteMode() {
+		if(!isset($this->through)) {
+			return Relationship::CASCADE;
+		} else {
+			return Relationship::DELETE;
+		}
 	}
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
@@ -26,19 +34,51 @@ class HasManyRelationship extends Relationship {
 		if(!$model->primaryKeyIsSet()) {
 			$model->insert();
 		}
+			
+		if(!isset($this->through)) {
+			$foreignKey = $this->foreignKey;
+			$localKey = Model::primaryKeyName($model);	
+			$relatedModel->$foreignKey = $model->$localKey;
+			$relatedModel->save();
+		} else {
+			if(!$relatedModel->primaryKeyIsSet()) {
+				$relatedModel->insert();
+			}
+			// TODO: This is a shitshow.
+			$through = new $this->through;
+			$localPrimaryKey = Model::primaryKeyName($model);
+			$localForeignKey = $this->foreignKey;
+			$through->$localForeignKey = $model->$localPrimaryKey;
+			
+			$relatedPrimaryKey = Model::primaryKeyName($this->through);
+			$relatedForeignKey = Model::getRelationship($this->through, Inflector::toSingular($this->name))->foreignKey;
+			$through->$relatedForeignKey = $relatedModel->$relatedPrimaryKey;
+			
+			$through->insert();
+		}
 		
-		$foreignKey = $this->foreignKey;
-		$localKey = Model::primaryKeyName($model);	
-		$relatedModel->$foreignKey = $model->$localKey;
-		$relatedModel->save();
 		return $model;
 	}
 	
 	function removeFrom(Model $model, Model $relatedModel) {
-		$foreignKey = $this->foreignKey;
-		$relatedModel->$foreignKey = '';
-		$relatedModel->save();
-		return $model;
+		if(!isset($this->through)) {
+			$foreignKey = $this->foreignKey;
+			$relatedModel->$foreignKey = '';
+			$relatedModel->save();
+			return $model;
+		} else {
+			$through = new $this->through;
+			
+			$localPrimaryKey = Model::primaryKeyName($model);
+			$localForeignKey = $this->foreignKey;
+			$through->$localForeignKey = $model->$localPrimaryKey;
+			
+			$relatedPrimaryKey = Model::primaryKeyName($this->through);
+			$relatedForeignKey = Model::getRelationship($this->through, Inflector::toSingular($this->name))->foreignKey;
+			$through->$relatedForeignKey = $relatedModel->$relatedPrimaryKey;
+			
+			$through->find()->delete(false);
+		}
 	}
 	
 	function selectModel(Model $model) {
@@ -50,25 +90,55 @@ class HasManyRelationship extends Relationship {
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {
-		$select	->from(Model::tableFor($this->foreignClass))
+		if(!isset($this->through)) {
+			$relatedClass = $this->foreignClass;
+		} else {
+			$relatedClass = $this->through;
+		}
+		
+		$select	->from(Model::tableFor($relatedClass))
 				->innerJoin(Model::tableFor($this->localClass), 
 							Model::primaryKeyFor($this->localClass), 
-							Model::tableFor($this->foreignClass) . '.' . $this->foreignKey);
-				
-		$select->rowClass = $this->foreignClass;
-		return $select;
+							Model::tableFor($relatedClass) . '.' . $this->foreignKey);
+		$select->rowClass = $relatedClass;
+		
+		if(!isset($this->through)) {
+			return $select;
+		} else {
+			$select->distinct();
+			$relationship = $this->name;
+			return $select->$relationship();
+		}
 	}
 	
 	function onDeleteCascade(Model $model) {
-		$this->selectModel($model)->delete();
+		$related = $this->selectModel($model)->delete();
+		
+		if(isset($this->through)) {
+			$modelPk = Model::primaryKeyName($model);
+			$queryBuilder = new SqlBuilder();
+			$queryBuilder
+				->from(Model::tableFor($this->through))
+				->equal($this->foreignKey, $model->$modelPk);
+			
+			$source = Model::sourceFor($model);
+			
+			$source->executeStatement($queryBuilder->delete(), $queryBuilder->getPdoArguments());		
+		}
 	}
 	
-	function onDeleteDelete(Model $model) {		
+	function onDeleteDelete(Model $model) {
 		$modelPk = Model::primaryKeyName($model);
+		
+		if(!isset($this->through)) {
+			$relatedClass = $this->foreignClass;
+		} else {
+			$relatedClass = $this->through;
+		}
 		
 		$queryBuilder = new SqlBuilder();
 		$queryBuilder
-			->from(Model::tableFor($this->foreignClass))
+			->from(Model::tableFor($relatedClass))
 			->equal($this->foreignKey, $model->$modelPk);
 		
 		$source = Model::sourceFor($model);
@@ -77,6 +147,10 @@ class HasManyRelationship extends Relationship {
 	}
 	
 	function onDeleteNullify(Model $model) {
+		if(isset($this->through)) {
+			return $this->onDeleteDelete($model);
+		}
+		
 		$modelPk = Model::primaryKeyName($model);
 		
 		$queryBuilder = new SqlBuilder();

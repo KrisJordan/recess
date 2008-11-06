@@ -47,19 +47,19 @@ class BelongsToRelationship extends Relationship {
 		$select	->from(Model::tableFor($this->foreignClass))
 				->innerJoin(Model::tableFor($this->localClass), 
 							Model::primaryKeyFor($this->foreignClass), 
-							$this->foreignKey);
-
+							Model::tableFor($this->localClass) . '.' . $this->foreignKey);
 		$select->rowClass = $this->foreignClass;
+		return $select;
+	}
+	
+	function selectModel(Model $model) {
+		$select = $this->augmentSelect($model->select());
 		
 		if(isset($select[0])) {
 			return $select[0];
 		} else { 
 			return null;
 		}
-	}
-	
-	function selectModel(Model $model) {
-		return $this->augmentSelect($model->select());
 	}
 	
 	function selectModelSet(ModelSet $modelSet) {

@@ -62,6 +62,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		} else {
 			$this->assignments[] = new Criterion($column, $value, Criterion::ASSIGNMENT); 
 		}
+		return $this;
 	}
 	
 	/* UPDATE & DELETE */

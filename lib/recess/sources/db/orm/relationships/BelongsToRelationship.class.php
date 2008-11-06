@@ -13,6 +13,33 @@ class BelongsToRelationship extends Relationship {
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
 		$attachedMethod = new RecessClassAttachedMethod($this, 'selectModel');
 		$descriptor->addAttachedMethod($this->name, $attachedMethod);
+		
+		$attachedMethod = new RecessClassAttachedMethod($this,'set');
+		$descriptor->addAttachedMethod('set' . ucfirst($this->name), $attachedMethod);
+		
+		$attachedMethod = new RecessClassAttachedMethod($this,'remove');
+		$descriptor->addAttachedMethod('unset' . ucfirst($this->name), $attachedMethod);
+	}
+	
+	function set(Model $model, Model $relatedModel) {
+		if(!$relatedModel->primaryKeyIsSet()) {
+			$relatedModel->insert();
+		}
+		
+		$foreignKey = $this->foreignKey;
+		$relatedPrimaryKey = Model::primaryKeyName($relatedModel);
+		$model->$foreignKey = $relatedModel->$relatedPrimaryKey;
+		$model->save();
+		
+		return $model;
+	}
+	
+	function remove(Model $model) {		
+		$foreignKey = $this->foreignKey;
+		$model->$foreignKey = null;
+		$model->save();
+		
+		return $model;
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {

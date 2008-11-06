@@ -95,8 +95,11 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 		return !isset($this[0]);
 	}
 	
-	function first() {
-		$this->range(0,1);
+	function first() { // TODO: DO these semantics make sense? Should we tack on a range?
+		if(!$this->hasResults) {
+			$this->range(0,1);
+		}
+		
 		if(isset($this[0])) {
 			return $this[0];
 		} else {

@@ -14,11 +14,14 @@ class HasManyRelationship extends Relationship {
 		$attachedMethod = new RecessClassAttachedMethod($this,'selectModel');
 		$descriptor->addAttachedMethod($this->name, $attachedMethod);
 		
-		$attachedMethod = new RecessClassAttachedMethod($this,'addToRelationship');
+		$attachedMethod = new RecessClassAttachedMethod($this,'addTo');
 		$descriptor->addAttachedMethod('addTo' . ucfirst($this->name), $attachedMethod);
+		
+		$attachedMethod = new RecessClassAttachedMethod($this,'removeFrom');
+		$descriptor->addAttachedMethod('removeFrom' . ucfirst($this->name), $attachedMethod);
 	}
 	
-	function addToRelationship(Model $model, Model $relatedModel) {
+	function addTo(Model $model, Model $relatedModel) {
 		if(!$model->primaryKeyIsSet()) {
 			$model->insert();
 		}
@@ -26,6 +29,13 @@ class HasManyRelationship extends Relationship {
 		$foreignKey = $this->foreignKey;
 		$localKey = Model::primaryKeyName($model);	
 		$relatedModel->$foreignKey = $model->$localKey;
+		$relatedModel->save();
+		return $model;
+	}
+	
+	function removeFrom(Model $model, Model $relatedModel) {
+		$foreignKey = $this->foreignKey;
+		$relatedModel->$foreignKey = '';
 		$relatedModel->save();
 		return $model;
 	}

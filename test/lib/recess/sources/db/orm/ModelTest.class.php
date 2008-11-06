@@ -100,27 +100,6 @@ class ModelTest extends UnitTestCase {
 		$genera = Make::a('Genera')->equal('title','Social Healing')->first();
 		$this->assertEqual($genera->title, 'Social Healing');
 		$this->assertEqual($genera->id, 3);
-		
-// Prototype code:
-//		$book = new Book();
-//		$book->title = 'Hark the raven, nevermore.';
-//		$book->generas()->add($genera);
-//		$book->save();
-//		
-//		$book->addTo('generas',$genera);
-//		
-//		$author = $people[0];
-//		$author->books()->add($book);
-//		$author->books()->remove($book);
-//		$author->books()->clear();
-// if modelset carried around the last used relation, this could work
-		
-//		SELECT books.* FROM books 
-//		INNER JOIN people ON people.id = books.author_id 
-//		WHERE people.id = 1
-//		
-//		$author->addTo('books', $book);
-
 	}	
 	
 	function testFindCriteria() {
@@ -288,6 +267,40 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual($book->author()->id, $person->id);
 	}
 	
+	function testRemoveFromHasManyRelationship() {
+		$barack = Make::a('Person')->equal('first_name', 'Barack')->first();
+		
+		$barackBooksCount = count($barack->books());
+		
+		$book = Make::a('Book')->like('title', '%Audacity%')->first();
+		$barack->removeFromBooks($book);
+		
+		$this->assertEqual(count($barack->books()), $barackBooksCount - 1);
+	}
+	
+	function testSetOnBelongsToRelationship() {
+		$person = new Person;
+		$person->first_name = 'John';
+		$person->age = 22; 
+		
+		$book = new Book();
+		$book->title = 'Obama Wins!';
+		$book->setAuthor($person);
+		
+		$this->assertEqual($book->author()->id, $person->id);
+	}
+	
+	function testUnsetOnBelongsToRelationship() {
+		$barack = Make::a('Person')->equal('first_name', 'Barack')->first();
+		
+		$barackBooksCount = count($barack->books());
+		
+		$book = Make::a('Book')->like('title', '%Audacity%')->first();
+		$book->unsetAuthor();
+		
+		$this->assertEqual(count($barack->books()), $barackBooksCount - 1);
+	}
+	
 	function testNonDefaultPrimaryKey() {
 		$person = new Person;
 		$person->first_name = 'Katie';
@@ -303,6 +316,31 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual($car->owner()->id, $person->id);
 	}
 	
+	function testAddToHasAndBelongsToManyRelationship() {
+		$book = new Book();
+		$book->title = 'Hello world.';
+		
+		$genera = new Genera();
+		$genera->title = 'Scary';
+		
+		$book->addToGeneras($genera);
+		
+		$resultBook = $genera->books()->first();
+		
+		$this->assertEqual($book->id, $resultBook->id);
+	}
+	
+	function testRemoveFromHasAndBelongsToManyRelationship() {
+		$book = Make::a('Book')->like('title','%Sketch%')->first();
+		$generas = $book->generas();
+		$generasCount = count($generas);
+		
+		$genera = $generas->first();
+		$book->removeFromGeneras($genera);
+		
+		$this->assertEqual($generasCount - 1, count($book->generas()));
+	}
+	
 	function tearDown() {
 		$this->source->commit();
 		$this->source->beginTransaction();
@@ -315,7 +353,6 @@ class ModelTest extends UnitTestCase {
 		$this->source->commit();
 		unset($this->source);
 	}
-	
 }
 
 ?>

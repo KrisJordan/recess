@@ -19,6 +19,10 @@ Library::import('recess.sources.db.orm.relationships.HasAndBelongsToManyRelation
 
 abstract class Model extends RecessClass implements ISqlConditions {
 	
+	static function sourceFor($class) {
+		return self::getClassDescriptor($class)->source;
+	}
+	
 	static function tableFor($class) {
 		return self::getClassDescriptor($class)->table;
 	}

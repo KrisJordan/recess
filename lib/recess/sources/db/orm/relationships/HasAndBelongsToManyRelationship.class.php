@@ -27,6 +27,54 @@ class HasAndBelongsToManyRelationship extends Relationship {
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
 		$attachedMethod = new RecessClassAttachedMethod($this, 'selectModel');
 		$descriptor->addAttachedMethod($this->name, $attachedMethod);
+		
+		$attachedMethod = new RecessClassAttachedMethod($this,'addTo');
+		$descriptor->addAttachedMethod('addTo' . ucfirst($this->name), $attachedMethod);
+		
+		$attachedMethod = new RecessClassAttachedMethod($this,'removeFrom');
+		$descriptor->addAttachedMethod('removeFrom' . ucfirst($this->name), $attachedMethod);
+	}
+	
+	function addTo(Model $model, Model $relatedModel) {
+		if(!$model->primaryKeyIsSet()) {
+			$model->insert();
+		}
+		
+		if(!$relatedModel->primaryKeyIsSet()) {
+			$relatedModel->insert();
+		}
+		
+		$modelPk = Model::primaryKeyName($model);
+		$relatedModelPk = Model::primaryKeyName($relatedModel);
+		
+		$queryBuilder = new SqlBuilder();
+		$queryBuilder
+			->into($this->joinTable)
+			->assign($this->joinTableLocalClassKey, $model->$modelPk)
+			->assign($this->joinTableForeignClassKey, $relatedModel->$relatedModelPk);
+
+		$source = Model::sourceFor($model);
+		
+		$source->executeStatement($queryBuilder->insert(), $queryBuilder->getPdoArguments());
+		
+		return $model;
+	}
+	
+	function removeFrom(Model $model, Model $relatedModel) {
+		$modelPk = Model::primaryKeyName($model);
+		$relatedModelPk = Model::primaryKeyName($relatedModel);
+		
+		$queryBuilder = new SqlBuilder();
+		$queryBuilder
+			->from($this->joinTable)
+			->equal($this->joinTableLocalClassKey, $model->$modelPk)
+			->equal($this->joinTableForeignClassKey, $relatedModel->$relatedModelPk);
+
+		$source = Model::sourceFor($model);
+		
+		$source->executeStatement($queryBuilder->delete(), $queryBuilder->getPdoArguments());
+		
+		return $model;
 	}
 	
 	protected function augmentSelect(PdoDataSet $select) {

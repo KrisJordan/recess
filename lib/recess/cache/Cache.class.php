@@ -13,7 +13,7 @@ class Cache {
 	protected static $reportsTo;
 
 	static function reportsTo(ICacheProvider $cache) {
-		if(!is_a($cache, 'ICacheProvider')) {
+		if(!$cache instanceof ICacheProvider) {
 			$cache = new NoOpCacheProvider();
 		}
 		

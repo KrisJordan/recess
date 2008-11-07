@@ -94,7 +94,7 @@ abstract class AbstractController {
 					}
 				}
 				
-				if(is_a($response, 'Response')) {
+				if($response instanceof Response) {
 					return $response;
 				} else {
 					return new BadRequestResponse($request);

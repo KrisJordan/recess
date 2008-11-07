@@ -20,8 +20,8 @@ class PluggableController implements IController {
 		foreach($this->plugins as $plugin) {
 			$result = $plugin->serve($request);
 			if(is_null($result)) continue;
-			else if (is_a($result, 'Request')) $request = $result;
-			else if (is_a($result, 'Response')) return $result; // short-circuit a Response
+			else if ($result instanceof Request) $request = $result;
+			else if ($result instanceof Response) return $result; // short-circuit a Response
 			else throw new RecessException('Invalid return type (' . gettype($result) . ') of a controller wrapper! Expected: null, Request, Response.', get_defined_vars());
 		}
 		

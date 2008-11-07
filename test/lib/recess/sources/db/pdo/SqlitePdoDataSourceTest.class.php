@@ -58,7 +58,7 @@ class SqlitePdoDataSourceTest extends UnitTestCase  {
 	
 	function testSelect() {
 		$selectedSet = $this->source->select();
-		$this->assertTrue(is_a($selectedSet, 'PdoDataSet'));
+		$this->assertTrue($selectedSet instanceof PdoDataSet);
 	}
 	
 	function tearDown() {

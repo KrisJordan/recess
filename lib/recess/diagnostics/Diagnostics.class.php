@@ -5,7 +5,7 @@ Library::import('recess.http.ResponseCodes');
 class Diagnostics {
 	
 	public static function handleException(Exception $exception) {
-		if(is_a($exception, 'LibraryException')) {
+		if($exception instanceof LibraryException) {
 			// Special Case for LibraryException to shift front value from stack
 			$trace = $exception->getTrace();
 			array_shift($trace);			

@@ -61,7 +61,7 @@ class DefaultConvention implements IConvention {
 
 	public function getViewFor(Response $response) {
 		// TODO: This needs significant refactoring.
-		if(is_a($response, 'ErrorResponse')) {
+		if($response instanceof ErrorResponse) {
 			if(Application::isInDebugMode()) {
 				throw new RecessTraceException(ResponseCodes::getMessageForCode($response->code), $response->trace);
 			} else {

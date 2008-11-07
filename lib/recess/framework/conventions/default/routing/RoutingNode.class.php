@@ -67,7 +67,7 @@ class RoutingNode {
 		
 		$nextPart = $pathParts[$index];
 		
-		if($nextPart[0] != ':') {
+		if($nextPart[0] != '$') {
 			$childrenArray = &$this->static_children;
 			$nextKey = $nextPart;
 			$isParam = false;
@@ -92,7 +92,7 @@ class RoutingNode {
 	
 	/**
 	 * Traverses children recursively to find a matching route. First looks
-	 * to see if a static (non-parametric, i.e. /this_is_static/ vs. /:this_is_dynamic/)
+	 * to see if a static (non-parametric, i.e. /this_is_static/ vs. /$this_is_dynamic/)
 	 * match exists. If not, we match against dynamic children. We reverse and step backwards
 	 * through the array because $index > 0 is less costly than $index < count($parts)
 	 * in PHP.

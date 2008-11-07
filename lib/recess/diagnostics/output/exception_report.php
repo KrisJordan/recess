@@ -208,7 +208,7 @@ function printContext($context) {
 					<h2><?php print $exception->getMessage(); ?></h2>
 					<p>Location: Line <?php print $exception->getLine(); ?> of <?php print $exception->getFile(); ?></p>
 					<?php printCodeSnippet($exception->getFile(), $exception->getLine()); ?>
-					<?php if(is_a($exception, 'RecessException') || is_a($exception, 'RecessErrorException')) { printContext($exception->context); } ?>
+					<?php if($exception instanceof RecessException || $exception instanceof RecessErrorException) { printContext($exception->context); } ?>
 				</div>
 				
 				<div id="callstack">
@@ -218,7 +218,7 @@ function printContext($context) {
 					<?php
 					$i = 0;
 					$exceptionTrace = array();
-					if(is_a($exception, 'RecessException') || is_a($exception, 'RecessErrorException')) {
+					if($exception instanceof RecessException || $exception instanceof RecessErrorException) {
 						$exceptionTrace = $exception->getRecessTrace();	
 					} else {
 						$exceptionTrace = $exception->getTrace();

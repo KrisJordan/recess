@@ -1,6 +1,6 @@
 <?php
 
-Library::import('recess.views.SmartyView');
+Library::import('recess.framework.views.SmartyView');
 
 class ErrorView extends SmartyView {
 

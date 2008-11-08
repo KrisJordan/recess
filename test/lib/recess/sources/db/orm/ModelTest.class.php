@@ -8,9 +8,13 @@ Library::import('recess.sources.db.orm.ModelDataSource');
 
 /**
  * !BelongsTo owner, Class: Person, ForeignKey: person_id, OnDelete: Cascade
- * !PrimaryKey pk
  */
-class Car extends Model {}
+class Car extends Model {
+	
+	/** !PrimaryKey integer, AutoIncrement: true */
+	public $pk;
+	
+}
 
 /**
  * !HasMany persons
@@ -435,7 +439,11 @@ class ModelTest extends UnitTestCase {
 	function testHasManyOnDeleteNullify() {
 		$kris = Make::a('Person')->equal('first_name', 'Kris')->first();
 		
-		$allCarsCount = count(Make::a('Car')->all());
+		$car = Make::a('Car');
+		
+		$all = $car->all();
+		
+		$allCarsCount = count($all);
 		
 		$kris->delete();
 		

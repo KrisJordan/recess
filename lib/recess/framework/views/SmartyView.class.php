@@ -42,20 +42,19 @@ abstract class SmartyView extends AbstractView {
 			default:
 		}
 		
-		if($response->code == ResponseCodes::HTTP_CREATED) {
-			exit;
-		}
+		if($response->code == ResponseCodes::HTTP_CREATED) { exit; }
 		
 		// TODO: Fill variables here
 		$this->smarty->assign('response', $response);
 		$this->smarty->assign('data', $response->data);
 		$this->smarty->assign('parameters', $response->meta['function_args']);
 		
-		if(is_array($response->data)) {
-			foreach(array_keys($response->data) as $key) {
-				$this->smarty->assign($key, $response->data[$key]);
+		try {
+			foreach($response->data as $key => $value) {
+				$this->smarty->assign($key, $value);
 			}
-		}
+		} catch(Exception $e) {}
+		
 		$this->smarty->display($this->templateLocationFor($response));
 	}
 	

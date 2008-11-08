@@ -8,7 +8,7 @@ class TableAnnotation extends ModelAnnotation {
 	}
 	
 	function massage(ModelDescriptor &$descriptor) {
-		$descriptor->table = $table;
+		$descriptor->table = $this->table;
 	}
 }
 ?>

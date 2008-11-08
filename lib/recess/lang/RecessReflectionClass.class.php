@@ -1,5 +1,6 @@
 <?php
 Library::import('recess.lang.Annotation');
+Library::import('recess.lang.RecessClass');
 Library::import('recess.lang.RecessReflectionMethod');
 Library::import('recess.lang.RecessReflectionProperty');
 
@@ -22,8 +23,8 @@ Library::import('recess.lang.RecessReflectionProperty');
  * @author Kris Jordan
  */
 class RecessReflectionClass extends ReflectionClass {
-	function getProperties($filter) {
-		$rawProperties = parent::getProperties($filter);
+	function getProperties() {
+		$rawProperties = parent::getProperties();
 		$properties = array();
 		foreach($rawProperties as $rawProperty) {
 			$properties[] = new RecessReflectionProperty($this->name, $rawProperty->name);
@@ -34,7 +35,12 @@ class RecessReflectionClass extends ReflectionClass {
 		$rawMethods = parent::getMethods();
 		$methods = array();
 		foreach($rawMethods as $rawMethod) {
-			$methods[] = new RecessReflectionMethod($this->name, $rawMethod->name);
+			$method = new RecessReflectionMethod($this->name, $rawMethod->name);
+			$methods[] = $method;
+		}
+		if($this->isSubclassOf('RecessClass')) {
+			// $attachedMethods = RecessClass::getAttachedMethods($this->name);
+			$methods = array_merge($methods, RecessClass::getAttachedMethods($this->name));
 		}
 		return $methods;
 	}

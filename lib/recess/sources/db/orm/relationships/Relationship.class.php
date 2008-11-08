@@ -18,6 +18,8 @@ abstract class Relationship {
 	public $onDelete;
 	public $through;
 	
+	abstract function getType();
+	
 	abstract function init($modelClassName, $relationshipName);
 	
 	function getDefaultOnDeleteMode() { return Relationship::NULLIFY; }

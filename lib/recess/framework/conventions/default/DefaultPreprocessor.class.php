@@ -54,14 +54,19 @@ class DefaultPreprocessor implements IPreprocessor {
 	}
 
 	protected function getFormatFromResourceString(Request $request) {
-		$lastDotPosition = strrpos($request->resource, Library::dotSeparator);
+		$lastPartIndex = count($request->resourceParts) - 1;
+		if($lastPartIndex < 0) return $request;
+		
+		$lastPart = $request->resourceParts[$lastPartIndex];
+		
+		$lastDotPosition = strrpos($lastPart, Library::dotSeparator);
 		if($lastDotPosition !== false) {
-			$substring = substr($request->resource, $lastDotPosition + 1);
+			$substring = substr($lastPart, $lastDotPosition + 1);
 			if(in_array($substring, Formats::$all)) {
 				$request->format = $substring;
-				$request->setResource(substr($request->resource, 0, $lastDotPosition));
+				$request->setResource(substr($request->resource, 0, strrpos($request->resource, Library::dotSeparator)));
 			} else {
-				$request->format = Formats::invalid;
+				$request->format = Formats::xhtml;
 			}
 		}
 		return $request;

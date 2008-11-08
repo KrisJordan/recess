@@ -3,23 +3,30 @@ Library::import('recess.sources.db.orm.relationships.Relationship');
 
 class BelongsToRelationship extends Relationship {
 	
+	function getType() {
+		return 'BelongsTo';
+	}
+	
 	function init($modelClassName, $relationshipName) {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
 		$this->onDelete = Relationship::NULLIFY;
-		$this->foreignKey = $relationshipName . '_id';
+		$this->foreignKey = Inflector::toUnderscores($relationshipName) . '_id';
 		$this->foreignClass = Inflector::toProperCaps($relationshipName);
 	}
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
-		$attachedMethod = new RecessClassAttachedMethod($this, 'selectModel');
-		$descriptor->addAttachedMethod($this->name, $attachedMethod);
+		$alias = $this->name;
+		$attachedMethod = new RecessClassAttachedMethod($this, 'selectModel', $alias);
+		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
-		$attachedMethod = new RecessClassAttachedMethod($this,'set');
-		$descriptor->addAttachedMethod('set' . ucfirst($this->name), $attachedMethod);
+		$alias = 'set' . ucfirst($this->name);
+		$attachedMethod = new RecessClassAttachedMethod($this,'set', $alias);
+		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
-		$attachedMethod = new RecessClassAttachedMethod($this,'remove');
-		$descriptor->addAttachedMethod('unset' . ucfirst($this->name), $attachedMethod);
+		$alias = 'unset' . ucfirst($this->name);
+		$attachedMethod = new RecessClassAttachedMethod($this,'remove', $alias);
+		$descriptor->addAttachedMethod($alias, $attachedMethod);
 	}
 	
 	function set(Model $model, Model $relatedModel) {

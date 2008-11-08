@@ -31,6 +31,17 @@ abstract class AbstractController {
 	 * @return array(Routes)
 	 */
 	public function getRoutes() {
+		Library::import('recess.lang.RecessReflectionClass');
+		$reflectionClass = new RecessReflectionClass($this);
+		$methods = $reflectionClass->getMethods();
+		foreach($methods as $method) {
+			$annotations = $method->getAnnotations();
+			foreach($annotations as $annotation) {
+				if($annotation instanceof RouteAnnotation) {
+					$this->routes[] = new Route($this,$method->name,$annotation->methods,$annotation->path);
+				}
+			}
+		}
 		return $this->routes;
 	}
 	
@@ -78,17 +89,19 @@ abstract class AbstractController {
 				} else {
 					// Parameters are requested inbound
 					if(isset($request->meta['function_args']) && is_array($request->meta['function_args'])) {
-						if(count($request->meta['function_args']) == $parameterCount - 1) {
-							// Map function_args to expected parameters
-							$callArguments = array($request);
-							foreach($functionParameters as $parameter) {
-								if($parameter->getPosition() == 0) continue;
+						// Map function_args to expected parameters
+						$callArguments = array($request);
+						foreach($functionParameters as $parameter) {
+							if($parameter->getPosition() == 0) continue;
+							if(!isset($request->meta['function_args'][$parameter->getName()])) {
+								if(!$parameter->isOptional()) {
+									throw new RecessException('Controller method "' . $functionName . '" expects ' . $parameterCount . ' arguments, given ' . count($request->meta['function_args']) . ' and missing required parameter: ' . $parameter->name);
+								}
+							} else {
 								$callArguments[] = $request->meta['function_args'][$parameter->getName()];
-							}
-							$response = $function->invokeArgs($this, $callArguments);
-						} else {
-							throw new RecessException('Controller method "' . $functionName . '" expects ' . $parameterCount . ' arguments, given ' . count($request->meta['function_args']));
+							}							
 						}
+						$response = $function->invokeArgs($this, $callArguments);
 					} else {
 						throw new RecessException('Controller method expects routed functions.', get_defined_vars());
 					}

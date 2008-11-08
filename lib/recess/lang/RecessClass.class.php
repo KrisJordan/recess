@@ -20,7 +20,7 @@ abstract class RecessClass extends stdClass {
 	 * @param string $providerMethodName
 	 */
 	static function attachMethod($attachOnClassName, $attachedMethodAlias, $providerInstance, $providerMethodName) {
-		$attachedMethod = new RecessClassAttachedMethod($providerInstance, $providerMethodName);
+		$attachedMethod = new RecessClassAttachedMethod($providerInstance, $providerMethodName, $attachedMethodAlias);
 		self::getClassDescriptor($attachOnClassName)->addAttachedMethod($attachedMethodAlias, $attachedMethod);
 	}
 	
@@ -71,6 +71,17 @@ abstract class RecessClass extends stdClass {
 	}
 	
 	/**
+	 * Retrieve an array of the attached methods for a particular class.
+	 *
+	 * @param variant $classNameOrInstance - String class name or instance of a Recess Class
+	 * @return array
+	 */
+	final static function getAttachedMethods($classNameOrInstance) {
+		$descriptor = self::getClassDescriptor($classNameOrInstance);
+		return $descriptor->getAttachedMethods();
+	}
+	
+	/**
 	 * Returns instance of RecessClassDescriptor which describes
 	 * this class. Should be overridden in subclasses.
 	 * 
@@ -112,6 +123,15 @@ class RecessClassDescriptor extends stdClass {
 	}
 	
 	/**
+	 * Return all attached methods.
+	 *
+	 * @return array(AttachedMethod)
+	 */
+	function getAttachedMethods() {
+		return $this->attachedMethods;
+	}
+	
+	/**
 	 * Add an attached method with given methodName alias.
 	 *
 	 * @param string $methodName
@@ -132,11 +152,39 @@ class RecessClassDescriptor extends stdClass {
 class RecessClassAttachedMethod {
 	public $object;
 	public $method;
+	public $name;
 	
-	function __construct($object, $method) { 
+	function __construct($object, $method, $name) { 
 		$this->object = $object;
 		$this->method = $method;
+		$this->name = $name;
 	}
+	
+	function isFinal() { return true; }
+    function isAbstract() { return false; }
+    function isPublic() { return true; }
+    function isPrivate() { return false; }
+    function isProtected() { return false; }
+    function isStatic() { return false; }
+    function isConstructor() { return false; }
+    function isDestructor() { return false; }
+    function isAttached() { return true; }
+
+    function getName() { return $this->alias; }
+    function isInternal() { return false; }
+    function isUserDefined() { return true; }
+    
+    function getFileName() { $reflection = new ReflectionClass($this->object); return $reflection->getMethod($this->method)->getFileName(); }
+    function getStartLine() { $reflection = new ReflectionClass($this->object); return $reflection->getMethod($this->method)->getStartLine(); }
+    function getEndLine() { $reflection = new ReflectionClass($this->object); return $reflection->getMethod($this->method)->getEndLine(); }
+    function getParameters() { 
+    	$reflection = new ReflectionClass($this->object); 
+    	$params = $reflection->getMethod($this->method)->getParameters(); 
+    	array_shift($params); 
+    	return $params;
+    }
+    function getNumberOfParameters() { $reflection = new ReflectionClass($this->object); return $reflection->getMethod($this->method)->getNumberOfParameters() - 1; }
+    function getNumberOfRequiredParameters() { $reflection = new ReflectionClass($this->object); return $reflection->getMethod($this->method)->getNumberOfRequiredParameters() - 1; }
 }
 
 ?>

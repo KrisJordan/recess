@@ -69,6 +69,16 @@ class DefaultConvention implements IConvention {
 			}
 		}
 		
+		if(isset($response->meta['viewClass'])) {
+			$className = $response->meta['viewClass'];
+			if(Library::classExists($this->applicationViewsPrefix . $className)) {
+				Library::import($this->applicationViewsPrefix . $className);
+				return new $className;
+			} else {
+				throw new RecessException('Cannot locate view, expecting: ' . $this->applicationViewsPrefix . $className, get_defined_vars());
+			}
+		}
+		
 		if(isset($response->meta['resource'])) {
 			$className = Inflector::toProperCaps($response->meta['resource']) . 'View';
 			if(Library::classExists($this->applicationViewsPrefix . $className)) {

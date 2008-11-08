@@ -75,7 +75,7 @@ class PdoDataSource extends PDO {
 		if($query == '') return array();
 		$statement = $this->prepareStatement($query, $arguments);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className, array());
-		$statement->execute();	
+		$statement->execute();
 		return $statement->fetchAll();
 	}
 	

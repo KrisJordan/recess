@@ -3,6 +3,10 @@ Library::import('recess.sources.db.orm.relationships.Relationship');
 
 class HasManyRelationship extends Relationship {
 	
+	function getType() {
+		return 'HasMany';
+	}
+	
 	function init($modelClassName, $relationshipName) {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
@@ -20,14 +24,17 @@ class HasManyRelationship extends Relationship {
 	}
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
-		$attachedMethod = new RecessClassAttachedMethod($this,'selectModel');
-		$descriptor->addAttachedMethod($this->name, $attachedMethod);
+		$alias = $this->name;
+		$attachedMethod = new RecessClassAttachedMethod($this,'selectModel', $alias);
+		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
-		$attachedMethod = new RecessClassAttachedMethod($this,'addTo');
-		$descriptor->addAttachedMethod('addTo' . ucfirst($this->name), $attachedMethod);
+		$alias = 'addTo' . ucfirst($this->name);
+		$attachedMethod = new RecessClassAttachedMethod($this,'addTo', $alias);
+		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
-		$attachedMethod = new RecessClassAttachedMethod($this,'removeFrom');
-		$descriptor->addAttachedMethod('removeFrom' . ucfirst($this->name), $attachedMethod);
+		$alias = 'removeFrom' . ucfirst($this->name);
+		$attachedMethod = new RecessClassAttachedMethod($this,'removeFrom', $alias);
+		$descriptor->addAttachedMethod($alias, $attachedMethod);
 	}
 	
 	function addTo(Model $model, Model $relatedModel) {

@@ -17,5 +17,9 @@ class RecessReflectionMethod extends ReflectionMethod {
 		}
 		return $returns;
 	}
+	
+	function isAttached() {
+		return false;
+	}
 }
 ?>

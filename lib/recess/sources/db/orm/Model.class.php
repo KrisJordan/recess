@@ -12,17 +12,14 @@ Library::import('recess.sources.db.orm.annotations.HasManyAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.BelongsToAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.TableAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.PrimaryKeyAnnotation', true);
+Library::import('recess.sources.db.orm.annotations.ForeignKeyAnnotation', true);
+Library::import('recess.sources.db.orm.annotations.TypeAnnotation', true);
+Library::import('recess.sources.db.orm.annotations.SourceAnnotation', true);
 
 Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
 Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
 
 abstract class Model extends RecessClass implements ISqlConditions {
-	
-	function copy($keyValuePair) {
-		foreach($keyValuePair as $key => $value) {
-			$this->$key = $value;
-		}
-	}
 	
 	static function sourceFor($class) {
 		return self::getClassDescriptor($class)->source;
@@ -41,12 +38,20 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		return self::getClassDescriptor($class)->primaryKey;
 	}
 	
-	static function getRelationship($class, $name) {
-		if(isset(self::getClassDescriptor($class)->relationships[$name])) {
-			return self::getClassDescriptor($class)->relationships[$name];
+	static function getRelationship($classOrInstance, $name) {
+		if(isset(self::getClassDescriptor($classOrInstance)->relationships[$name])) {
+			return self::getClassDescriptor($classOrInstance)->relationships[$name];
 		} else {
 			return false;
 		}
+	}
+	
+	static function getRelationships($classOrInstance) {
+		return self::getClassDescriptor($classOrInstance)->relationships;
+	}
+	
+	static function getColumns($classOrInstance) {
+		return self::getClassDescriptor($classOrInstance)->columns;
 	}
 	
 	static protected function buildClassDescriptor($class) {
@@ -65,6 +70,21 @@ abstract class Model extends RecessClass implements ISqlConditions {
 			}
 		}
 		
+		$reflectedProperties = $reflection->getProperties();
+		$properties = array();
+		foreach($reflectedProperties as $reflectedProperty) {
+			$property = new ModelProperty();
+			$annotations = $reflectedProperty->getAnnotations();
+			foreach($annotations as $annotation) {
+				if($annotation instanceof ModelPropertyAnnotation) {
+					$annotation->massage($property);
+				}
+				if($annotation instanceof PrimaryKeyAnnotation) {
+					$descriptor->primaryKey = $reflectedProperty->name;
+				}
+			}
+		}
+		
 		return $descriptor;
 	}
 	
@@ -76,7 +96,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		$thisClassDescriptor = self::getClassDescriptor($this);
 		$result = $thisClassDescriptor->source->selectModelSet($thisClassDescriptor->table);
 		foreach($this as $column => $value) {
-			if(in_array($column,$thisClassDescriptor->columns)) {
+			if(isset($this->$column) && in_array($column,$thisClassDescriptor->columns)) {
 				$result = $result->assign($column, $value);
 			}
 		}
@@ -159,7 +179,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 			return false;
 		}
 	}
-	
+
 	function find() { return $this->select(); }
 	
 	function equal($lhs, $rhs){ return $this->select()->equal($lhs,$rhs); }
@@ -170,6 +190,21 @@ abstract class Model extends RecessClass implements ISqlConditions {
 	function lessThan($lhs, $rhs) { return $this->select()->lessThan($lhs,$rhs); }
 	function lessThanOrEqualTo($lhs, $rhs) { return $this->select()->lessThanOrEqualTo($lhs,$rhs); }
 	function like($lhs, $rhs) { return $this->select()->like($lhs,$rhs); }
+	
+	function copy($keyValuePair) {
+		foreach($keyValuePair as $key => $value) {
+			$this->$key = $value;
+		}
+	}
+}
+
+class ModelProperty {
+	public $name;
+	public $type;
+	public $pkCallback;
+	public $autoincrement = false;
+	public $isPrimaryKey = false;
+	public $isForeignKey = false;
 }
 
 class ModelDescriptor extends RecessClassDescriptor {
@@ -178,7 +213,9 @@ class ModelDescriptor extends RecessClassDescriptor {
 	
 	public $modelClass;
 	public $relationships;
+	
 	public $columns;
+	public $properties;
 	
 	// TODO: This will need to be refactored to reference the source_name verses the source
 	public $source_name;

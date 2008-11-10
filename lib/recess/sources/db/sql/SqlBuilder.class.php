@@ -1,16 +1,39 @@
 <?php
-
 Library::import('recess.sources.db.sql.ISqlConditions');
 Library::import('recess.sources.db.sql.ISqlSelectOptions');
-Library::import('recess.sources.db.sql.Criterion');
-Library::import('recess.sources.db.sql.Join');
 
+/**
+ * SqlBuilder is used to incrementally compose named-parameter PDO Sql strings 
+ * using a simple, chainable method call API. This is a naive wrapper that does
+ * not gaurantee valid SQL output (i.e. column names using reserved SQL words).
+ * 
+ * 4 classes of SQL strings can be built: INSERT, UPDATE, DELETE, SELECT.
+ * This class is intentionally arranged from the low complexity requirements
+ * of INSERT to the more complex SELECT.
+ * 
+ * INSERT:        table, column/value assignments
+ * UPDATE/DELETE: where conditions
+ * SELECT:        order, joins, offset, limit, distinct
+ * 
+ * Example usage: 
+ * 
+ * $sqlBuilder->into('table_name')->assign('column', 'value')->insert() .. 
+ * 		returns "INSERT INTO table_name (column) VALUES (:column)"
+ * $sqlBuilder->getPdoArguments() returns array( ':column' => 'value' )
+ * 
+ * @author Kris Jordan
+ */
 class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		
 	/* INSERT */
 	protected $table;
 	protected $assignments = array();
 	
+	/**
+	 * 
+	 * 
+	 * @return string INSERT string.
+	 */
 	public function insert() {
 		$this->insertSanityCheck();
 
@@ -303,6 +326,73 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		if(isset($this->limit)){ $sql .= ' LIMIT ' . $this->limit; }
 		if(isset($this->offset)){ $sql .= ' OFFSET ' . $this->offset; }
 		return $sql;
+	}
+}
+
+class Criterion {
+	public $column;
+	public $value;
+	public $operator;
+	
+	const GREATER_THAN = '>';
+	const GREATER_THAN_EQUAL_TO = '>=';
+	
+	const LESS_THAN = '<';
+	const LESS_THAN_EQUAL_TO = '<=';
+	
+	const EQUAL_TO = '==';
+	const NOT_EQUAL_TO = '!=';
+	
+	const LIKE = 'LIKE';
+	
+	const COLON = ':';
+	
+	const ASSIGNMENT = '=';
+	const ASSIGNMENT_PREFIX = 'assgn_';
+	
+	const UNDERSCORE = '_';
+	
+	public function __construct($column, $value, $operator){
+		$this->column = $column;
+		$this->value = $value;
+		$this->operator = $operator;
+	}
+	
+	public function getQueryParameter() {
+		if($this->operator == self::ASSIGNMENT) { 
+			return self::COLON . str_replace(Library::dotSeparator, self::UNDERSCORE, self::ASSIGNMENT_PREFIX . $this->column);
+		} else {
+			return self::COLON . str_replace(Library::dotSeparator, self::UNDERSCORE, $this->column);
+		}
+	}
+}
+
+class Join {
+	const NATURAL = 'NATURAL';
+	
+	const LEFT = 'LEFT';
+	const RIGHT = 'RIGHT';
+	const FULL = 'FULL';
+	
+	const INNER = 'INNER';
+	const OUTER = 'OUTER';
+	const CROSS = 'CROSS';
+	
+	public $natural = '';
+	public $leftRightOrFull = '';
+	public $innerOuterOrCross = 'OUTER';
+	
+	public $table;
+	public $tablePrimaryKey;
+	public $fromTableForeignKey;
+	
+	public function __construct($leftRightOrFull, $innerOuterOrCross, $table, $tablePrimaryKey, $fromTableForeignKey, $natural = ''){
+		$this->natural = $natural;
+		$this->leftRightOrFull = $leftRightOrFull;
+		$this->innerOuterOrCross = $innerOuterOrCross;
+		$this->table = $table;
+		$this->tablePrimaryKey = $tablePrimaryKey;
+		$this->fromTableForeignKey = $fromTableForeignKey;
 	}
 }
 

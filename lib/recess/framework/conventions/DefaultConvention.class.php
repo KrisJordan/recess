@@ -21,7 +21,7 @@ class DefaultConvention implements IConvention {
 		return new DefaultPreprocessor();	
 	}
 
-	public function getControllerFor(Request $request) {
+	public function getControllerFor(DefaultRequest $request) {
 		// TODO: Add support for plugins!
 		// TODO: Make Request => StandardRequest and add fields for controller, function, function_args
 		if(isset($request->meta['controller'])) {

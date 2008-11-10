@@ -1,4 +1,5 @@
 <?php
+Library::import('recess.lang.RecessClass');
 
 class Request {	
 	
@@ -14,10 +15,14 @@ class Request {
 
 	public $cookie;
 	
-	public $meta = array(); // Key/value store used by Policy to mark-up request
+	public $meta; // Key/value store used by Policy to mark-up request
 	
 	public $username = '';
 	public $password = '';
+	
+	public function __construct() {
+		$this->meta = new Meta;
+	}
 	
 	public function setResource($resource) {
 		$this->resource = $resource;
@@ -42,5 +47,7 @@ class Request {
 		return $parts;
 	}
 }
+
+class Meta extends RecessClass {}
 
 ?>

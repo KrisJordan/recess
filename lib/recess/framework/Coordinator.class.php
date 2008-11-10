@@ -18,7 +18,7 @@ final class Coordinator {
 	 */
 	public static function main(Request $request) {
 		
-		$convention = Application::getConvention($request);
+		$convention = Application::getPolicy($request);
 		
 		$preprocessor = $convention->getPreprocessor();
 		

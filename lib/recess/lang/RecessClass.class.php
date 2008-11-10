@@ -5,7 +5,7 @@
  * 
  * @author Kris Jordan
  */
-abstract class RecessClass extends stdClass {
+abstract class RecessClass extends StdClass {
 	
 	protected static $descriptors = array();
 	

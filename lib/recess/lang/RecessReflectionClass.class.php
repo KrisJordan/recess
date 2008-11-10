@@ -31,14 +31,14 @@ class RecessReflectionClass extends ReflectionClass {
 		}
 		return $properties;
 	}
-	function getMethods(){
+	function getMethods($getAttachedMethods = true){
 		$rawMethods = parent::getMethods();
 		$methods = array();
 		foreach($rawMethods as $rawMethod) {
 			$method = new RecessReflectionMethod($this->name, $rawMethod->name);
 			$methods[] = $method;
 		}
-		if($this->isSubclassOf('RecessClass')) {
+		if($getAttachedMethods && $this->isSubclassOf('RecessClass')) {
 			// $attachedMethods = RecessClass::getAttachedMethods($this->name);
 			$methods = array_merge($methods, RecessClass::getAttachedMethods($this->name));
 		}

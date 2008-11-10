@@ -20,6 +20,6 @@ interface IPreprocessor {
 	 * @param	Request The Request to preprocess.
 	 * @return	Request The preprocessed Request.
 	 */
-	public function process(Request $request);
+	public function process(Request &$request);
 }
 ?>

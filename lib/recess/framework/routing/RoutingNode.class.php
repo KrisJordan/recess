@@ -6,16 +6,16 @@ Library::import('recess.framework.routing.RoutingResult');
  * URI string and HTTP Method to a Route. Example Route paths:
  * 
  * /pages/				-> matches /pages/
- * /pages/:id			-> matches /pages/1 ... (id => 1)
- * /pages/slug/:slug	-> matches /pages/slug/some-slug-here (slug => some-slug-here)
+ * /pages/$id			-> matches /pages/1 ... (id => 1)
+ * /pages/slug/$slug	-> matches /pages/slug/some-slug-here (slug => some-slug-here)
  * 
  * For the purposes of this class a URI path is broken into parts delimited
  * with a '/'. There are two kinds of path parts: static and parametric. Static matches
  * have precedence over parametric matches. For example, if you have the following routes:
  * 
- * (1) /pages/:page_title/
+ * (1) /pages/$page_title/
  * (2) /pages/a-page/
- * (3) /pages/:page_title/:id
+ * (3) /pages/$page_title/$id
  * 
  * A request of "/pages/a-page/" will match (2) and the result will not contain an argument.
  * A request of "/pages/b-page/" will match (1) and the result will contain argument ("page_title" => "b_page")
@@ -39,7 +39,17 @@ class RoutingNode {
 	 * 
 	 * @param Route The route to add to this routing tree.
 	 */
-	public function addRoute(Route $route) {
+	public function addRoute(Route $route, $prefix) {
+		if($route->path == '') return;
+		
+		if($route->path[0] != '/') {
+			if($prefix[0] == '/') {
+				$route->path = $prefix . $route->path;
+			} else {
+				$route->path = $prefix . '/' . $route->path;
+			}
+		}
+		
 		$pathParts = $this->getRevesedPathParts($route->path);
 		$this->addRouteRecursively($pathParts, count($pathParts) - 1, $route);
 	}

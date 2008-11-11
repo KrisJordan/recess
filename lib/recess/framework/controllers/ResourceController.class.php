@@ -3,7 +3,7 @@
 Library::import('recess.framework.controllers.AbstractController');
 Library::import('recess.http.Request');
 Library::import('recess.http.responses.OkResponse');
-Library::import('recess.framework.conventions.default.routing.Route');
+Library::import('recess.framework.routing.Route');
 Library::import('recess.lang.Inflector');
 
 abstract class ResourceController extends AbstractController {

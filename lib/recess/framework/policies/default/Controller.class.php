@@ -1,6 +1,7 @@
 <?php
 Library::import('recess.lang.RecessClass');
 Library::import('recess.lang.RecessReflectionClass');
+Library::import('recess.lang.Annotation', true);
 Library::import('recess.framework.policies.default.annotations.ViewAnnotation', true);
 Library::import('recess.framework.policies.default.annotations.RouteAnnotation', true);
 class ControllerDescriptor extends RecessClassDescriptor {
@@ -55,7 +56,7 @@ abstract class Controller extends RecessClass {
 			$annotations = $reflectedMethod->getAnnotations();
 			foreach($annotations as $annotation) {
 				if($annotation instanceof ControllerAnnotation) {
-					$annotation->massage($class, $reflectedMethod->name, $descriptor);
+					$annotation->massage(Library::getFullyQualifiedClassName($class), $reflectedMethod->name, $descriptor);
 				}
 			}
 		}
@@ -108,7 +109,7 @@ abstract class Controller extends RecessClass {
 			$descriptor = self::getClassDescriptor($this);
 			$response->meta->viewClass = $descriptor->viewClass;
 			$response->meta->viewPrefix = $descriptor->viewPrefix;
-			$response->meta->viewName = $methodName;			
+			$response->meta->viewName = $methodName;
 			return $response;
 		} else {
 			return new BadRequestResponse($request);

@@ -1,6 +1,6 @@
 <?php
-require_once('recess/diagnostics/Diagnostics.class.php');
-require_once('recess/cache/Cache.class.php');
+require_once($_ENV['dir.recess'] . 'diagnostics/Diagnostics.class.php');
+require_once($_ENV['dir.recess'] . 'cache/Cache.class.php');
 
 /**
  * Used to include class files into the system
@@ -14,7 +14,7 @@ require_once('recess/cache/Cache.class.php');
  */
 class Library {
 	static private $paths = array();
-	static private $classNames = array('Library' => 'Library');
+	static private $classNames = array('recess.lang.Library' => 'Library');
 	static private $loaded = array('Libary' => true);
 	static public $memcache = false;
 	static private $use_memcache = false;
@@ -45,6 +45,16 @@ class Library {
 		if($forceLoad) {
 			self::load($className);
 		}
+	}
+	
+	static function importAndInstantiate($fullyQualifiedClassName) {
+		$className = self::getClassName($fullyQualifiedClassName);
+	
+		if(!isset(self::$loaded[$className])) {
+			self::$loaded[$className] = $fullyQualifiedClassName;
+		}
+		
+		return new $className;
 	}
 	
 	static function classExists($fullyQualifiedClassName) {
@@ -133,6 +143,15 @@ class Library {
 		}
 	}
 	
+	static function getFullyQualifiedClassName($className) {
+		$fullyQualified = array_search($className, self::$classNames);
+		if($fullyQualified === false) {
+			return $className;
+		} else {
+			return $fullyQualified;
+		}
+	}
+	
 	static function findClassesIn($package) {
 		$package = str_replace(self::dotSeparator,self::pathSeparator, $package);
 		$classes = array();
@@ -161,9 +180,8 @@ function __autoload($class) {
 }
 
 class Make {
-	static function a($class) {
-		return new $class;
-	}
+	static function a($class) { return new $class; }
+	static function an($class) { return new $class; }
 }
 
 Library::init();

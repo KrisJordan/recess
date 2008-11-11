@@ -13,6 +13,7 @@ class NativeView extends AbstractView {
 	 */
 	protected function render(Response $response) {
 		$data = $response->data;
+		extract($response->data);
 		// TODO: Set more interesting variables here.
 		include_once(Application::getSetting('View.dir') . $response->meta->viewPrefix . $response->meta->viewName . '.php');
 	}

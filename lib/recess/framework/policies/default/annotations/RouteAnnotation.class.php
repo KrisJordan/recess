@@ -1,6 +1,7 @@
 <?php
 Library::import('recess.framework.policies.default.annotations.ControllerAnnotation');
 Library::import('recess.framework.routing.Route');
+
 class RouteAnnotation extends ControllerAnnotation {
 	protected $methods = array();
 	protected $path;

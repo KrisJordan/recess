@@ -1,7 +1,7 @@
 <?php
 
 interface IPolicy {
-	public function getPreprocessor();
+	public function preprocess(Request $request);
 	
 	public function getControllerFor(Request $request);
 	

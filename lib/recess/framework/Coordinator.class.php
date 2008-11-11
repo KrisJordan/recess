@@ -1,6 +1,6 @@
 <?php
-Library::import('app.Application');
-Library::import('recess.http.Environment');
+Library::import('Config');
+
 /**
  * Entry into Recess! Framework occurs in the coordinator. It is responsible
  * for the flow of control from preprocessing of request data, the serving of a request
@@ -16,21 +16,38 @@ final class Coordinator {
 	 * @package recess
 	 * @static 
 	 */
-	public static function main(Request $request) {
+	public static function main(IPolicy $policy, Request $request, RoutingNode $routing = null, Plugins $plugins = null) {
 		
-		$convention = Application::getPolicy($request);
+		$pluggedPolicy = $policy;
 		
-		$preprocessor = $convention->getPreprocessor();
+		// foreach($plugins as $plugin) {
+		//	$pluggedPolicy = $plugin->decorate($pluggedPolicy);
+		// }
 		
-		$request = $preprocessor->process($request);
+		// try {
 		
-		$controller = $convention->getControllerFor($request);
+		$request = $pluggedPolicy->preprocess($request);
+		
+		// $controller = $pluggedPolicy->getControllerFor($request, $routing);
+		$controller = $pluggedPolicy->getControllerFor($request);
 		
 		$response = $controller->serve($request);
 		
-		$view = $convention->getViewFor($response);
+		$view = $pluggedPolicy->getViewFor($response);
 		
 		$view->respondWith($response);
+		
+		// $pluggedPolicy->end();
+		
+		// } catch(Exception $e) {
+		
+		//		$plugins->preHandleException($e);
+		
+		//		Diagnostics::handleException($e);
+		
+		//		$plugins->postHandleException($e);
+		
+		// }
 		
 	}
 }

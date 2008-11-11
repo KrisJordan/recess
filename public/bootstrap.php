@@ -15,5 +15,5 @@ require_once('./recess-config.php');
 
 Library::import('recess.framework.Coordinator');
 Library::import('recess.http.Environment');
-Coordinator::main(Config::$policy, Environment::getRawRequest());
+Coordinator::main(Environment::getRawRequest(), Config::$policy, Config::$applications, Config::getRouter(), Config::$plugins);
 ?>

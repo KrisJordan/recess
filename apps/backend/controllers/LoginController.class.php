@@ -2,9 +2,13 @@
 
 class LoginController extends Controller {
 	
-	/** !Route GET, login */
-	function showLogin() {
-		echo 'login'; exit;
+	/** !Route GET, login/$name */
+	function showLogin($name) {
+		echo 'login welcomes ' . $name; exit;
+	}
+	
+	function kris($lastname) {
+		echo 'kris' . $lastname; exit;
 	}
 	
 }

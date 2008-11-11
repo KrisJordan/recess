@@ -188,19 +188,7 @@ class RoutingNode {
 	 * @param string Path to be split and reversed.
 	 */
 	private function getRevesedPathParts($path) {
-		$pathParts = explode('/', $path);
-		if(!empty($pathParts)) {
-			if($pathParts[0] == '') {
-				array_shift($pathParts);
-			}
-		}
-		if(!empty($pathParts)) {
-			if($pathParts[count($pathParts)-1] == '') {
-				array_pop($pathParts);
-			}
-		}
-		$pathParts = array_reverse($pathParts);
-		return $pathParts;
+		return array_reverse(array_filter(explode('/', $path)));
 	}
 }
 ?>

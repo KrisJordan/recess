@@ -15,7 +15,7 @@ Config::$cacheProviders
 Config::$applications 
 	= array(	'frontend.FrontEndApplication',
 				'backend.BackEndApplication',
-				'recess.framework.apps.ide.RecessIdeApplication'
+				'recess.apps.ide.RecessIdeApplication'
 			);
 
 //Config::$plugins 
@@ -23,7 +23,7 @@ Config::$applications
 //			);
 
 Config::$defaultDataSource 
-	= array(	'sqlite::' . $_ENV['dir.base'] . '/data/default.db'
+	= array(	'sqlite:' . $_ENV['dir.base'] . '/data/default.db'
 			);			
 			
 //Config::$namedDataSources 
@@ -37,7 +37,7 @@ Config::$settings
 				'dir.apps' => $_ENV['dir.base'] . 'apps/'
 			);
 
-Library::import('recess.framework.policies.DefaultPolicy');
+Library::import('recess.framework.DefaultPolicy');
 Config::$policy
 	= new DefaultPolicy();
 
@@ -79,8 +79,14 @@ abstract class Config {
 		if(!isset(self::$settings['dir.apps'])) {
 			self::$settings['dir.apps'] = $_ENV['dir.base'] . 'apps/';
 		}
+		
 		Library::addClassPath(self::$settings['dir.apps']);
 		
+		Config::$applications = array_map(create_function('$class','return Library::importAndInstantiate($class);'),Config::$applications);
+		
+		Library::import('recess.sources.db.DbSources');
+		Library::import('recess.sources.db.orm.ModelDataSource');
+		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource[0]));
 	}
 	
 	static function getRouter() {
@@ -88,10 +94,7 @@ abstract class Config {
 		$router = new RoutingNode();
 
 		foreach(self::$applications as $app) {
-			Library::import($app);
-			$appClass = Library::getClassName($app);
-			$instance = new $appClass;
-			$instance->addRoutes($router);
+			$app->addRoutesToRouter($router);
 		}
 
 		return $router;

@@ -16,7 +16,7 @@ final class Coordinator {
 	 * @package recess
 	 * @static 
 	 */
-	public static function main(IPolicy $policy, Request $request, RoutingNode $routing = null, Plugins $plugins = null) {
+	public static function main(Request $request, IPolicy $policy, array $apps, RoutingNode $routes, array $plugins = array()) {
 		
 		$pluggedPolicy = $policy;
 		
@@ -29,7 +29,7 @@ final class Coordinator {
 		$request = $pluggedPolicy->preprocess($request);
 		
 		// $controller = $pluggedPolicy->getControllerFor($request, $routing);
-		$controller = $pluggedPolicy->getControllerFor($request);
+		$controller = $pluggedPolicy->getControllerFor($request, $apps, $routes);
 		
 		$response = $controller->serve($request);
 		

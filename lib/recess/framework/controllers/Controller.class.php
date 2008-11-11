@@ -2,8 +2,8 @@
 Library::import('recess.lang.RecessClass');
 Library::import('recess.lang.RecessReflectionClass');
 Library::import('recess.lang.Annotation', true);
-Library::import('recess.framework.policies.default.annotations.ViewAnnotation', true);
-Library::import('recess.framework.policies.default.annotations.RouteAnnotation', true);
+Library::import('recess.framework.annotations.ViewAnnotation', true);
+Library::import('recess.framework.annotations.RouteAnnotation', true);
 class ControllerDescriptor extends RecessClassDescriptor {
 	public $routes;
 	public $viewClass = 'NativeView';

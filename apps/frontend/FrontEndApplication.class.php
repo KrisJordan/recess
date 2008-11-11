@@ -3,9 +3,9 @@ Library::import('recess.framework.Application');
 
 class FrontEndApplication extends Application {
 	
-	public $controllersPrefix = 'frontend.controllers';
+	public $controllersPrefix = 'frontend.controllers.';
 	
-	public $routingPrefix = '/';
+	public $routingPrefix = '';
 	
 }
 ?>

@@ -30,21 +30,8 @@ class Request {
 	}
 	
 	public static function splitResourceString($resourceString) {
-		$parts = split(Library::pathSeparator, $resourceString);
-		
-		// "Trim" empty strings
-		if(!empty($parts)) {
-			array_shift($parts);
-		}
-		
-		if(!empty($parts)) {
-			$last = array_pop($parts);
-			if($last !== '') {
-				$parts[] = $last;
-			}
-		}
-		
-		return $parts;
+		$parts = array_filter(split(Library::pathSeparator, $resourceString));
+		return array_combine(range(0, count($parts)-1), $parts);
 	}
 }
 

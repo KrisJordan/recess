@@ -19,7 +19,7 @@ class ViewAnnotation extends ControllerAnnotation {
 	}
 	
 	function massage($controller, $method, ControllerDescriptor $descriptor) {
-		$descriptor->viewClass = $this->viewClass . 'View';
+		$descriptor->viewClass = 'recess.framework.views.' . $this->viewClass . 'View';
 		$descriptor->viewPrefix = $this->prefix;
 	}
 	

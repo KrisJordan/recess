@@ -1,4 +1,6 @@
 <?php
+phpinfo();
+exit;
 
 class DynamicPropsTake1 {
 	protected $properties;

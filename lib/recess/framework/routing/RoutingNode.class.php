@@ -39,15 +39,13 @@ class RoutingNode {
 	 * 
 	 * @param Route The route to add to this routing tree.
 	 */
-	public function addRoute(Route $route, $prefix) {
+	public function addRoute($app, Route $route, $prefix) {
 		if($route->path == '') return;
 		
+		$route->app = $app;
+		
 		if($route->path[0] != '/') {
-			if($prefix[0] == '/') {
-				$route->path = $prefix . $route->path;
-			} else {
-				$route->path = $prefix . '/' . $route->path;
-			}
+			$route->path = $prefix . '/' . $route->path;
 		}
 		
 		$pathParts = $this->getRevesedPathParts($route->path);

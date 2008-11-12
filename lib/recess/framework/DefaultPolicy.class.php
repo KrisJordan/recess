@@ -4,7 +4,8 @@ Library::import('recess.framework.views.View');
 Library::import('recess.framework.interfaces.IPolicy');
 
 class DefaultPolicy implements IPolicy {
-	
+	protected $controller;
+		
 	/**
 	 * Used to pre-process a request.
 	 * This may involve extracting information and transforming values. 
@@ -13,7 +14,7 @@ class DefaultPolicy implements IPolicy {
 	 * @param	Request The Request to refine.
 	 * @return	Request The refined Request.
 	 */
-	public function preprocess(Request $request) {
+	public function preprocess(Request &$request) {
 		
 		$this->getHttpMethodFromPost($request);
 
@@ -26,7 +27,7 @@ class DefaultPolicy implements IPolicy {
 		return $request;
 	}
 	
-	public function getControllerFor(Request $request, array $applications, RoutingNode $routes) {
+	public function getControllerFor(Request &$request, array $applications, RoutingNode $routes) {
 		
 		$routeResult = $routes->findRouteFor($request);
 		
@@ -41,12 +42,15 @@ class DefaultPolicy implements IPolicy {
 			$controller = $this->getControllerFromResourceString($request, $applications);
 		}
 		
+		$this->controller = $controller;
+		
 		return $controller;
 	}
 	
-	public function getViewFor(Response $response) {
-		$response->meta->app->loadView($response->meta->viewClass);
-		return new $response->meta->viewClass;
+	public function getViewFor(Response &$response) {
+		$view = Library::importAndInstantiate($response->meta->viewClass);
+		$response->meta->viewDir = $response->meta->app->getViewsDir() . $response->meta->viewPrefix;
+		return $view;
 	}
 	
 	/////////////////////////////////////////////////////////////////////////
@@ -97,6 +101,7 @@ class DefaultPolicy implements IPolicy {
 	}
 	
 	protected function getControllerFromRouteResult(Request &$request, RoutingResult $routeResult) {
+		$request->meta->app = $routeResult->route->app;
 		$request->meta->controllerMethod = $routeResult->route->function;
 		$request->meta->controllerMethodArguments = $routeResult->arguments;
 		$request->meta->useAssociativeArguments = true;

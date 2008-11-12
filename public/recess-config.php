@@ -15,7 +15,8 @@ Config::$cacheProviders
 Config::$applications 
 	= array(	'frontend.FrontEndApplication',
 				'backend.BackEndApplication',
-				'recess.apps.ide.RecessIdeApplication'
+				'recess.apps.ide.RecessIdeApplication',
+				'blog.BlogApplication'
 			);
 
 //Config::$plugins 
@@ -68,16 +69,22 @@ abstract class Config {
 	
 	static function init() {
 		
-		if(!isset(self::$settings['dir.temp'])) {
-			self::$settings['dir.temp'] = $_ENV['dir.base'] . 'temp/';
+		if(isset(self::$settings['dir.temp'])) {
+			$_ENV['dir.temp'] = self::$settings['dir.temp'];
+		} else {
+			$_ENV['dir.temp'] = $_ENV['dir.base'] . 'temp/';
 		}
 		
 		if(!isset(self::$settings['dir.test'])) {
-			self::$settings['dir.test'] = $_ENV['dir.base'] . 'test/';
+			$_ENV['dir.test'] = self::$settings['dir.test'];
+		} else {
+			$_ENV['dir.test'] = $_ENV['dir.base'] . 'test/';
 		}
 		
 		if(!isset(self::$settings['dir.apps'])) {
-			self::$settings['dir.apps'] = $_ENV['dir.base'] . 'apps/';
+			$_ENV['dir.apps'] = self::$settings['dir.apps'];
+		} else {
+			$_ENV['dir.apps'] = $_ENV['dir.base'] . 'apps/';
 		}
 		
 		Library::addClassPath(self::$settings['dir.apps']);
@@ -91,11 +98,16 @@ abstract class Config {
 	
 	static function getRouter() {
 		Library::import('recess.framework.routing.RoutingNode');
-		$router = new RoutingNode();
-
-		foreach(self::$applications as $app) {
-			$app->addRoutesToRouter($router);
-		}
+		Library::import('recess.framework.routing.Route');
+		//apc_delete('router');
+		//$router = apc_fetch('router');
+		//if($router === false) {
+			$router = new RoutingNode();
+			foreach(self::$applications as $app) {
+				$app->addRoutesToRouter($router);
+			}
+//			apc_store('router', $router);	
+//		}
 
 		return $router;
 	}

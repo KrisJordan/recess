@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Routes map a routing path to a application, class, and method.
  * 
@@ -11,6 +10,7 @@ class Route {
 	public $class;
 	public $function;
 	
+	public $app;
 	public $methods = array();
 	public $path;
 	public $args = array();
@@ -24,5 +24,4 @@ class Route {
 		$this->path = $path;
 	}
 }
-
 ?>

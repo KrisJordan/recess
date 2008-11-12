@@ -17,10 +17,10 @@ abstract class AbstractView extends RecessClass {
 	 * @param Response $response
 	 */
 	public final function respondWith(Response $response) {
-
-		$this->sendHeadersFor($response);
+		if(!headers_sent())
+			$this->sendHeadersFor($response);
 		
-		if(ResponseCodes::canHaveBody($response->code)) {
+		if(ResponseCodes::canHaveBody($response->code) && !$response instanceof ForwardingResponse) {
 			$this->render($response);
 		}
 		
@@ -45,6 +45,8 @@ abstract class AbstractView extends RecessClass {
 			setcookie($cookie->name, $cookie->value, $cookie->expire, $cookie->path, $cookie->domain, $cookie->secure, $cookie->httponly);
 		}
 		
+		flush();
+
 		// TODO: Determine other headers to send here. Content-Type, Caching, Etags, ...
 	}
 	

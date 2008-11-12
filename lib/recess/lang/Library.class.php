@@ -61,20 +61,8 @@ class Library {
 		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullyQualifiedClassName) . '.class.php';
 		$className = self::getClassName($fullyQualifiedClassName);
 		foreach(self::$paths as $path) {
-			if(file_exists($path . $file)) {
-				if(!self::$memcache) {
-					include_once($path . $file);
-				} else {
-					$file_contents = php_strip_whitespace($path . $file);
-					$file_contents = str_replace('<?php', '', $file_contents);
-					$file_contents = str_replace('?>', '', $file_contents);
-					if(self::$memcache) {
-						self::$memcache->set('Recess::Library::' . $className, $file_contents, false, 600) or die ("Failed to save data at the server");
-					}
-					eval($file_contents);
-					unset($file_contents);
-				}
-				self::$loaded[$className] = true;
+			@include_once($path . $file);
+			if(class_exists($className, false) || interface_exists($className, false)) {
 				return true;
 			}
 		}

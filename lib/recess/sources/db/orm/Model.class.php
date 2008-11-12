@@ -16,6 +16,7 @@ Library::import('recess.sources.db.orm.annotations.ForeignKeyAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.TypeAnnotation', true);
 Library::import('recess.sources.db.orm.annotations.SourceAnnotation', true);
 
+Library::import('recess.sources.db.orm.relationships.Relationship');
 Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
 Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
 
@@ -195,6 +196,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		foreach($keyValuePair as $key => $value) {
 			$this->$key = $value;
 		}
+		return $this;
 	}
 }
 

@@ -1,5 +1,4 @@
 <?php
-Library::import('recess.sources.db.orm.relationships.Relationship');
 
 class BelongsToRelationship extends Relationship {
 	

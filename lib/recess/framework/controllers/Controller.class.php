@@ -4,11 +4,6 @@ Library::import('recess.lang.RecessReflectionClass');
 Library::import('recess.lang.Annotation', true);
 Library::import('recess.framework.annotations.ViewAnnotation', true);
 Library::import('recess.framework.annotations.RouteAnnotation', true);
-class ControllerDescriptor extends RecessClassDescriptor {
-	public $routes;
-	public $viewClass = 'NativeView';
-	public $viewPrefix = '';
-}
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,
@@ -19,8 +14,9 @@ class ControllerDescriptor extends RecessClassDescriptor {
  * @author Kris Jordan
  */
 abstract class Controller extends RecessClass {
+	
 	protected $request;
-	protected $data;
+	protected $headers;
 	
 	public static function getViewClass($class) {
 		return self::getClassDescriptor($class)->viewClass;
@@ -104,18 +100,22 @@ abstract class Controller extends RecessClass {
 		} else {
 			throw new RecessException('Error calling method "' . $methodName . '" in "' . get_class($this) . '". Method does not exist.', array());
 		}
-		
-		if($response instanceof Response) {
-			$descriptor = self::getClassDescriptor($this);
-			$response->meta->viewClass = $descriptor->viewClass;
-			$response->meta->viewPrefix = $descriptor->viewPrefix;
-			$response->meta->viewName = $methodName;
-			return $response;
-		} else {
-			return new BadRequestResponse($request);
+
+		if(!$response instanceof Response) {
+			Library::import('recess.http.responses.OkResponse');
+			$response = new OkResponse($this->request);
 		}
+		
+		$descriptor = self::getClassDescriptor($this);
+		if(!isset($response->meta->viewName)) $response->meta->viewName = $methodName;
+		$response->meta->viewClass = $descriptor->viewClass;
+		$response->meta->viewPrefix = $descriptor->viewPrefix;
+		$response->data = get_object_vars($this);
+		if(is_array($this->headers)) { foreach($this->headers as $header) $response->addHeader($header); }
+		
+		return $response;
 	}
-	
+
 	private function getCallArgumentsAssociative($parameters, $arguments) {
 		$callArgs = array();
 		foreach($parameters as $parameter) {
@@ -129,7 +129,7 @@ abstract class Controller extends RecessClass {
 		}
 		return $callArgs;
 	}
-	
+
 	private function getCallArgumentsSequential($parameters, $arguments) {
 		$callArgs = array();
 		$parameterCount = count($parameters);
@@ -144,10 +144,25 @@ abstract class Controller extends RecessClass {
 		}
 		return $callArgs;
 	}
-	
-	protected function ok() {
-		return new OkResponse($this->request, $this->data);
+
+	protected function ok($viewName = null) {
+		Library::import('recess.http.responses.OkResponse');
+		$response = new OkResponse($this->request);
+		if(isset($viewName)) $response->meta->viewName = $viewName;
+		return $response;
 	}
 	
+	protected function created($resourceUri, $contentUri = '') {
+		Library::import('recess.http.responses.CreatedResponse');
+		if($contentUri == '') $contentUri = $resourceUri;
+		return new CreatedResponse($this->request, $resourceUri, $contentUri);
+	}
 }
+
+class ControllerDescriptor extends RecessClassDescriptor {
+	public $routes;
+	public $viewClass = 'recess.framework.views.NativeView';
+	public $viewPrefix = '';
+}
+
 ?>

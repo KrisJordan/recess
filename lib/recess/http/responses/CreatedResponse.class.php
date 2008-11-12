@@ -1,13 +1,14 @@
 <?php
-
-Library::import('recess.http.Response');
+Library::import('recess.http.ForwardingResponse');
 Library::import('recess.http.ResponseCodes');
 
-class CreatedResponse extends Response {
-	public function __construct(Request $request, $resource_uri) {
-		parent::__construct($request, ResponseCodes::HTTP_CREATED, ResponseCodes::getMessageForCode(ResponseCodes::HTTP_CREATED));
-		$this->addHeader('Location: http://localhost' . $resource_uri);
-	}
-}
+class CreatedResponse extends ForwardingResponse {
 
+	public function __construct(Request $request, $resourceUri, $contentUri = null) {
+		if(!isset($contentUri)) $contentUri = $resourceUri;
+		parent::__construct($request, ResponseCodes::HTTP_CREATED, $contentUri);
+		$this->addHeader('Location: http://localhost' . $resourceUri); // TODO: This should not reference localhost!
+	}
+	
+}
 ?>

@@ -5,6 +5,8 @@ class FrontEndApplication extends Application {
 	
 	public $controllersPrefix = 'frontend.controllers.';
 	
+	public $viewsDir = 'frontend/views/';
+	
 	public $routingPrefix = '';
 	
 }

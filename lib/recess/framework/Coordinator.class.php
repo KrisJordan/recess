@@ -1,6 +1,7 @@
 <?php
 Library::import('Config');
 
+Library::import('recess.http.ForwardingResponse');
 /**
  * Entry into Recess! Framework occurs in the coordinator. It is responsible
  * for the flow of control from preprocessing of request data, the serving of a request
@@ -36,6 +37,13 @@ final class Coordinator {
 		$view = $pluggedPolicy->getViewFor($response);
 		
 		$view->respondWith($response);
+		
+		if($response instanceof ForwardingResponse) {
+			$forwardRequest = new Request();
+			$forwardRequest->setResource($response->forwardUri);
+			$forwardRequest->method = Methods::GET;
+			Coordinator::main($forwardRequest, $policy, $apps, $routes, $plugins);
+		}
 		
 		// $pluggedPolicy->end();
 		

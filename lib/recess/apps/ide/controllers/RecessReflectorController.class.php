@@ -1,10 +1,11 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
-Library::import('app.controllers.RouteAnnotation', true);
 Library::import('recess.http.responses.NotFoundResponse');
-Library::import('recess.framework.ResponseData');
 Library::import('recess.http.responses.OkResponse');
 
+/**
+ * !View Smarty, Prefix: reflector/
+ */
 class RecessReflectorController extends Controller {
 	/** !Route GET, reflector/ */
 	public function home() {
@@ -25,18 +26,12 @@ class RecessReflectorController extends Controller {
 		$model = Library::getClassName($fullyQualifiedModel);
 		$reflection = new RecessReflectionClass($model);
 		
-		$data = new stdclass;
-		$data->reflection = $reflection;
-		$data->relationships = Model::getRelationships($model);
-		$data->columns = Model::getColumns($model);
-		$data->table = Model::tableFor($model);
+		$this->reflection = $reflection;
+		$this->relationships = Model::getRelationships($model);
+		$this->columns = Model::getColumns($model);
+		$this->table = Model::tableFor($model);
 		
 		return $this->ok();
-		
-//		$response = new OkResponse($this->request, $data);
-//		$response->meta->app = new RecessIdeApplication();
-//		$response->meta->viewName = 'reflector/model';
-//		return $response;
 	}
 	
 }

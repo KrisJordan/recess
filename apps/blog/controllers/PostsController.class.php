@@ -42,6 +42,16 @@ class PostsController extends Controller {
 		
 	}
 	
+	/** !Route GET, comment/$commentId/delete/ */
+	function deleteComment($commentId) {
+		$comment = new Comment();
+		$comment->id = $commentId;
+		$post = $comment->post();
+		$comment->delete();
+		Library::import('recess.http.ForwardingResponse');
+		return $this->forwardOk('/blog/comments/' . $post->id);
+	}
+	
 }
 
 ?>

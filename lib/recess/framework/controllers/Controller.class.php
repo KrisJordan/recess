@@ -152,6 +152,11 @@ abstract class Controller extends RecessClass {
 		return $response;
 	}
 	
+	protected function forwardOk($forwardedUri) {
+		Library::import('recess.http.responses.ForwardingOkResponse');
+		return new ForwardingOkResponse($this->request, $forwardedUri);
+	}
+	
 	protected function created($resourceUri, $contentUri = '') {
 		Library::import('recess.http.responses.CreatedResponse');
 		if($contentUri == '') $contentUri = $resourceUri;

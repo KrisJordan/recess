@@ -1,5 +1,4 @@
 <?php
-
 Library::import('recess.http.responses.ErrorResponse');
 Library::import('recess.http.ResponseCodes');
 

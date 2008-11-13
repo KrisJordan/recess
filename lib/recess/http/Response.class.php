@@ -1,5 +1,4 @@
 <?php
-
 Library::import('recess.http.Request');
 Library::import('recess.http.Cookie');
 
@@ -31,5 +30,4 @@ class Response {
 		$this->headers[] = $header;
 	}
 }
-
 ?>

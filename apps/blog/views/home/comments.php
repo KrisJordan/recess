@@ -12,7 +12,7 @@ echo '<h2>' . $post->title . '</h2>';
 
 foreach($comments as $comment) {
 	
-	echo '<p>' . $comment->comment . '</p>';
+	echo '<p><a href="/blog/comment/' . $comment->id . '/delete/">X</a> ' . $comment->comment . '</p>';
 	
 	echo '<hr />';
 	

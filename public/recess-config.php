@@ -4,7 +4,7 @@
 
 Config::$mode = Config::DEVELOPMENT;
 
-Config::$useTurboSpeed = true; // Do you want to go fast?
+Config::$useTurboSpeed = false; // I wanna go FAST!
 
 Config::$cacheProviders 
 	= array(	'Apc',
@@ -13,8 +13,8 @@ Config::$cacheProviders
 			);
 
 Config::$applications 
-	= array(	// 'frontend.FrontEndApplication',
-				// 'backend.BackEndApplication',
+	= array(	'frontend.FrontEndApplication',
+				'backend.BackEndApplication',
 				'recess.apps.ide.RecessIdeApplication',
 				'blog.BlogApplication'
 			);
@@ -71,6 +71,7 @@ abstract class Config {
 				$provider = $provider . 'CacheProvider';
 				Cache::reportsTo(new $provider);
 			}
+			Cache::clear();
 		}
 		
 		if(isset(self::$settings['dir.temp'])) {
@@ -97,6 +98,7 @@ abstract class Config {
 		Library::addClassPath(self::$settings['dir.apps']);
 		
 		// TODO: GET RID OF THIS
+		Library::import('recess.framework.Application');
 		self::$applications = array_map(create_function('$class','return Library::importAndInstantiate($class);'),Config::$applications);
 		
 		Library::import('recess.sources.db.DbSources');

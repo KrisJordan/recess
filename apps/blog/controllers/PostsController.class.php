@@ -1,10 +1,6 @@
 <?php
 
-Library::import('blog.models.Post');
-Library::import('blog.models.Comment');
-
-/** !View Native, Prefix: home/
-*/
+/** !View Native, Prefix: home/ */
 class PostsController extends Controller {
 	
 	/** !Route GET, /blog/ */
@@ -14,6 +10,13 @@ class PostsController extends Controller {
 		
 	}
 	
+	/** !Route GET, posts */
+	function listPosts() {
+		
+		echo 'hello world!';
+		
+	}
+
 	/** !Route GET, alpha/ */
 	function alphabetical() {
 		

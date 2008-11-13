@@ -12,6 +12,11 @@ class RecessReflectorController extends Controller {
 		echo 'ROUTED home';
 	}
 	
+	/** !Route GET, reflector/model/$model */
+	function showModel($model) {
+		
+	}
+	
 	/** !Route GET, reflector/package/$package */
 	public function package($package) {
 		echo 'package/' . $package; exit;

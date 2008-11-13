@@ -7,7 +7,7 @@ Config::$mode = Config::DEVELOPMENT;
 Config::$useTurboSpeed = false; // I wanna go FAST!
 
 Config::$cacheProviders 
-	= array(	'Apc',
+	= array(	// 'Apc',
 				// 'Memcache',
 				// 'Disk'
 			);
@@ -16,7 +16,8 @@ Config::$applications
 	= array(	'frontend.FrontEndApplication',
 				'backend.BackEndApplication',
 				'recess.apps.ide.RecessIdeApplication',
-				'blog.BlogApplication'
+				'blog.BlogApplication',
+				'nuevo.NuevoBlogApplication'
 			);
 
 //Config::$plugins 

@@ -72,7 +72,7 @@ class RoutingNode {
 			}
 			return;
 		}
-		
+
 		$nextPart = $pathParts[$index];
 		
 		if($nextPart[0] != '$') {

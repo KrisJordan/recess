@@ -10,8 +10,7 @@ class PostsController extends Controller {
 	/** !Route GET, /blog/ */
 	function home() {
 
-		// $this->latestPosts = Make::a('Post')->find()->orderBy('id DESC')->range(0,5);
-		$this->latestPosts = array();
+		$this->latestPosts = Make::a('Post')->find()->orderBy('id DESC')->range(0,5);
 		
 	}
 	
@@ -27,7 +26,8 @@ class PostsController extends Controller {
 	/** !Route GET, comments/$postId */
 	function comments($postId) {
 		
-		$this->comments = Make::a('Post')->equal('id',$postId)->comments();
+		$this->post = Make::a('Post')->equal('id',$postId)->first();
+		$this->comments = $this->post->comments();
 		
 	}
 	

@@ -1,8 +1,5 @@
 <?php
-Library::import('recess.lang.Annotation');
 Library::import('recess.lang.RecessClass');
-Library::import('recess.lang.RecessReflectionMethod');
-Library::import('recess.lang.RecessReflectionProperty');
 
 /**
  * Recess! Framework reflection for class which introduces annotations.
@@ -24,6 +21,7 @@ Library::import('recess.lang.RecessReflectionProperty');
  */
 class RecessReflectionClass extends ReflectionClass {
 	function getProperties() {
+		Library::import('recess.lang.RecessReflectionProperty');
 		$rawProperties = parent::getProperties();
 		$properties = array();
 		foreach($rawProperties as $rawProperty) {
@@ -32,19 +30,21 @@ class RecessReflectionClass extends ReflectionClass {
 		return $properties;
 	}
 	function getMethods($getAttachedMethods = true){
+		Library::import('recess.lang.RecessReflectionMethod');
 		$rawMethods = parent::getMethods();
 		$methods = array();
 		foreach($rawMethods as $rawMethod) {
 			$method = new RecessReflectionMethod($this->name, $rawMethod->name);
 			$methods[] = $method;
 		}
-		if($getAttachedMethods && $this->isSubclassOf('RecessClass')) {
+		if($getAttachedMethods && $this instanceof RecessClass) {
 			// $attachedMethods = RecessClass::getAttachedMethods($this->name);
 			$methods = array_merge($methods, RecessClass::getAttachedMethods($this->name));
 		}
 		return $methods;
 	}
 	function getAnnotations() {
+		Library::import('recess.lang.Annotation');
 		$docstring = $this->getDocComment();
 		if($docstring == '') return array();
 		else {

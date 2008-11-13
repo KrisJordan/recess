@@ -52,7 +52,8 @@ class Library {
 	}
 	
 	static function namedRunMissed($class) {
-		self::$namedRuns[self::$namedRun][] = $class;
+		if($class != 'Smarty')
+			self::$namedRuns[self::$namedRun][] = $class;
 	}
 	
 	static function persistNamedRuns() {
@@ -70,15 +71,14 @@ class Library {
 				$file = fopen($namedRunFile,'w');
 			}
 			
-				echo $namedRun;
 			foreach($missedClasses as $class) {
 				$classInfo = self::$classesByClass[$class];
 				$fullName = $classInfo[self::NAME];
 				$path = self::$paths[$classInfo[self::PATH]];
 				$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
 				$classFile = $path . $fileName;
-				// $code = php_strip_whitespace($classFile);
-				$code = preg_replace('/\nLibrary::import\(.*/','',file_get_contents($classFile));
+				$code = file_get_contents($classFile);
+				// $code = preg_replace('/\nLibrary::import\(.*/','',file_get_contents($classFile));
 				fwrite($file, $code);
 			}
 			
@@ -221,7 +221,7 @@ class Library {
 		
 		$lastDotPosition = strrpos($fullName, self::dotSeparator);
 		if($lastDotPosition === false) {
-			self::$classNames[$fullName] = $fullName;
+			self::$classesByFull[$fullName] = $fullName;
 			return $fullName;
 		} else {
 			$className = substr($fullName, $lastDotPosition + 1);

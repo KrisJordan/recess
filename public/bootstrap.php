@@ -13,6 +13,10 @@ unset($file);
 
 require_once('./recess-config.php');
 
+Library::import('recess.diagnostics.Diagnostics');
+set_error_handler('Diagnostics::handleError', E_ALL);
+set_exception_handler('Diagnostics::handleException');
+
 Library::import('recess.framework.Coordinator');
 Library::import('recess.http.Environment');
 Coordinator::main(Environment::getRawRequest(), Config::$policy, Config::$applications, Config::getRouter(), Config::$plugins);

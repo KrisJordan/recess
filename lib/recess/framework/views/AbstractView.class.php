@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.http.Resposne');
+Library::import('recess.http.Response');
 Library::import('recess.lang.RecessClass');
 
 /**

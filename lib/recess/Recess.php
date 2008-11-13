@@ -10,8 +10,4 @@ unset($file);
 
 require_once($_ENV['dir.recess'] . 'lang/Library.class.php');
 Library::addClassPath($_ENV['dir.lib']);
-
-Library::import('recess.diagnostics.Diagnostics');
-set_error_handler('Diagnostics::handleError', E_ALL);
-set_exception_handler('Diagnostics::handleException');
 ?>

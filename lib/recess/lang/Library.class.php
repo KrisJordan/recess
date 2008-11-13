@@ -28,9 +28,63 @@ class Library {
 	const CLASSES_X_CLASS_CACHE_KEY = 'Library::$classesByClass';
 	const CLASSES_X_FULL_CACHE_KEY = 'Library::$classesByFull';
 	const PATHS_CACHE_KEY = 'Library::$paths';
+	const NAMED_DIRS_PATH = 'namedRuns/';
+	const PHP_EXTENSION = '.php';
 	
 	const NAME = 0;
 	const PATH = 1;
+	
+	static public $useNamedRuns = false;
+	static private $namedRun;
+	static private $namedRuns = array();
+	static private $inNamedRunImport = false;
+	
+	static function beginNamedRun($name) {
+		if(!self::$useNamedRuns || !isset($_ENV['dir.temp'])) return;
+		$namedRunFile = $_ENV['dir.temp'] . self::NAMED_DIRS_PATH . $name . self::PHP_EXTENSION;
+		if(file_exists($namedRunFile)) {
+			self::$inNamedRunImport = true;
+			include_once($namedRunFile);
+			self::$inNamedRunImport = false;
+		}
+		self::$namedRun = $name;
+		self::$namedRuns[$name] = array();
+	}
+	
+	static function namedRunMissed($class) {
+		self::$namedRuns[self::$namedRun][] = $class;
+	}
+	
+	static function persistNamedRuns() {
+		if(!isset($_ENV['dir.temp'])) return;
+		$tempDir = $_ENV['dir.temp'];
+		foreach(self::$namedRuns as $namedRun => $missedClasses) {
+			$namedRunDir = $_ENV['dir.temp'] . self::NAMED_DIRS_PATH;
+			$namedRunFile = $namedRunDir . $namedRun . self::PHP_EXTENSION;
+			if(file_exists($namedRunFile)) { // append to
+				$file = fopen($namedRunFile,'a');
+			} else {
+				if(!file_exists($namedRunDir)) {
+					mkdir($namedRunDir);
+				}
+				$file = fopen($namedRunFile,'w');
+			}
+			
+				echo $namedRun;
+			foreach($missedClasses as $class) {
+				$classInfo = self::$classesByClass[$class];
+				$fullName = $classInfo[self::NAME];
+				$path = self::$paths[$classInfo[self::PATH]];
+				$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+				$classFile = $path . $fileName;
+				// $code = php_strip_whitespace($classFile);
+				$code = preg_replace('/\nLibrary::import\(.*/','',file_get_contents($classFile));
+				fwrite($file, $code);
+			}
+			
+			fclose($file);
+		}
+	}
 	
 	static function init() {		
 		$paths = Cache::get(self::PATHS_CACHE_KEY);
@@ -55,6 +109,8 @@ class Library {
 			Cache::set(self::CLASSES_X_CLASS_CACHE_KEY, self::$classesByClass);
 			Cache::set(self::CLASSES_X_FULL_CACHE_KEY, self::$classesByFull);
 		}
+		
+		self::persistNamedRuns();
 	}
 	
 	static function addClassPath($newPath) {
@@ -108,12 +164,16 @@ class Library {
 		}
 		
 		$class = self::$classesByFull[$fullName];
+		
+		if(class_exists($class, false)) return true;
+				
 		$pathIndex = self::$classesByClass[$class][self::PATH];
 		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
 		if($pathIndex == -1) {
 			foreach(self::$paths as $index => $path) {
 				@include_once($path . $file);
 				if(class_exists($class, false) || interface_exists($class, false)) {
+					if(isset(self::$namedRun)) { self::namedRunMissed($class); }
 					self::$dirtyClasses = true;
 					self::$classesByClass[$class][self::PATH] = $index;
 					self::$loaded[$class] = true;
@@ -126,25 +186,15 @@ class Library {
 			include_once($path);
 			self::$loaded[$class] = true;
 		}
+	
+		if(isset(self::$namedRun)) { self::namedRunMissed($class); }
+		
 		return class_exists($class, false) || interface_exists($class, false);
 	}
 	
-//	static function loadViaMemcache($className) {
-//		if(class_exists($className) || interface_exists($className)) return true;
-//		$code = self::$memcache->get('Recess::Library::' . $className);
-//		try {
-//			if($code != '') {
-//				eval($code);
-//				return class_exists($className, false) || interface_exists($className);
-//			} else {
-//				return false;
-//			}
-//		} catch(Exception $e) {
-//			return false;
-//		}
-//	}
-	
 	static function load($className) {
+		if(self::$inNamedRunImport) return;
+		
 		if(!isset(self::$loaded[$className])) {
 			throw new LibraryException($className . ' has not been imported.');
 		}

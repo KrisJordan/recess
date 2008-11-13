@@ -4,17 +4,17 @@
 
 Config::$mode = Config::DEVELOPMENT;
 
-Config::$useCache = false;
+Config::$useTurboSpeed = true; // Do you want to go fast?
 
 Config::$cacheProviders 
-	= array(	// 'Apc',
+	= array(	'Apc',
 				// 'Memcache',
-				'Disk'
+				// 'Disk'
 			);
 
 Config::$applications 
-	= array(	'frontend.FrontEndApplication',
-				'backend.BackEndApplication',
+	= array(	// 'frontend.FrontEndApplication',
+				// 'backend.BackEndApplication',
 				'recess.apps.ide.RecessIdeApplication',
 				'blog.BlogApplication'
 			);
@@ -38,10 +38,6 @@ Config::$settings
 				'dir.apps' => $_ENV['dir.base'] . 'apps/'
 			);
 
-Library::import('recess.framework.DefaultPolicy');
-Config::$policy
-	= new DefaultPolicy();
-
 /* END OF BASIC CONFIGURATION SETTINGS */
 
 abstract class Config {
@@ -51,9 +47,9 @@ abstract class Config {
 	
 	public static $mode = self::DEPLOYMENT;
 	
-	public static $useCache = false;
+	public static $useTurboSpeed = false;
 	
-	public static $cacheProviders = array('Disk');
+	public static $cacheProviders = array();
 	
 	public static $applications = array();
 	
@@ -68,6 +64,14 @@ abstract class Config {
 	public static $policy;
 	
 	static function init() {
+		if(self::$useTurboSpeed) {
+			Library::$useNamedRuns = true;
+			$cacheProvidersReversed = array_reverse(self::$cacheProviders);
+			foreach($cacheProvidersReversed as $provider) {
+				$provider = $provider . 'CacheProvider';
+				Cache::reportsTo(new $provider);
+			}
+		}
 		
 		if(isset(self::$settings['dir.temp'])) {
 			$_ENV['dir.temp'] = self::$settings['dir.temp'];
@@ -87,27 +91,34 @@ abstract class Config {
 			$_ENV['dir.apps'] = $_ENV['dir.base'] . 'apps/';
 		}
 		
+		Library::init();
+		Library::beginNamedRun('recess');
+		
 		Library::addClassPath(self::$settings['dir.apps']);
 		
-		Config::$applications = array_map(create_function('$class','return Library::importAndInstantiate($class);'),Config::$applications);
+		// TODO: GET RID OF THIS
+		self::$applications = array_map(create_function('$class','return Library::importAndInstantiate($class);'),Config::$applications);
 		
 		Library::import('recess.sources.db.DbSources');
 		Library::import('recess.sources.db.orm.ModelDataSource');
 		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource[0]));
+		
+		Library::import('recess.framework.DefaultPolicy');
+		self::$policy = new DefaultPolicy();
 	}
 	
 	static function getRouter() {
 		Library::import('recess.framework.routing.RoutingNode');
 		Library::import('recess.framework.routing.Route');
-		//apc_delete('router');
-		//$router = apc_fetch('router');
-		//if($router === false) {
+
+		$router = Cache::get('router');
+		if($router === false) {
 			$router = new RoutingNode();
 			foreach(self::$applications as $app) {
 				$app->addRoutesToRouter($router);
 			}
-//			apc_store('router', $router);	
-//		}
+			Cache::set('router', $router);	
+		}
 
 		return $router;
 	}

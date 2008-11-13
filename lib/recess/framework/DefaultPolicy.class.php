@@ -105,6 +105,7 @@ class DefaultPolicy implements IPolicy {
 		$request->meta->controllerMethod = $routeResult->route->function;
 		$request->meta->controllerMethodArguments = $routeResult->arguments;
 		$request->meta->useAssociativeArguments = true;
+		Library::beginNamedRun($routeResult->route->class);
 		return Library::importAndInstantiate($routeResult->route->class);
 	}
 	
@@ -122,6 +123,7 @@ class DefaultPolicy implements IPolicy {
 				if($defaultAppKey !== false) {
 					$request->meta->controllerMethod = 'home';
 					$request->meta->app = $applications[$defaultAppKey];
+						Library::beginNamedRun('HomeController');
 					return $applications[$defaultAppKey]->getController('HomeController');
 				}
 				break;
@@ -130,12 +132,14 @@ class DefaultPolicy implements IPolicy {
 				if($appKey !== false) {
 					$request->meta->controllerMethod = 'home';
 					$request->meta->app = $applications[$appKey];
+						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
 					return $applications[$appKey]->getController('HomeController');
 				} else {
 					$defaultAppKey = array_search('',$prefixes);
 					if($defaultAppKey !== false) {
 						$request->meta->controllerMethod = 'home';
 						$request->meta->app = $applications[$defaultAppKey];
+						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
 						return $applications[$defaultAppKey]->getController($request->resourceParts[0] . 'Controller');
 					}
 				}
@@ -145,12 +149,14 @@ class DefaultPolicy implements IPolicy {
 				if($appKey !== false) {
 					$request->meta->controllerMethod = 'home';
 					$request->meta->app = $applications[$appKey];
+						Library::beginNamedRun($request->resourceParts[1] . 'Controller');
 					return $applications[$appKey]->getController($request->resourceParts[1] . 'Controller');
 				} else {
 					$defaultAppKey = array_search('',$prefixes);
 					if($defaultAppKey !== false) {
 						$request->meta->controllerMethod = $request->resourceParts[1];
 						$request->meta->app = $applications[$defaultAppKey];
+						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
 						return $applications[$defaultAppKey]->getController($request->resourceParts[0] . 'Controller');
 					}
 				}
@@ -161,6 +167,7 @@ class DefaultPolicy implements IPolicy {
 					$request->meta->controllerMethodArguments = array_slice($request->resourceParts,3);
 					$request->meta->controllerMethod = $request->resourceParts[2];
 					$request->meta->app = $applications[$appKey];
+					Library::beginNamedRun($request->resourceParts[1] . 'Controller');
 					return $applications[$appKey]->getController($request->resourceParts[1] . 'Controller');
 				} else {
 					$defaultAppKey = array_search('',$prefixes);
@@ -168,6 +175,7 @@ class DefaultPolicy implements IPolicy {
 						$request->meta->controllerMethodArguments = array_slice($request->resourceParts,2);
 						$request->meta->controllerMethod = $request->resourceParts[1];
 						$request->meta->app = $applications[$defaultAppKey];
+						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
 						return $applications[$defaultAppKey]->getController($request->resourceParts[0] . 'Controller');
 					}
 				}

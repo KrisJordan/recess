@@ -23,7 +23,7 @@ Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
 abstract class Model extends RecessClass implements ISqlConditions {
 	
 	static function sourceFor($class) {
-		return self::getClassDescriptor($class)->source;
+		return self::getClassDescriptor($class)->getSource();
 	}
 	
 	static function tableFor($class) {
@@ -95,7 +95,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 
 	protected function getModelSet() {
 		$thisClassDescriptor = self::getClassDescriptor($this);
-		$result = $thisClassDescriptor->source->selectModelSet($thisClassDescriptor->table);
+		$result = $thisClassDescriptor->getSource()->selectModelSet($thisClassDescriptor->table);
 		foreach($this as $column => $value) {
 			if(isset($this->$column) && in_array($column,$thisClassDescriptor->columns)) {
 				$result = $result->assign($column, $value);
@@ -135,7 +135,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor, false);
 		
-		return $thisClassDescriptor->source->executeStatement($sqlBuilder->delete(), $sqlBuilder->getPdoArguments());	
+		return $thisClassDescriptor->getSource()->executeStatement($sqlBuilder->delete(), $sqlBuilder->getPdoArguments());	
 	}
 	
 	function insert() {
@@ -143,10 +143,10 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor);
 		
-	 	$result = $thisClassDescriptor->source->executeStatement($sqlBuilder->insert(), $sqlBuilder->getPdoArguments());
+	 	$result = $thisClassDescriptor->getSource()->executeStatement($sqlBuilder->insert(), $sqlBuilder->getPdoArguments());
 	 	
 	 	$primaryKey = $thisClassDescriptor->primaryKey;
-	 	$this->$primaryKey = $thisClassDescriptor->source->lastInsertId();
+	 	$this->$primaryKey = $thisClassDescriptor->getSource()->lastInsertId();
 	 	
 	 	return $result;
 	}
@@ -158,7 +158,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		$primaryKey = $thisClassDescriptor->primaryKey;
 		$sqlBuilder->equal($thisClassDescriptor->primaryKey, $this->$primaryKey);
 		
-		return $thisClassDescriptor->source->executeStatement($sqlBuilder->update(), $sqlBuilder->getPdoArguments());
+		return $thisClassDescriptor->getSource()->executeStatement($sqlBuilder->update(), $sqlBuilder->getPdoArguments());
 	}
 	
 	function save()   {
@@ -226,10 +226,18 @@ class ModelDescriptor extends RecessClassDescriptor {
 	function __construct($class) {
 		$this->table = Inflector::toPlural(Inflector::toUnderscores($class));
 		$this->relationships = array();
-		$this->source = DbSources::getDefaultSource();
-		$this->columns = $this->source->getColumns($this->table);
+		$this->source = false;
+		$this->columns = $this->getSource()->getColumns($this->table);
 		$this->primaryKeyColumn = 'id';
 		$this->modelClass = $class;
+	}
+	
+	function getSource() {
+		if(!$this->source) {
+			return DbSources::getDefaultSource();
+		} else {
+			return DbSources::getSource($this->source);
+		}
 	}
 }
 ?>

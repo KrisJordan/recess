@@ -13,33 +13,72 @@ require_once($_ENV['dir.recess'] . 'cache/Cache.class.php');
  * @todo Allow framework to register packages/shortcuts? i.e.: Library::import('recess.framework.models.Model') vs. Library::import('recess','Model')
  */
 class Library {
+	static private $classesByClass = array();	// = array( 'Inflector' => array( 'recess.lang.Inflector', 0 );
+	static private $classesByFull = array();	// = 'recess.lang.Inflector'
+	static private $dirtyClasses = false;
+	
 	static private $paths = array();
-	static private $classNames = array('recess.lang.Library' => 'Library');
+	static private $dirtyPaths = false;
+	
 	static private $loaded = array('Libary' => true);
-	static public $memcache = false;
-	static private $use_memcache = false;
 	
 	const dotSeparator = '.';
 	const pathSeparator = '/';
 	
-	static function init() {
-		if(self::$use_memcache && class_exists('Memcache')) {
-			self::$memcache = new Memcache();
-			self::$memcache->connect('localhost', 11211);
+	const CLASSES_X_CLASS_CACHE_KEY = 'Library::$classesByClass';
+	const CLASSES_X_FULL_CACHE_KEY = 'Library::$classesByFull';
+	const PATHS_CACHE_KEY = 'Library::$paths';
+	
+	const NAME = 0;
+	const PATH = 1;
+	
+	static function init() {		
+		$paths = Cache::get(self::PATHS_CACHE_KEY);
+		if($paths !== false) self::$paths = $paths;
+		
+		$classesByClass = Cache::get(self::CLASSES_X_CLASS_CACHE_KEY);
+		if($classesByClass !== false) self::$classesByClass = $classesByClass;
+		
+		$classesByFull = Cache::get(self::CLASSES_X_FULL_CACHE_KEY);
+		if($classesByFull !== false) self::$classesByFull = $classesByFull;
+		
+		self::$dirtyPaths = false;
+		self::$dirtyClasses = false;
+	}
+	
+	static function shutdown() {
+		if(self::$dirtyPaths) {
+			Cache::set(self::PATHS_CACHE_KEY, self::$paths);
+		}
+		
+		if(self::$dirtyClasses) {
+			Cache::set(self::CLASSES_X_CLASS_CACHE_KEY, self::$classesByClass);
+			Cache::set(self::CLASSES_X_FULL_CACHE_KEY, self::$classesByFull);
 		}
 	}
 	
-	static function addClassPath($newPath) { 
+	static function addClassPath($newPath) {
 		if(!in_array($newPath, self::$paths)) {
 			self::$paths[] = $newPath;
+			self::$dirtyPaths = true;
 		}
 	}
 	
-	static function import($fullyQualifiedClassName, $forceLoad = false) {
-		$className = self::getClassName($fullyQualifiedClassName);
+	static function addClass($fullName) {
+		$className = self::getClassName($fullName);
+		self::$classesByFull[$fullName] = $className;
+		self::$classesByClass[$className] = array( $fullName, -1 );
+	}
+	
+	static function import($fullName, $forceLoad = false) {
+		if(!isset(self::$classesByFull[$fullName])) {
+			self::addClass($fullName);
+		}
+		
+		$className = self::$classesByFull[$fullName];
 	
 		if(!isset(self::$loaded[$className])) {
-			self::$loaded[$className] = $fullyQualifiedClassName;
+			self::$loaded[$className] = false;
 		}
 		
 		if($forceLoad) {
@@ -47,63 +86,73 @@ class Library {
 		}
 	}
 	
-	static function importAndInstantiate($fullyQualifiedClassName) {
-		$className = self::getClassName($fullyQualifiedClassName);
+	static function importAndInstantiate($fullName) {
+		// TODO: REDUCE DUPLICATION WITH IMPORT
+		if(isset(self::$classesByFull[$fullName])) {
+			$className = self::$classesByFull[$fullName];
+		} else {
+			$className = self::getClassName($fullName);
+			self::addClass($fullName, $className);
+		}
 	
 		if(!isset(self::$loaded[$className])) {
-			self::$loaded[$className] = $fullyQualifiedClassName;
+			self::$loaded[$className] = false;
 		}
 		
 		return new $className;
 	}
 	
-	static function classExists($fullyQualifiedClassName) {
-		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullyQualifiedClassName) . '.class.php';
-		$className = self::getClassName($fullyQualifiedClassName);
-		foreach(self::$paths as $path) {
-			@include_once($path . $file);
-			if(class_exists($className, false) || interface_exists($className, false)) {
-				return true;
-			}
+	static function classExists($fullName) {
+		if(!isset(self::$classesByFull[$fullName])) {
+			self::addClass($fullName);
 		}
-		return false;
+		
+		$class = self::$classesByFull[$fullName];
+		$pathIndex = self::$classesByClass[$class][self::PATH];
+		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+		if($pathIndex == -1) {
+			foreach(self::$paths as $index => $path) {
+				@include_once($path . $file);
+				if(class_exists($class, false) || interface_exists($class, false)) {
+					self::$dirtyClasses = true;
+					self::$classesByClass[$class][self::PATH] = $index;
+					self::$loaded[$class] = true;
+					return true;
+				}
+			}
+			return false;
+		} else {
+			$path = self::$paths[$pathIndex] . $file;
+			include_once($path);
+			self::$loaded[$class] = true;
+		}
+		return class_exists($class, false) || interface_exists($class, false);
 	}
 	
-	static function loadViaMemcache($className) {
-		if(class_exists($className) || interface_exists($className)) return true;
-		$code = self::$memcache->get('Recess::Library::' . $className);
-		try {
-			if($code != '') {
-				eval($code);
-				return class_exists($className, false) || interface_exists($className);
-			} else {
-				return false;
-			}
-		} catch(Exception $e) {
-			return false;
-		}
-	}
+//	static function loadViaMemcache($className) {
+//		if(class_exists($className) || interface_exists($className)) return true;
+//		$code = self::$memcache->get('Recess::Library::' . $className);
+//		try {
+//			if($code != '') {
+//				eval($code);
+//				return class_exists($className, false) || interface_exists($className);
+//			} else {
+//				return false;
+//			}
+//		} catch(Exception $e) {
+//			return false;
+//		}
+//	}
 	
 	static function load($className) {
 		if(!isset(self::$loaded[$className])) {
 			throw new LibraryException($className . ' has not been imported.');
 		}
 		
-		$fullyQualifiedClassName = self::$loaded[$className];
-		
-		if($fullyQualifiedClassName === true)
-			return; // Class file has already been loaded, short circuit
-		
-		// try loading via memcache
-		if(self::$memcache) {
-			if(self::loadViaMemcache($className)) {
-				self::$loaded[$className] = true;
-				return;
-			}
-		}
+		if(self::$loaded[$className]) { return; }
 			
 		// Search through paths to find requested file
-		if(self::classExists($fullyQualifiedClassName)) {
+		if(class_exists($className, false) || self::classExists(self::$classesByClass[$className][self::NAME])) {
 			return;	
 		} else {
 			// Could not load the desired class
@@ -115,28 +164,27 @@ class Library {
 		}
 	}
 	
-	static function getClassName($fullyQualifiedClassName) {
-		if(isset(self::$classNames[$fullyQualifiedClassName])) {
-			return self::$classNames[$fullyQualifiedClassName];
+	static function getClassName($fullName) {
+		if(isset(self::$classesByFull[$fullName])) {
+			return self::$classesByFull[$fullName];
 		}
 		
-		$lastDotPosition = strrpos($fullyQualifiedClassName, self::dotSeparator);
+		$lastDotPosition = strrpos($fullName, self::dotSeparator);
 		if($lastDotPosition === false) {
-			self::$classNames[$fullyQualifiedClassName] = $fullyQualifiedClassName;
-			return $fullyQualifiedClassName;
+			self::$classNames[$fullName] = $fullName;
+			return $fullName;
 		} else {
-			$className = substr($fullyQualifiedClassName, $lastDotPosition + 1);
-			self::$classNames[$fullyQualifiedClassName] = $className;
+			$className = substr($fullName, $lastDotPosition + 1);
+			self::$classesByFull[$fullName] = $className;
 			return $className;
 		}
 	}
 	
 	static function getFullyQualifiedClassName($className) {
-		$fullyQualified = array_search($className, self::$classNames);
-		if($fullyQualified === false) {
-			return $className;
+		if(isset(self::$classesByClass[$className])) {
+			return self::$classesByClass[$className][self::NAME];
 		} else {
-			return $fullyQualified;
+			return $className;
 		}
 	}
 	
@@ -172,7 +220,7 @@ class Make {
 	static function an($class) { return new $class; }
 }
 
-Library::init();
+register_shutdown_function(array('Library','shutdown'));
 
 class LibraryException extends ErrorException {}
 

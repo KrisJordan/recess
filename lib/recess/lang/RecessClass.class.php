@@ -46,6 +46,7 @@ abstract class RecessClass extends StdClass {
 		}
 	}
 	
+	const RECESS_CLASS_KEY_PREFIX = 'RecessClass::desc::';
 	/**
 	 * Return the RecessClassInfo for provided RecessClass instance.
 	 *
@@ -59,15 +60,23 @@ abstract class RecessClass extends StdClass {
 			$class = $classNameOrInstance;
 		}
 		
-		if(isset(self::$descriptors[$class])) {
-			return self::$descriptors[$class];
-		} else {
-			if(is_subclass_of($class, __CLASS__)) {
-				return self::$descriptors[$class] = call_user_func(array($class, 'buildClassDescriptor'), $class);
+		if(!isset(self::$descriptors[$class])) {
+			$cache_key = self::RECESS_CLASS_KEY_PREFIX . $class;
+			$descriptor = Cache::get($cache_key);
+			if($descriptor === false) {
+				if(is_subclass_of($class, __CLASS__)) {
+					$descriptor = call_user_func(array($class, 'buildClassDescriptor'), $class);
+					Cache::set($cache_key, $descriptor);
+					self::$descriptors[$class] = $descriptor;
+				} else {
+					throw new RecessException('RecessClassRegistry only retains information on classes derived from RecessClass. Class of type "' . $class . '" given.', get_defined_vars());
+				}
 			} else {
-				throw new RecessException('RecessClassRegistry only retains information on classes derived from RecessClass. Class of type "' . $class . '" given.', get_defined_vars());
+				self::$descriptors[$class] = $descriptor;
 			}
 		}
+		
+		return self::$descriptors[$class];
 	}
 	
 	/**

@@ -1,5 +1,4 @@
 <?php
-Library::import('Config');
 
 Library::import('recess.http.ForwardingResponse');
 /**

@@ -7,6 +7,8 @@ Library::import('blog.models.Comment');
 */
 class PostsController extends Controller {
 	
+	protected $formats = array(Formats::xhtml, Formats::json);
+	
 	/** !Route GET, /blog/ */
 	function home() {
 

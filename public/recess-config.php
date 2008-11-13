@@ -4,7 +4,7 @@
 
 Config::$mode = Config::DEVELOPMENT;
 
-Config::$useTurboSpeed = false; // I wanna go FAST!
+Config::$useTurboSpeed = true; // I wanna go FAST!
 
 Config::$cacheProviders 
 	= array(	'Apc',

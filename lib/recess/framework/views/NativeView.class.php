@@ -12,6 +12,18 @@ class NativeView extends AbstractView {
 	 * @abstract 
 	 */
 	protected function render(Response $response) {
+		switch($response->request->format) {
+			case Formats::json:
+				foreach($response->data as $key => $value) {
+					if($value instanceof ModelSet) {
+						$response->data[$key] = $value->toArray();
+					}
+				}
+				print json_encode($response->data);
+				exit;
+			default:
+		}
+		
 		extract($response->data);
 		include_once($response->meta->viewDir . $response->meta->viewName . '.php');
 	}

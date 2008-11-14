@@ -3,6 +3,8 @@
 /** !View Native, Prefix: home/ */
 class PostsController extends Controller {
 	
+	protected $formats = array(Formats::xhtml, Formats::json);
+	
 	/** !Route GET, /blog/ */
 	function home() {
 

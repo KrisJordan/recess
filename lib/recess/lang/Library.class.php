@@ -41,14 +41,22 @@ class Library {
 	
 	static function beginNamedRun($name) {
 		if(!self::$useNamedRuns || !isset($_ENV['dir.temp'])) return;
+		
+		self::$namedRun = $name;
+		if(!isset(self::$namedRuns[$name])) {
+			self::$namedRuns[$name] = array();
+		} else {
+			if(!is_array(self::$namedRuns[$name])) {
+				self::$namedRuns[$name] = array();
+			}
+		}
+		
 		$namedRunFile = $_ENV['dir.temp'] . self::NAMED_DIRS_PATH . $name . self::PHP_EXTENSION;
 		if(file_exists($namedRunFile)) {
 			self::$inNamedRunImport = true;
 			include_once($namedRunFile);
 			self::$inNamedRunImport = false;
 		}
-		self::$namedRun = $name;
-		self::$namedRuns[$name] = array();
 	}
 	
 	static function namedRunMissed($class) {
@@ -56,33 +64,37 @@ class Library {
 			self::$namedRuns[self::$namedRun][] = $class;
 	}
 	
-	static function persistNamedRuns() {
+	static function persistNamedRuns() {		
 		if(!isset($_ENV['dir.temp'])) return;
 		$tempDir = $_ENV['dir.temp'];
 		foreach(self::$namedRuns as $namedRun => $missedClasses) {
 			$namedRunDir = $_ENV['dir.temp'] . self::NAMED_DIRS_PATH;
 			$namedRunFile = $namedRunDir . $namedRun . self::PHP_EXTENSION;
-			if(file_exists($namedRunFile)) { // append to
-				$file = fopen($namedRunFile,'a');
-			} else {
-				if(!file_exists($namedRunDir)) {
-					mkdir($namedRunDir);
+			
+			if(!empty($missedClasses)) {
+				if(file_exists($namedRunFile)) { // append to
+					$file = fopen($namedRunFile,'a');
+					echo 'here';
+				} else {
+					if(!file_exists($namedRunDir)) {
+						mkdir($namedRunDir);
+					}
+					$file = fopen($namedRunFile,'w');
 				}
-				$file = fopen($namedRunFile,'w');
+				
+				foreach($missedClasses as $class) {
+					$classInfo = self::$classesByClass[$class];
+					$fullName = $classInfo[self::NAME];
+					$path = self::$paths[$classInfo[self::PATH]];
+					$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+					$classFile = $path . $fileName;
+					$code = file_get_contents($classFile);
+					// $code = preg_replace('/\nLibrary::import\(.*/','',file_get_contents($classFile));
+					fwrite($file, $code);
+				}
+				
+				fclose($file);
 			}
-			
-			foreach($missedClasses as $class) {
-				$classInfo = self::$classesByClass[$class];
-				$fullName = $classInfo[self::NAME];
-				$path = self::$paths[$classInfo[self::PATH]];
-				$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
-				$classFile = $path . $fileName;
-				$code = file_get_contents($classFile);
-				// $code = preg_replace('/\nLibrary::import\(.*/','',file_get_contents($classFile));
-				fwrite($file, $code);
-			}
-			
-			fclose($file);
 		}
 	}
 	
@@ -98,9 +110,11 @@ class Library {
 		
 		self::$dirtyPaths = false;
 		self::$dirtyClasses = false;
+
 	}
 	
 	static function shutdown() {
+
 		if(self::$dirtyPaths) {
 			Cache::set(self::PATHS_CACHE_KEY, self::$paths);
 		}
@@ -109,7 +123,7 @@ class Library {
 			Cache::set(self::CLASSES_X_CLASS_CACHE_KEY, self::$classesByClass);
 			Cache::set(self::CLASSES_X_FULL_CACHE_KEY, self::$classesByFull);
 		}
-		
+
 		self::persistNamedRuns();
 	}
 	
@@ -166,7 +180,9 @@ class Library {
 		$class = self::$classesByFull[$fullName];
 		
 		if(class_exists($class, false)) return true;
-				
+		
+		echo $fullName . '<br />';
+		
 		$pathIndex = self::$classesByClass[$class][self::PATH];
 		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
 		if($pathIndex == -1) {

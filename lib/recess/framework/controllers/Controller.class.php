@@ -18,6 +18,9 @@ abstract class Controller extends RecessClass {
 	protected $request;
 	protected $headers;
 	
+	/** The formats/content-types which a controller responds to. */
+	protected $formats = array(Formats::xhtml);
+	
 	public static function getViewClass($class) {
 		return self::getClassDescriptor($class)->viewClass;
 	}
@@ -112,7 +115,9 @@ abstract class Controller extends RecessClass {
 		$response->meta->viewPrefix = $descriptor->viewPrefix;
 		$response->data = get_object_vars($this);
 		if(is_array($this->headers)) { foreach($this->headers as $header) $response->addHeader($header); }
-		
+		unset($response->data['request']);
+		unset($response->data['headers']);
+		unset($response->data['formats']);
 		return $response;
 	}
 

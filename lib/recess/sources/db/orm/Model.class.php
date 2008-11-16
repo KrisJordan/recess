@@ -55,6 +55,10 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		return self::getClassDescriptor($classOrInstance)->columns;
 	}
 	
+	static function getProperties($classOrInstance) {
+		return self::getClassDescriptor($classOrInstance)->properties;
+	}
+	
 	static protected function buildClassDescriptor($class) {
 		$descriptor = new ModelDescriptor($class);
 		
@@ -74,17 +78,22 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		$reflectedProperties = $reflection->getProperties();
 		$properties = array();
 		foreach($reflectedProperties as $reflectedProperty) {
-			$property = new ModelProperty();
-			$annotations = $reflectedProperty->getAnnotations();
-			foreach($annotations as $annotation) {
-				if($annotation instanceof ModelPropertyAnnotation) {
-					$annotation->massage($property);
+			if(!$reflectedProperty->isStatic() && $reflectedProperty->isPublic()) {
+				$property = new ModelProperty();
+				$property->name = $reflectedProperty->name;
+				$annotations = $reflectedProperty->getAnnotations();
+				foreach($annotations as $annotation) {
+					if($annotation instanceof ModelPropertyAnnotation) {
+						$annotation->massage($property);
+					}
+					if($annotation instanceof PrimaryKeyAnnotation) {
+						$descriptor->primaryKey = $reflectedProperty->name;
+					}
 				}
-				if($annotation instanceof PrimaryKeyAnnotation) {
-					$descriptor->primaryKey = $reflectedProperty->name;
-				}
+				$properties[] = $property;
 			}
 		}
+		$descriptor->properties = $properties;
 		
 		return $descriptor;
 	}
@@ -226,6 +235,7 @@ class ModelDescriptor extends RecessClassDescriptor {
 	function __construct($class) {
 		$this->table = Inflector::toPlural(Inflector::toUnderscores($class));
 		$this->relationships = array();
+		$this->properties = array();
 		$this->source = false;
 		$this->columns = $this->getSource()->getColumns($this->table);
 		$this->primaryKeyColumn = 'id';

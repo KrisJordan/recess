@@ -7,6 +7,7 @@ Library::import('recess.sources.db.orm.Model');
  * !BelongsTo package, Class: RecessReflectorPackage, ForeignKey: packageId
  * !BelongsTo parent, Class: RecessReflectorClass, ForeignKey: parentId
  * !Table classes
+ * !Source reflector
  */
 class RecessReflectorClass extends Model {
 	

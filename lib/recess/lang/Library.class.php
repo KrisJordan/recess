@@ -74,7 +74,6 @@ class Library {
 			if(!empty($missedClasses)) {
 				if(file_exists($namedRunFile)) { // append to
 					$file = fopen($namedRunFile,'a');
-					echo 'here';
 				} else {
 					if(!file_exists($namedRunDir)) {
 						mkdir($namedRunDir);
@@ -180,8 +179,6 @@ class Library {
 		$class = self::$classesByFull[$fullName];
 		
 		if(class_exists($class, false)) return true;
-		
-		echo $fullName . '<br />';
 		
 		$pathIndex = self::$classesByClass[$class][self::PATH];
 		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';

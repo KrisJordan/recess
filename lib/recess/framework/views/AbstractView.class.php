@@ -60,5 +60,7 @@ abstract class AbstractView extends RecessClass {
 	 * @abstract 
 	 */
 	protected abstract function render(Response $response);
+	
+	
 }
 ?>

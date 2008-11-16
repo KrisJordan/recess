@@ -8,17 +8,20 @@ class Diagnostics {
 		if($exception instanceof LibraryException) {
 			// Special Case for LibraryException to shift front value from stack
 			$trace = $exception->getTrace();
-			array_shift($trace);			
+			if(count($trace) > 0) 
+				array_shift($trace);
 			$exception = new RecessTraceException($exception->getMessage(), $trace);
 		}
 		
-		header('HTTP/1.1 ' . ResponseCodes::getMessageForCode(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR));
+		if(!headers_sent()) {
+			header('HTTP/1.1 ' . ResponseCodes::getMessageForCode(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR));
+		}
+		
 		include('output/exception_report.php');
 	}
 	
 	public static function handleError($errorNumber, $errorString, $errorFile, $errorLine, $errorContext) {
 		if(ini_get('error_reporting') == 0) return true;
-	
 		throw new RecessErrorException($errorString, 0, $errorNumber, $errorFile, $errorLine, $errorContext);
 	}
 }

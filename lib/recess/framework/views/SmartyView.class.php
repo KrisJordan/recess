@@ -7,13 +7,14 @@ class SmartyView extends AbstractView {
 	
 	public function __construct() {
 		Library::import('smarty.Smarty');
-		//Fetch Smarty object
+		
 		if($this->smarty !== ''){
 			$this->smarty = new Smarty();
 		}
 		
-		// $this->smarty->assign('base_url', Environment::$base_url);
 		$this->smarty->caching = 0;
+		$this->smarty->assign('url_base', $_ENV['url.base']);
+		$this->smarty->force_compile = Config::$mode == Config::DEVELOPMENT;
 	}
 	
 	public function setTemplateDir($template_dir) {
@@ -31,6 +32,11 @@ class SmartyView extends AbstractView {
 		
 		switch($response->request->format) {
 			case Formats::json:
+				foreach($response->data as $key => $value) {
+					if($value instanceof ModelSet) {
+						$response->data[$key] = $value->toArray();
+					}
+				}
 				print json_encode($response->data);
 				exit;
 			default:
@@ -48,7 +54,18 @@ class SmartyView extends AbstractView {
 			}
 		} catch(Exception $e) {}
 		
-		$this->smarty->display($this->smarty->template_dir . $response->meta->viewName . '.tpl');
+		try {
+			$this->smarty->display($this->smarty->template_dir . $response->meta->viewName . '.tpl');
+		} catch(Exception $e) {
+			//print_r($e); exit;
+			if(!file_exists($this->smarty->cache_dir)) {
+				mkdir($this->smarty->cache_dir,null,true);
+			}
+			if(!file_exists($this->smarty->compile_dir)) {
+				mkdir($this->smarty->compile_dir,null,true);
+			}
+			$this->smarty->display($this->smarty->template_dir . $response->meta->viewName . '.tpl');
+		}
 	}
 	
 }

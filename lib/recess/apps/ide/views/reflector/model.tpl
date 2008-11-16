@@ -1,3 +1,6 @@
+<html>
+<head><title>Model {$reflection->name}</title></head>
+<body>
 {assign var='parent' value=$reflection->getParentClass()}
 <h1>{$reflection->name} (extends {$parent->name})</h1>
 <div class="orm">
@@ -68,3 +71,5 @@
 	{/if}
 {/foreach}
 </ul>
+</body>
+</html>

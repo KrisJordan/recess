@@ -1,4 +1,7 @@
 <?php
+Library::import('blog.models.Post');
+Library::import('blog.models.Comment');
+
 
 /** !View Native, Prefix: home/ */
 class PostsController extends Controller {

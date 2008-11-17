@@ -31,7 +31,7 @@ class RoutingNodeTest extends UnitTestCase {
 	}
 	
 	function testFindOnSingleRoute() {
-		$this->node->addRoute($this->routes['MethodA']);
+		$this->node->addRoute('test', $this->routes['MethodA'], '');
 		$request = new Request();
 		$request->method = Methods::GET;
 		$request->setResource('/controller/methoda/');
@@ -41,7 +41,7 @@ class RoutingNodeTest extends UnitTestCase {
 	}
 	
 	function testFindFailOnSingleRoute() {
-		$this->node->addRoute($this->routes['MethodA']);
+		$this->node->addRoute('test', $this->routes['MethodA'], '');
 		$request = new Request();
 		$request->method = Methods::GET;
 		$request->setResource('/controller/methodb/');
@@ -58,7 +58,7 @@ class RoutingNodeTest extends UnitTestCase {
 	}
 	
 	function testFindFailOnMethodSingleRoute() {
-		$this->node->addRoute($this->routes['MethodA']);
+		$this->node->addRoute('test', $this->routes['MethodA'], '');
 		$request = new Request();
 		$request->method = Methods::POST;
 		$request->setResource('/controller/methoda/');

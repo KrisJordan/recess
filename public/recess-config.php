@@ -72,7 +72,6 @@ abstract class Config {
 				$provider = $provider . 'CacheProvider';
 				Cache::reportsTo(new $provider);
 			}
-			Cache::clear();
 		}
 		
 		if(isset(self::$settings['dir.temp'])) {

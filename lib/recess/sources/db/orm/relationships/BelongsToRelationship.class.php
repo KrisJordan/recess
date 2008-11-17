@@ -43,7 +43,7 @@ class BelongsToRelationship extends Relationship {
 	
 	function remove(Model $model) {		
 		$foreignKey = $this->foreignKey;
-		$model->$foreignKey = null;
+		$model->$foreignKey = '';
 		$model->save();
 		
 		return $model;
@@ -55,6 +55,7 @@ class BelongsToRelationship extends Relationship {
 					->innerJoin(Model::tableFor($this->localClass), 
 								Model::primaryKeyFor($this->foreignClass), 
 								Model::tableFor($this->localClass) . '.' . $this->foreignKey);
+								
 		$select->rowClass = $this->foreignClass;
 		return $select;
 	}

@@ -2,6 +2,7 @@
 Library::import('recess.lang.Inflector');
 Library::import('recess.lang.RecessClass');
 Library::import('recess.lang.RecessReflectionClass');
+Library::import('recess.lang.Annotation');
 
 Library::import('recess.sources.db.DbSources');
 Library::import('recess.sources.db.sql.ISqlConditions');
@@ -26,13 +27,17 @@ abstract class Model extends RecessClass implements ISqlConditions {
 		return self::getClassDescriptor($class)->getSource();
 	}
 	
+	static function sourceNameFor($class) {
+		return self::getClassDescriptor($class)->getSourceName();
+	}
+	
 	static function tableFor($class) {
-		return self::getClassDescriptor($class)->table;
+		return self::getClassDescriptor($class)->getTable();
 	}
 	
 	static function primaryKeyFor($class) {
 		$descriptor = self::getClassDescriptor($class);
-		return $descriptor->table . '.' . $descriptor->primaryKey;
+		return $descriptor->getTable() . '.' . $descriptor->primaryKey;
 	}
 	
 	static function primaryKeyName($class) {
@@ -104,7 +109,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 
 	protected function getModelSet() {
 		$thisClassDescriptor = self::getClassDescriptor($this);
-		$result = $thisClassDescriptor->getSource()->selectModelSet($thisClassDescriptor->table);
+		$result = $thisClassDescriptor->getSource()->selectModelSet($thisClassDescriptor->getTable());
 		foreach($this as $column => $value) {
 			if(isset($this->$column) && in_array($column,$thisClassDescriptor->columns)) {
 				$result = $result->assign($column, $value);
@@ -120,20 +125,21 @@ abstract class Model extends RecessClass implements ISqlConditions {
 	
 	protected function assignmentSqlForThisObject(ModelDescriptor $descriptor, $useAssignment = true, $excludePrimaryKey = false) {
 		$sqlBuilder = new SqlBuilder();
-		$sqlBuilder->from($descriptor->table);
+		$sqlBuilder->from($descriptor->getTable());
 		foreach($this as $column => $value) {
 			if($excludePrimaryKey && $descriptor->primaryKey == $column) continue;
-			if(in_array($column, $descriptor->columns)) {
-				if($useAssignment)
+			if(in_array($column, $descriptor->columns) && isset($value)) {
+				if($useAssignment) {
 					$sqlBuilder->assign($column,$value);
-				else
+				} else {
 					$sqlBuilder->equal($column,$value);
+				}
 			}
 		}
 		return $sqlBuilder;
 	}
 	
-	function delete($cascade = true) {		
+	function delete($cascade = true) {	
 		$thisClassDescriptor = self::getClassDescriptor($this);
 		
 		if($cascade) {
@@ -141,7 +147,7 @@ abstract class Model extends RecessClass implements ISqlConditions {
 				$relationship->delete($this);
 			}
 		}
-		
+			
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor, false);
 		
 		return $thisClassDescriptor->getSource()->executeStatement($sqlBuilder->delete(), $sqlBuilder->getPdoArguments());	
@@ -192,6 +198,16 @@ abstract class Model extends RecessClass implements ISqlConditions {
 
 	function find() { return $this->select(); }
 	
+	function exists() {
+		$result = $this->find()->first();
+		if($result != null) {
+			$this->copy($result);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	function equal($lhs, $rhs){ return $this->select()->equal($lhs,$rhs); }
 	function notEqual($lhs, $rhs) { return $this->select()->notEqual($lhs,$rhs); }
 	function between ($column, $lhs, $rhs) { return $this->select()->between($column, $lhs, $hrs); }
@@ -220,7 +236,7 @@ class ModelProperty {
 
 class ModelDescriptor extends RecessClassDescriptor {
 	public $primaryKey = 'id';
-	public $table;
+	private $table;
 	
 	public $modelClass;
 	public $relationships;
@@ -242,11 +258,28 @@ class ModelDescriptor extends RecessClassDescriptor {
 		$this->modelClass = $class;
 	}
 	
+	function setTable($table) {
+		$this->table = $table;
+		$this->columns = $this->getSource()->getColumns($this->table);
+	}
+	
+	function getTable() {
+		return $this->table;
+	}
+	
 	function getSource() {
 		if(!$this->source) {
 			return DbSources::getDefaultSource();
 		} else {
 			return DbSources::getSource($this->source);
+		}
+	}
+	
+	function getSourceName() {
+		if(!$this->source) {
+			return 'Default';
+		} else {
+			return $this->source;
 		}
 	}
 }

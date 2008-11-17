@@ -1,7 +1,7 @@
 <?php
 
-Library::import('recess.interfaces.IController');
-Library::import('recess.interfaces.IPlugin');
+Library::import('recess.framework.interfaces.IController');
+Library::import('recess.framework.interfaces.IPlugin');
 
 class PluggableController implements IController {
 	

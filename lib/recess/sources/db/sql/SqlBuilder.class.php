@@ -42,7 +42,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		$columns = '';
 		$values = '';
 		$first = true;
-		$table_prefix = $this->table . '.';
+		$table_prefix = $this->tableAsPrefix() . '.';
 		foreach($this->assignments as $assignment) {
 			if($first) { $first = false; }
 			else { $columns .= ', '; $values .= ', '; }
@@ -78,7 +78,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function assign($column, $value) { 
 		if(strpos($column, '.') === false) {
 			if(isset($this->table)) {
-				$this->assignments[] = new Criterion($this->table . '.' . $column, $value, Criterion::ASSIGNMENT); 
+				$this->assignments[] = new Criterion($this->tableAsPrefix() . '.' . $column, $value, Criterion::ASSIGNMENT); 
 			} else {
 				throw new RecessException('Cannot assign without specifying table.', get_defined_vars());
 			}
@@ -116,7 +116,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		$sql = 'UPDATE ' . $this->table . ' SET ';
 		
 		$first = true;
-		$table_prefix = $this->table . '.';
+		$table_prefix = $this->tableAsPrefix() . '.';
 		foreach($this->assignments as $assignment) {
 			if($first) { $first = false; }
 			else { $sql .= ', '; }
@@ -181,7 +181,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected function addCondition($column, $value, $operator) {
 		if(strpos($column, '.') === false) {
 			if(isset($this->table)) {
-				$this->conditions[] = new Criterion($this->table . '.' . $column, $value, $operator); 
+				$this->conditions[] = new Criterion($this->tableAsPrefix() . '.' . $column, $value, $operator); 
 			} else {
 				throw new RecessException('Cannot use "' . $operator . '" operator without specifying table for column "' . $column . '".', get_defined_vars());
 			}
@@ -198,6 +198,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected $offset;
 	protected $distinct;
 	protected $orderBy = array();
+	protected $usingAliases = false;
 	
 	public function select() {
 		$this->selectSanityCheck();
@@ -234,11 +235,21 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	
 	public function orderBy($clause) {
 		if(isset($this->table) && strpos($clause,'.') === false) {
-			$this->orderBy[] = $this->table . '.' . $clause; 
+			$this->orderBy[] = $this->tableAsPrefix() . '.' . $clause; 
 		} else {
 			$this->orderBy[] = $clause;
 		}
 		return $this; 
+	}
+	
+	protected function tableAsPrefix() {
+		if($this->usingAliases) {
+			$spacePos = strrpos($this->table, ' ');
+			if($spacePos !== false) {
+				return substr($this->table, $spacePos);
+			}
+		}
+		return $this->table;
 	}
 	
 	public function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) {
@@ -249,7 +260,23 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		return $this->join('', Join::INNER, $table, $tablePrimaryKey, $fromTableForeignKey);
 	}
 	protected function join($leftOrRight, $innerOrOuter, $table, $tablePrimaryKey, $fromTableForeignKey) {
-		$this->select = $this->table . '.*';
+		if($this->table == $table) {
+			$oldTable = $this->table;
+			$parts = split('__', $this->table);
+			$partsCount = count($parts);
+			if($partsCount > 0 && is_int($parts[$partsCount-1])) {
+				$number = $parts[$partsCount - 1] + 1;
+			} else {
+				$number = 2;
+			}
+			$tableAlias = $this->table . '__' . $number;
+			$this->table = $this->table . ' AS ' . $tableAlias;
+			$this->usingAliases = true;
+			
+			$tablePrimaryKey = str_replace($oldTable,$tableAlias,$tablePrimaryKey);			
+		}
+		
+		$this->select = $this->tableAsPrefix() . '.*';
 		$this->joins[] = new Join($leftOrRight, $innerOrOuter, $table, $tablePrimaryKey, $fromTableForeignKey);	
 		return $this;
 	}

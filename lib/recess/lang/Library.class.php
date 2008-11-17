@@ -213,7 +213,7 @@ class Library {
 		}
 		
 		if(self::$loaded[$className]) { return; }
-			
+		
 		// Search through paths to find requested file
 		if(class_exists($className, false) || self::classExists(self::$classesByClass[$className][self::NAME])) {
 			return;	
@@ -223,7 +223,7 @@ class Library {
 			foreach(self::$paths as $path) {
 				$paths .= $path . '<br />';				
 			}
-			throw new LibraryException('Library cannot find class "' . self::$loaded[$className] . '". Searched in: <br />' . $paths);
+			throw new LibraryException('Library cannot find class "' . self::$classesByClass[$className][self::NAME] . '". Searched in: <br />' . $paths);
 		}
 	}
 	
@@ -240,6 +240,14 @@ class Library {
 			$className = substr($fullName, $lastDotPosition + 1);
 			self::$classesByFull[$fullName] = $className;
 			return $className;
+		}
+	}
+	
+	static function getPackage($className) {
+		if(isset(self::$classesByClass[$className])) {
+			return str_replace('.' . $className, '', self::$classesByClass[$className][self::NAME]);
+		} else {
+			return '';
 		}
 	}
 	

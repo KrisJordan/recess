@@ -37,10 +37,11 @@ class RecessReflectionClass extends ReflectionClass {
 			$method = new RecessReflectionMethod($this->name, $rawMethod->name);
 			$methods[] = $method;
 		}
-		if($getAttachedMethods && $this instanceof RecessClass) {
-			// $attachedMethods = RecessClass::getAttachedMethods($this->name);
+		
+		if($getAttachedMethods && is_subclass_of($this->name, 'RecessClass')) {
 			$methods = array_merge($methods, RecessClass::getAttachedMethods($this->name));
 		}
+		
 		return $methods;
 	}
 	function getAnnotations() {

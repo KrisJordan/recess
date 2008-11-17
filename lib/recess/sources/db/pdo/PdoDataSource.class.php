@@ -84,6 +84,12 @@ class PdoDataSource extends PDO {
 		return $statement->execute();
 	}
 	
+	function explainStatement($statement, $arguments) {
+		$statement = $this->prepareStatement('EXPLAIN QUERY PLAN ' . $statement, $arguments);
+		$statement->execute();
+		return $statement->fetchAll();
+	}
+	
 	function prepareStatement($statement, $arguments) {
 		try {
 			$statement = $this->prepare($statement);

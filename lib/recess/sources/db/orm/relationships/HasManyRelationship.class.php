@@ -105,9 +105,10 @@ class HasManyRelationship extends Relationship {
 		
 		$select = $select	
 					->from(Model::tableFor($relatedClass))
-					->innerJoin(Model::tableFor($this->localClass), 
-								Model::primaryKeyFor($this->localClass), 
-								Model::tableFor($relatedClass) . '.' . $this->foreignKey);
+					->innerJoin(Model::tableFor($this->localClass),
+								Model::tableFor($relatedClass) . '.' . $this->foreignKey, 
+								Model::primaryKeyFor($this->localClass) 
+								);
 		$select->rowClass = $relatedClass;
 		
 		if(!isset($this->through)) {

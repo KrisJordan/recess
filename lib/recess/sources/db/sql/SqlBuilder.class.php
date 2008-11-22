@@ -299,7 +299,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			$assignments = $this->cleansedAssignmentsAsConditions();
 			foreach($assignments as $clause) {
 				if(!$first) { $sql .= ' AND '; } else { $first = false; } // TODO: Figure out how we'll do ORing
-				$sql .= $clause->column . ' == ' . $clause->getQueryParameter();
+				$sql .= $clause->column . ' = ' . $clause->getQueryParameter();
 			}
 		}
 		
@@ -367,7 +367,7 @@ class Criterion {
 	const LESS_THAN = '<';
 	const LESS_THAN_EQUAL_TO = '<=';
 	
-	const EQUAL_TO = '==';
+	const EQUAL_TO = ' = ';
 	const NOT_EQUAL_TO = '!=';
 	
 	const LIKE = 'LIKE';

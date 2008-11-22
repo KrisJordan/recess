@@ -35,7 +35,6 @@ abstract class RecessClass extends StdClass {
 		$classDescriptor = self::getClassDescriptor($this);
 		
 		$attachedMethod = $classDescriptor->getAttachedMethod($name);
-		
 		if($attachedMethod !== false) {
 			$object = $attachedMethod->object;
 			$method = $attachedMethod->method;
@@ -56,15 +55,18 @@ abstract class RecessClass extends StdClass {
 	final static protected function getClassDescriptor($classNameOrInstance) {
 		if($classNameOrInstance instanceof RecessClass) {
 			$class = get_class($classNameOrInstance);
+			$instance = $classNameOrInstance;
 		} else {
 			$class = $classNameOrInstance;
+			$instance = new $class;
 		}
 		
-		if(!isset(self::$descriptors[$class])) {
+		if(!isset(self::$descriptors[$class])) {		
 			$cache_key = self::RECESS_CLASS_KEY_PREFIX . $class;
 			$descriptor = Cache::get($cache_key);
-			if($descriptor === false) {
-				if(is_subclass_of($class, __CLASS__)) {
+			
+			if($descriptor === false) {				
+				if($instance instanceof RecessClass) {
 					$descriptor = call_user_func(array($class, 'buildClassDescriptor'), $class);
 					Cache::set($cache_key, $descriptor);
 					self::$descriptors[$class] = $descriptor;

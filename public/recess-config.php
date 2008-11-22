@@ -13,11 +13,8 @@ Config::$cacheProviders
 			);
 
 Config::$applications 
-	= array(	'frontend.FrontEndApplication',
-				'backend.BackEndApplication',
-				'recess.apps.ide.RecessIdeApplication',
-				'blog.BlogApplication',
-				'nuevo.NuevoBlogApplication'
+	= array(	'recess.apps.ide.RecessIdeApplication',
+				'blog.BlogApplication'
 			);
 
 //Config::$plugins 
@@ -25,8 +22,9 @@ Config::$applications
 //			);
 
 Config::$defaultDataSource 
-	= array(	'sqlite:' . $_ENV['dir.base'] . '/data/default.db'
-			);			
+	= array(	// 'sqlite:' . $_ENV['dir.base'] . '/data/default.db'
+				'mysql:host=localhost;dbname=recess', 'recess', 'recess'
+			);
 			
 //Config::$namedDataSources 
 //	= array( 	'name' => array('dsn'),
@@ -103,7 +101,7 @@ abstract class Config {
 		
 		Library::import('recess.sources.db.DbSources');
 		Library::import('recess.sources.db.orm.ModelDataSource');
-		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource[0]));
+		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource[0],Config::$defaultDataSource[1],Config::$defaultDataSource[2]));
 		
 		Library::import('recess.framework.DefaultPolicy');
 		self::$policy = new DefaultPolicy();

@@ -2,7 +2,6 @@
 Library::import('blog.models.Post');
 Library::import('blog.models.Comment');
 
-
 /** !View Native, Prefix: home/ */
 class PostsController extends Controller {
 	
@@ -15,19 +14,18 @@ class PostsController extends Controller {
 		
 	}
 	
-	/** !Route GET, posts */
-	function listPosts() {
+	/** !Route GET, new */
+	function newPost () { }
+	
+	/** !Route POST, new */
+	function createNewPost () {
 		
-		echo 'hello world!';
+		$post = new Post();
+		$post->copy($this->request->post);
+		$post->created = $post->modified = date( 'Y-m-d H:i:s', time() );
+		$post->save();
 		
-	}
-
-	/** !Route GET, alpha/ */
-	function alphabetical() {
-		
-		$this->latestPosts = Make::a('Post')->find()->orderBy('title')->range(0,5);
-		
-		return $this->ok('home');
+		return $this->created('/blog/posts/' . $post->id, '/blog/');
 		
 	}
 	

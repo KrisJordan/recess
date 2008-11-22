@@ -1,3 +1,8 @@
+<html>
+<head></head>
+<body>
+<h1>My Blog</h1>
+<a href="./new">Write New Post</a>
 <?php
 
 foreach($latestPosts as $post) {
@@ -7,8 +12,9 @@ foreach($latestPosts as $post) {
 	echo '<p>' . $post->body . '</p>';
 	
 	echo '<p><a href="comments/' . $post->id . '">' . $post->comments()->count() . ' Comments</a></p>';
-	
-	
+
 }
 
 ?>
+</body>
+</html>

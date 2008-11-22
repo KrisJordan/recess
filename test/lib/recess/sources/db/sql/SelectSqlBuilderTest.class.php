@@ -76,7 +76,7 @@ class SqlBuilderTest extends UnitTestCase  {
 	
 	function testLeftOuterJoin() {
 		$this->builder->from('authors')->equal('first_name', 'John')->from('books')->leftOuterJoin('authors','authors.id','books.author_id');
-		$expected = 'SELECT books.* FROM books LEFT OUTER JOIN authors ON authors.id = books.author_id WHERE authors.first_name == :authors_first_name';
+		$expected = 'SELECT books.* FROM books LEFT OUTER JOIN authors ON authors.id = books.author_id WHERE authors.first_name  =  :authors_first_name';
 		$this->assertEqual($this->builder->select(), $expected);
 	}
 	
@@ -88,7 +88,7 @@ class SqlBuilderTest extends UnitTestCase  {
 	
 	function testUpdate() {
 		$this->builder->table('authors')->equal('id',1)->assign('first_name','John');
-		$expected = 'UPDATE authors SET first_name = :assgn_authors_first_name WHERE authors.id == :authors_id';
+		$expected = 'UPDATE authors SET first_name = :assgn_authors_first_name WHERE authors.id  =  :authors_id';
 		$this->assertEqual($this->builder->update(),$expected);
 	}
 	
@@ -100,7 +100,7 @@ class SqlBuilderTest extends UnitTestCase  {
 
 	function testDeleteWhere() {
 		$this->builder->from('authors')->equal('id',1);
-		$expected = 'DELETE FROM authors WHERE authors.id == :authors_id';
+		$expected = 'DELETE FROM authors WHERE authors.id  =  :authors_id';
 		$this->assertEqual($this->builder->delete(), $expected);
 	}
 	

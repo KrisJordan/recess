@@ -52,14 +52,21 @@ function printObjectTable($var) {
 	print '<table class="classdetails">';
 	print '<thead class="subhead"><td>Member</td><td>Value</td></thead>';
 	$class = new ReflectionClass(get_class($var));
-	foreach($class->getProperties() as $property) {
-		if($property->isPublic()) {
-			print '<tr>';
-			print '<td>'; print $property->getName(); print '</td>';
-			print '<td>'; printValueOf($property->getValue($var)); print '</td>';
-			print '</tr>';
-		}
+	foreach(get_object_vars($var) as $key => $value) {
+		print '<tr>';
+		print '<td>'; print $key; print '</td>';
+		print '<td>'; printValueOf($value); print '</td>';
+		print '</tr>';
 	}
+	
+//	foreach($class->getProperties() as $property) {
+//		if($property->isPublic()) {
+//			print '<tr>';
+//			print '<td>'; print $property->getName(); print '</td>';
+//			print '<td>'; printValueOf($property->getValue($var)); print '</td>';
+//			print '</tr>';
+//		}
+//	}
 	print '</table>';
 }
 

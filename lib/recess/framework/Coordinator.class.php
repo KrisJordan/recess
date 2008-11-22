@@ -17,6 +17,9 @@ final class Coordinator {
 	 * @static 
 	 */
 	public static function main(Request $request, IPolicy $policy, array $apps, RoutingNode $routes, array $plugins = array()) {
+		static $callDepth = 0;
+		$callDepth++;
+		if($callDepth > 2) { echo 'too nested in main'; exit; }
 		
 		$pluggedPolicy = $policy;
 		
@@ -34,6 +37,8 @@ final class Coordinator {
 		$response = $controller->serve($request);
 		
 		$view = $pluggedPolicy->getViewFor($response);
+		
+		if($callDepth > 5) throw new RecessException('Forwarding depth too great.', get_defined_vars());
 		
 		$view->respondWith($response);
 		

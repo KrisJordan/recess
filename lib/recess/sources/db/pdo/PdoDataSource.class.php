@@ -42,7 +42,7 @@ class PdoDataSource extends PDO {
 			$provider->init($this);
 			return $provider;
 		} else {
-			throw new ProviderDoesNotExistException($provider, get_defined_vars());	
+			throw new ProviderDoesNotExistException($providerClass, get_defined_vars());	
 		}
 	}
 	

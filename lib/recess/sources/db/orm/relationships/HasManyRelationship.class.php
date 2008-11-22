@@ -103,12 +103,18 @@ class HasManyRelationship extends Relationship {
 			$relatedClass = $this->through;
 		}
 		
+		$relatedTable = Model::tableFor($relatedClass);
+		$localTable = Model::tableFor($this->localClass);
+		$foreignKey = $relatedTable . '.' . $this->foreignKey;
+		$primaryKey = Model::primaryKeyFor($this->localClass);
+		
 		$select = $select	
-					->from(Model::tableFor($relatedClass))
-					->innerJoin(Model::tableFor($this->localClass),
-								Model::tableFor($relatedClass) . '.' . $this->foreignKey, 
-								Model::primaryKeyFor($this->localClass) 
+					->from($relatedTable)
+					->innerJoin($localTable,
+								$foreignKey, 
+								$primaryKey 
 								);
+		
 		$select->rowClass = $relatedClass;
 		
 		if(!isset($this->through)) {

@@ -43,7 +43,11 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 	 * @return array(string) Column names sorted alphabetically.
 	 */
 	function getColumns($table) {
-		$results = $this->pdo->query('SHOW COLUMNS FROM ' . $table . ';');
+		try {
+			$results = $this->pdo->query('SHOW COLUMNS FROM ' . $table . ';');
+		} catch(Exception $e) {
+			return array();
+		}
 		
 		$columns = array();
 		

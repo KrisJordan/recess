@@ -5,7 +5,7 @@
  * 
  * @author Kris Jordan
  */
-abstract class RecessClass extends StdClass {
+abstract class RecessClass {
 	
 	protected static $descriptors = array();
 	
@@ -39,7 +39,9 @@ abstract class RecessClass extends StdClass {
 			$object = $attachedMethod->object;
 			$method = $attachedMethod->method;
 			array_unshift($arguments, $this);
-			return call_user_method_array($method, $object, $arguments);
+			$reflectedMethod = new ReflectionMethod($object, $method);
+			return $reflectedMethod->invokeArgs($object, $arguments);
+			// return call_user_func_array($method, $object, $arguments);
 		} else {
 			throw new RecessException('"' . get_class($this) . '" class does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
 		}

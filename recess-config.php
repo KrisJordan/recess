@@ -1,10 +1,19 @@
-<?php if(!isset($_ENV['dir.base'])) exit;
+<?php if(isset($bootstrapped)) unset($bootstrapped); else exit;
 
-/* BEGIN RECESS APPS CONFIGURATION SETTINGS */
+/* RECESS FRAMEWORK CONFIGURATION SETTINGS */
 
-Config::$mode = Config::DEVELOPMENT;
+Config::$mode = Config::DEVELOPMENT; // Config::PRODUCTION
 
-Config::$useTurboSpeed = false; // I wanna go FAST!
+// Paths to the recess and apps directories
+Config::$recessDir = $_ENV['dir.documentRoot'] . 'recess/';
+Config::$appsDir = $_ENV['dir.documentRoot'] . 'apps/';
+
+Config::$defaultTimeZone = 'America/New_York';
+
+Config::$defaultDataSource 
+	= array(	// 'sqlite:' . $_ENV['dir.recess'] . '/data/default.db'
+				'mysql:host=localhost;dbname=recess', 'recess', 'recess'
+			);
 
 Config::$cacheProviders 
 	= array(	// 'Apc',
@@ -12,39 +21,36 @@ Config::$cacheProviders
 				// 'Disk'
 			);
 
+Config::$useTurboSpeed = false; // I wanna go FAST!
+
 Config::$applications 
 	= array(	'recess.apps.ide.RecessIdeApplication',
 				'blog.BlogApplication'
 			);
 
 //Config::$plugins 
-//	= array( 	'lib.recess.framework.plugins.ContentCaching'
+//	= array( 	'recess.framework.plugins.ContentCaching'
 //			);
 
-Config::$defaultDataSource 
-	= array(	// 'sqlite:' . $_ENV['dir.base'] . '/data/default.db'
-				'mysql:host=localhost;dbname=recess', 'recess', 'recess'
-			);
+
 			
 //Config::$namedDataSources 
 //	= array( 	'name' => array('dsn'),
 //				'name' => array('dsn','user','pass','options')
 //			);
 
-Config::$settings 
-	= array(	'dir.temp' => $_ENV['dir.base'] . 'temp/',
-				'dir.test' => $_ENV['dir.base'] . 'test/',
-				'dir.apps' => $_ENV['dir.base'] . 'apps/'
-			);
-
 /* END OF BASIC CONFIGURATION SETTINGS */
 
 abstract class Config {
 
 	const DEVELOPMENT = 0;
-	const DEPLOYMENT = 1;
+	const PRODUCTION = 1;
 	
-	public static $mode = self::DEPLOYMENT;
+	public static $mode = self::PRODUCTION;
+	
+	public static $recessDir = '';
+	
+	public static $appsDir = '';
 	
 	public static $useTurboSpeed = false;
 	
@@ -60,9 +66,18 @@ abstract class Config {
 	
 	public static $settings = array();
 	
+	public static $defaultTimeZone = 'America/New_York';
+	
 	public static $policy;
 	
 	static function init() {
+		$_ENV['dir.recess'] = self::$recessDir;
+		$_ENV['dir.apps'] = self::$appsDir;
+		$_ENV['dir.test'] = self::$recessDir . 'test/';
+		$_ENV['dir.temp'] = self::$recessDir . 'temp/';
+		
+		date_default_timezone_set(self::$defaultTimeZone);
+		
 		if(self::$useTurboSpeed) {
 			Library::$useNamedRuns = true;
 			$cacheProvidersReversed = array_reverse(self::$cacheProviders);
@@ -72,28 +87,12 @@ abstract class Config {
 			}
 		}
 		
-		if(isset(self::$settings['dir.temp'])) {
-			$_ENV['dir.temp'] = self::$settings['dir.temp'];
-		} else {
-			$_ENV['dir.temp'] = $_ENV['dir.base'] . 'temp/';
-		}
-		
-		if(!isset(self::$settings['dir.test'])) {
-			$_ENV['dir.test'] = self::$settings['dir.test'];
-		} else {
-			$_ENV['dir.test'] = $_ENV['dir.base'] . 'test/';
-		}
-		
-		if(!isset(self::$settings['dir.apps'])) {
-			$_ENV['dir.apps'] = self::$settings['dir.apps'];
-		} else {
-			$_ENV['dir.apps'] = $_ENV['dir.base'] . 'apps/';
-		}
+		require_once(self::$recessDir . 'lib/recess/Recess.php');
 		
 		Library::init();
 		Library::beginNamedRun('recess');
 		
-		Library::addClassPath(self::$settings['dir.apps']);
+		Library::addClassPath(self::$appsDir);
 		
 		// TODO: GET RID OF THIS
 		Library::import('recess.framework.Application');

@@ -130,7 +130,7 @@ function printContext($context) {
 
 	<head>
 		<title>Recess! diagnostics! 500 :(</title>
-		<script type="text/javascript" src="/js/jquery/jquery-1.2.6.js"></script> 
+		<script type="text/javascript" src="<?php echo $_ENV['url.content']; ?>js/jquery/jquery-1.2.6.js"></script> 
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$('.callstackdetails').hide();
@@ -154,9 +154,9 @@ function printContext($context) {
 			h3 { font-size: 1.1em; line-height: 1.2em; margin-top: 0; margin-bottom: .1em; text-decoration:underline; font-weight: normal;}
 			#container { text-align: left; background: #fff; position: relative; margin: 0 .5em; border: 1px solid #039;}
 			#header { background: #003399; height: 120px; }
-			#logo { height: 120px; vertical-alignment: center;  width: 253px; background: url('/images/recess/RecessDiagnostics.png') left no-repeat; margin-left: 20px; display: block; position: absolute; left: 0; }
+			#logo { height: 120px; vertical-alignment: center;  width: 253px; background: url('<?php echo $_ENV['url.content']; ?>images/recess/RecessDiagnostics.png') left no-repeat; margin-left: 20px; display: block; position: absolute; left: 0; }
 			#logo h1 { visibility: hidden; margin: 0; }
-			#httpCode { height: 120px; width: 253px; vertical-alignment: center; background: url('/images/recess/500.png') right no-repeat; margin-right: 20px; display:block; position: absolute; right: 0;}
+			#httpCode { height: 120px; width: 253px; vertical-alignment: center; background: url('<?php echo $_ENV['url.content']; ?>images/recess/500.png') right no-repeat; margin-right: 20px; display:block; position: absolute; right: 0;}
 			#httpCode h2 { visibility: hidden; margin: 0;  }
 			#error { margin: 1em; border: 3px solid #c03; background: #fcc; padding: 1em; }
 			#error h2 { color: #cc0033; }

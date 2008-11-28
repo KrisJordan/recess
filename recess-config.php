@@ -11,8 +11,8 @@ Config::$appsDir = $_ENV['dir.documentRoot'] . 'apps/';
 Config::$defaultTimeZone = 'America/New_York';
 
 Config::$defaultDataSource 
-	= array(	// 'sqlite:' . $_ENV['dir.recess'] . '/data/default.db'
-				'mysql:host=localhost;dbname=recess', 'recess', 'recess'
+	= array(	'sqlite:' . $_ENV['dir.documentRoot'] . '/recess/sqlite/default.db'
+				// 'mysql:host=localhost;dbname=recess', 'recess', 'recess'
 			);
 
 Config::$cacheProviders 
@@ -75,6 +75,7 @@ abstract class Config {
 		$_ENV['dir.apps'] = self::$appsDir;
 		$_ENV['dir.test'] = self::$recessDir . 'test/';
 		$_ENV['dir.temp'] = self::$recessDir . 'temp/';
+		$_ENV['url.content'] = $_ENV['url.base'] . 'content/';
 		
 		date_default_timezone_set(self::$defaultTimeZone);
 		
@@ -100,7 +101,7 @@ abstract class Config {
 		
 		Library::import('recess.sources.db.DbSources');
 		Library::import('recess.sources.db.orm.ModelDataSource');
-		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource[0],Config::$defaultDataSource[1],Config::$defaultDataSource[2]));
+		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource[0]));//,Config::$defaultDataSource[1],Config::$defaultDataSource[2]));
 		
 		Library::import('recess.framework.DefaultPolicy');
 		self::$policy = new DefaultPolicy();

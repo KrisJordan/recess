@@ -1,0 +1,29 @@
+body { margin: 1em 0 0 0; }
+
+h3 {  }
+
+.header { background-image: url('/content/images/recess/logo.gif'); background-repeat: no-repeat; background-position: -5px -5px;}
+.header h1 { visibility: hidden; }
+
+.navigation { background: #eef; margin: .5em 0; }
+.navigation ul { margin: .5em .5em; font-size: 1.5em;}
+.navigation li { display: inline; margin: 0 1.5em 0 0;}
+
+.left-sidebar .loud { font-weight: bold; }
+.left-sidebar ul { margin: 0 0 3em .3em; }
+.left-sidebar ul ul { margin: 0 0 0 .3em; }
+.left-sidebar ul li { list-style: none; font-size: 1.2em; margin: .5em 0;}
+
+.infobar { background-color: #0b2c9e; margin: .5em 0;}
+.infobar h3 { background-color: #07278d;  background-image: url('/content/images/recess/resources.png'); background-repeat: no-repeat; background-position: 10px 10px; height: 2.5em; }
+.infobar h3 span { visibility: hidden; }
+.infobar p { margin: 1em; }
+.infobar a { color: white; }
+.infobar ul { margin: 1em 0em 2em 2em; }
+.infobar li { display: block; margin: .5em 0 .5em 0; font-size: 1.1em;}
+
+.footer { background: #eef; margin: 10em 0; text-align: center;}
+
+.highlight { background: #0b2c9e; color: white; }
+.highlight li { }
+.highlight a { color: white; margin: 1em; text-decoration: none;}

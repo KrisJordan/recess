@@ -25,15 +25,15 @@ class HasManyRelationship extends Relationship {
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
 		$alias = $this->name;
-		$attachedMethod = new RecessClassAttachedMethod($this,'selectModel', $alias);
+		$attachedMethod = new RecessObjectAttachedMethod($this,'selectModel', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'addTo' . ucfirst($this->name);
-		$attachedMethod = new RecessClassAttachedMethod($this,'addTo', $alias);
+		$attachedMethod = new RecessObjectAttachedMethod($this,'addTo', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'removeFrom' . ucfirst($this->name);
-		$attachedMethod = new RecessClassAttachedMethod($this,'removeFrom', $alias);
+		$attachedMethod = new RecessObjectAttachedMethod($this,'removeFrom', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 	}
 	

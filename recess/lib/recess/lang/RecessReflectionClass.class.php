@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.lang.RecessClass');
+Library::import('recess.lang.RecessObject');
 
 /**
  * Recess! Framework reflection for class which introduces annotations.
@@ -38,8 +38,8 @@ class RecessReflectionClass extends ReflectionClass {
 			$methods[] = $method;
 		}
 		
-		if($getAttachedMethods && is_subclass_of($this->name, 'RecessClass')) {
-			$methods = array_merge($methods, RecessClass::getAttachedMethods($this->name));
+		if($getAttachedMethods && is_subclass_of($this->name, 'RecessObject')) {
+			$methods = array_merge($methods, RecessObject::getAttachedMethods($this->name));
 		}
 		
 		return $methods;

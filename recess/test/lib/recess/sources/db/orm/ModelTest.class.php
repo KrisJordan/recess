@@ -1,6 +1,6 @@
 <?php
 
-Library::import('recess.lang.RecessClassRegistry');
+Library::import('recess.lang.RecessObjectRegistry');
 
 Library::import('recess.sources.db.DbSources');
 Library::import('recess.sources.db.orm.Model');
@@ -158,7 +158,7 @@ class ModelTest extends UnitTestCase {
 		$this->source->commit();
 		$this->source->beginTransaction();
 		DbSources::setDefaultSource($this->source);
-		RecessClass::clearDescriptors();
+		RecessObject::clearDescriptors();
 	}
 
 	function testAll() {

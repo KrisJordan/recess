@@ -3,22 +3,39 @@ Library::import('recess.framework.controllers.Controller');
 Library::import('recess.http.responses.NotFoundResponse');
 Library::import('recess.http.responses.OkResponse');
 
-Library::import('recess.apps.ide.models.RecessReflectorClass');
-Library::import('recess.apps.ide.models.RecessReflectorPackage');
-Library::import('recess.apps.ide.models.RecessReflectorProperty');
-Library::import('recess.apps.ide.models.RecessReflectorMethod');
+Library::import('recess.apps.tools.models.RecessReflectorClass');
+Library::import('recess.apps.tools.models.RecessReflectorPackage');
+Library::import('recess.apps.tools.models.RecessReflectorProperty');
+Library::import('recess.apps.tools.models.RecessReflectorMethod');
 
 /**
- * !View Native, Prefix: reflector/
+ * !View Native, Prefix: code/
+ * !RoutesPrefix code/
  */
-class RecessReflectorController extends Controller {
+class RecessToolsCodeController extends Controller {
 	
-	/** !Route GET, reflector/index/ */
+	/** !Route GET */
+	public function home() {
+		
+	}
+	
+	/** !Route GET, /index */
 	public function index() {
 		$this->recursiveIndex($_ENV['dir.apps']);
 		$this->recursiveIndex($_ENV['dir.lib']);
 		exit;
 	}
+	
+	/** !Route GET, byClass */
+	public function byClass() {
+		
+	}
+	
+	/** !Route GET, byPackage */
+	public function byPackage() {
+		
+	}
+	
 	
 	private function recursiveIndex($base, $dir = '') {
 		$dirInfo = scandir($base . $dir);
@@ -55,26 +72,30 @@ class RecessReflectorController extends Controller {
 		return $reflectorClass;
 	}
 	
-	/** !Route GET, reflector/class/$fullyQualifiedModel */
-	public function classInfo($fullyQualifiedModel) {
-		$result = $this->indexClass($fullyQualifiedModel, '');
+	/** !Route GET, class/$class */
+	public function classInfo($class) {
+		$result = $this->indexClass($class, '');
 		
 		if($result === false) {
 			return new NotFoundResponse($this->request);
 		}
+		$this->reflector = $result;
 		
-		$model = Library::getClassName($fullyQualifiedModel);
-		$reflection = new RecessReflectionClass($model);
+		$className = Library::getClassName($class);
+		$reflection = new RecessReflectionClass($className);
 		
 		$this->reflection = $reflection;
-		$this->relationships = Model::getRelationships($model);
-		$this->columns = Model::getColumns($model);
-		$this->table = Model::tableFor($model);
-		$this->source = Model::sourceNameFor($model);
-		$this->reflector = $result;
+		$this->className = $className;
+		
+		if($reflection->isSubclassOf('Model')) {
+			$this->relationships = Model::getRelationships($className);
+			$this->columns = Model::getColumns($className);
+			$this->table = Model::tableFor($className);
+			$this->source = Model::sourceNameFor($className);
+		}
 	}
 	 
-	/** !Route GET, reflector/package/$package */
+	/** !Route GET, code/package/$package */
 	function packageInfo ($package) {
 		
 		Library::import('recess.apps.ide.models.RecessReflectorPackage');
@@ -84,7 +105,7 @@ class RecessReflectorController extends Controller {
 	}
 	
 	
-	/** !Route GET, reflector/model/$fullyQualifiedModel/create */
+	/** !Route GET, code/model/$fullyQualifiedModel/create */
 	function createTable ($fullyQualifiedModel) {
 		if(!Library::classExists($fullyQualifiedModel)) {
 			return new NotFoundResponse($this->request);

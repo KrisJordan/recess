@@ -8,7 +8,7 @@ class BlogApplication extends Application {
 	
 	public $viewsDir = 'blog/views/';
 	
-	public $routingPrefix = 'blog';
+	public $routingPrefix = 'blog/';
 	
 }
 

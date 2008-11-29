@@ -24,7 +24,7 @@ Config::$cacheProviders
 Config::$useTurboSpeed = false; // I wanna go FAST!
 
 Config::$applications 
-	= array(	'recess.apps.ide.RecessIdeApplication',
+	= array(	'recess.apps.tools.RecessToolsApplication',
 				'blog.BlogApplication'
 			);
 

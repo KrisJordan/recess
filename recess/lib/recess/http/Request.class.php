@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.lang.RecessClass');
+Library::import('recess.lang.RecessObject');
 
 class Request {	
 	
@@ -39,6 +39,6 @@ class Request {
 	}
 }
 
-class Meta extends RecessClass {}
+class Meta extends RecessObject {}
 
 ?>

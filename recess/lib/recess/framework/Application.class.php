@@ -20,8 +20,12 @@ abstract class Application {
 		$classes = Library::findClassesIn($this->controllersPrefix);
 		
 		foreach($classes as $class) {
-			Library::import($this->controllersPrefix . $class);
-			$instance = new $class;
+			if(Library::classExists($this->controllersPrefix . $class)) {
+				$instance = new $class($this);
+			} else {
+				continue;
+			}
+			
 			if($instance instanceof Controller) {
 				$routes = Controller::getRoutes($instance);
 				if(!is_array($routes)) continue;
@@ -35,7 +39,9 @@ abstract class Application {
 	}
 	
 	function getController($controller) {
-		return Library::importAndInstantiate($this->controllersPrefix . $controller);
+		Library::import($this->controllersPrefix . $controller);
+		$returnController = new $controller($this);
+		return $returnController;
 	}
 	
 	function getViewsDir() {

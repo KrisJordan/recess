@@ -25,6 +25,7 @@ class NativeView extends AbstractView {
 		}
 		
 		extract($response->data);
+		$viewsDir = $response->meta->app->getViewsDir();
 		include_once($response->meta->viewDir . $response->meta->viewName . '.php');
 	}
 }

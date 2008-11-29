@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.http.Response');
-Library::import('recess.lang.RecessClass');
+Library::import('recess.lang.RecessObject');
 
 /**
  * Renders a Response in a desired format by sending relevant
@@ -9,7 +9,7 @@ Library::import('recess.lang.RecessClass');
  * @author Kris Jordan
  * @abstract 
  */
-abstract class AbstractView extends RecessClass {
+abstract class AbstractView extends RecessObject {
 	/**
 	 * The entry point from the Coordinator with a Response to be rendered.
 	 * Delegates the two steps in rendering a view: 1) Send Headers, 2) Render Body

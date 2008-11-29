@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.lang.Inflector');
-Library::import('recess.lang.RecessClass');
+Library::import('recess.lang.RecessObject');
 Library::import('recess.lang.RecessReflectionClass');
 Library::import('recess.lang.Annotation');
 
@@ -21,7 +21,7 @@ Library::import('recess.sources.db.orm.relationships.Relationship');
 Library::import('recess.sources.db.orm.relationships.HasManyRelationship');
 Library::import('recess.sources.db.orm.relationships.BelongsToRelationship');
 
-abstract class Model extends RecessClass implements ISqlConditions {
+abstract class Model extends RecessObject implements ISqlConditions {
 	
 	static function sourceFor($class) {
 		return self::getClassDescriptor($class)->getSource();
@@ -234,7 +234,7 @@ class ModelProperty {
 	public $isForeignKey = false;
 }
 
-class ModelDescriptor extends RecessClassDescriptor {
+class ModelDescriptor extends RecessObjectDescriptor {
 	public $primaryKey = 'id';
 	private $table;
 	

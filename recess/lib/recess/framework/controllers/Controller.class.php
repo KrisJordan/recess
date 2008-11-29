@@ -1,9 +1,10 @@
 <?php
-Library::import('recess.lang.RecessClass');
+Library::import('recess.lang.RecessObject');
 Library::import('recess.lang.RecessReflectionClass');
 Library::import('recess.lang.Annotation', true);
 Library::import('recess.framework.annotations.ViewAnnotation', true);
 Library::import('recess.framework.annotations.RouteAnnotation', true);
+Library::import('recess.framework.annotations.RoutesPrefixAnnotation', true);
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,
@@ -13,13 +14,17 @@ Library::import('recess.framework.annotations.RouteAnnotation', true);
  * 
  * @author Kris Jordan
  */
-abstract class Controller extends RecessClass {
-	
+abstract class Controller extends RecessObject {
 	protected $request;
 	protected $headers;
+	protected $application;
 	
 	/** The formats/content-types which a controller responds to. */
 	protected $formats = array(Formats::xhtml);
+	
+	public function __construct($application) {
+		$this->application = $application;
+	}
 	
 	public static function getViewClass($class) {
 		return self::getClassDescriptor($class)->viewClass;
@@ -61,6 +66,48 @@ abstract class Controller extends RecessClass {
 		}
 		
 		return $descriptor;
+	}
+	
+	public function urlToMethod($methodName) {
+		$args = func_get_args();
+		array_shift($args);
+		
+		$descriptor = Controller::getClassDescriptor($this);
+		if(isset($descriptor->methodUrls[$methodName])) {
+			$url = $descriptor->methodUrls[$methodName];
+			if($url[0] != '/') {
+				$url = $this->application->routingPrefix . $url;
+			}
+			if($url[0] == '/') {
+				$url = substr($url,1);
+			}
+			
+			if(!empty($args)) {
+				$reflectedMethod = new ReflectionMethod($this, $methodName);
+				$parameters = $reflectedMethod->getParameters();
+				
+				if(count($parameters) < count($args)) {
+					throw new RecessException('urlToMethod(\'' . $methodName . '\') called with ' . count($args) . ' arguments, method "' . $methodName . '" takes ' . count($parameters) . '.', get_defined_vars());
+				}
+				
+				$i = 0;
+				$params = array();
+				foreach($parameters as $parameter) {
+					if(isset($args[$i])) $params[] = '$' . $parameter->getName();
+					$i++;
+				}
+				$url = str_replace($params, $args, $url);
+			}
+			
+			if(strpos($url, '$') !== false) { 
+				throw new RecessException('Missing arguments in urlToMethod(' . $methodName . '). Provide values for missing arguments: ' . $url, get_defined_vars());
+			}
+			
+			
+			return $_ENV['url.base'] . $url;
+		} else {
+			throw new RecessException('No url for method ' . $methodName . ' exists.', get_defined_vars());
+		}
 	}
 	
 	/**
@@ -114,6 +161,7 @@ abstract class Controller extends RecessClass {
 		$response->meta->viewClass = $descriptor->viewClass;
 		$response->meta->viewPrefix = $descriptor->viewPrefix;
 		$response->data = get_object_vars($this);
+		$response->data['controller'] = $this;
 		if(is_array($this->headers)) { foreach($this->headers as $header) $response->addHeader($header); }
 		unset($response->data['request']);
 		unset($response->data['headers']);
@@ -169,8 +217,10 @@ abstract class Controller extends RecessClass {
 	}
 }
 
-class ControllerDescriptor extends RecessClassDescriptor {
-	public $routes;
+class ControllerDescriptor extends RecessObjectDescriptor {
+	public $routes = array();
+	public $methodUrls = array();
+	public $routesPrefix = '';
 	public $viewClass = 'recess.framework.views.NativeView';
 	public $viewPrefix = '';
 }

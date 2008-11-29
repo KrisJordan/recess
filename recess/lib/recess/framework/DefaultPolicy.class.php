@@ -105,8 +105,12 @@ class DefaultPolicy implements IPolicy {
 		$request->meta->controllerMethod = $routeResult->route->function;
 		$request->meta->controllerMethodArguments = $routeResult->arguments;
 		$request->meta->useAssociativeArguments = true;
-		Library::beginNamedRun($routeResult->route->class);
-		return Library::importAndInstantiate($routeResult->route->class);
+		$controllerClass = $routeResult->route->class;
+		Library::beginNamedRun($controllerClass);
+		Library::import($controllerClass);
+		$controllerClass = Library::getClassName($controllerClass);
+		$controller = new $controllerClass($routeResult->route->app);
+		return $controller;
 	}
 	
 	protected function getControllerFromResourceString(Request &$request, array $applications) {

@@ -16,15 +16,15 @@ class BelongsToRelationship extends Relationship {
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
 		$alias = $this->name;
-		$attachedMethod = new RecessClassAttachedMethod($this, 'selectModel', $alias);
+		$attachedMethod = new RecessObjectAttachedMethod($this, 'selectModel', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'set' . ucfirst($this->name);
-		$attachedMethod = new RecessClassAttachedMethod($this,'set', $alias);
+		$attachedMethod = new RecessObjectAttachedMethod($this,'set', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'unset' . ucfirst($this->name);
-		$attachedMethod = new RecessClassAttachedMethod($this,'remove', $alias);
+		$attachedMethod = new RecessObjectAttachedMethod($this,'remove', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 	}
 	

@@ -45,7 +45,7 @@ class RoutingNode {
 		$route->app = $app;
 		
 		if($route->path[0] != '/') {
-			$route->path = $prefix . '/' . $route->path;
+			$route->path = $prefix . '/' . trim($route->path);
 		}
 		
 		$pathParts = $this->getRevesedPathParts($route->path);

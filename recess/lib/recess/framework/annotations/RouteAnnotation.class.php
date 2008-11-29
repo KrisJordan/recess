@@ -7,6 +7,10 @@ class RouteAnnotation extends ControllerAnnotation {
 	protected $path;
 	
 	function init($array) {
+		if(count($array) == 1) {
+			$array[1] = ' ';
+		}
+		
 		if(count($array) != 2) {
 			throw new RecessException('RouteAnnotation takes 2 parameters: METHOD[s], route.', get_defined_vars());
 		}
@@ -21,7 +25,13 @@ class RouteAnnotation extends ControllerAnnotation {
 	}
 	
 	function massage($controller, $method, ControllerDescriptor $descriptor) {
-		$descriptor->routes[] = new Route($controller, $method,$this->methods, $this->path);
+		if(isset($this->path[0]) && $this->path[0] != '/') {
+			$descriptor->routes[] = new Route($controller, $method,$this->methods, $descriptor->routesPrefix . $this->path);
+			$descriptor->methodUrls[$method] = $descriptor->routesPrefix . $this->path;
+		} else {
+			$descriptor->routes[] = new Route($controller, $method,$this->methods, $this->path);
+			$descriptor->methodUrls[$method] = $this->path;
+		}
 	}
 }
 ?>

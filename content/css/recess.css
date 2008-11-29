@@ -5,6 +5,8 @@ h3 {  }
 .header { background-image: url('/content/images/recess/logo.gif'); background-repeat: no-repeat; background-position: -5px -5px;}
 .header h1 { visibility: hidden; }
 
+.qotm { margin: 2.5em 0 0 0; }
+
 .navigation { background: #eef; margin: .5em 0; }
 .navigation ul { margin: .5em .5em; font-size: 1.5em;}
 .navigation li { display: inline; margin: 0 1.5em 0 0;}

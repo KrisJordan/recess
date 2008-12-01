@@ -17,8 +17,7 @@ $codeController = new RecessToolsCodeController($response->request->meta->app);
 					)
 				); ?>"><?php echo get_class($app); ?></a></p>
 <div class="span-6">
-<h2 class="bottom">Models</h2>
-<a href="<?php echo $controller->urlToMethod('createModel'); ?>">Create New Model</a>
+<h2 class="bottom">Models (<a href="<?php echo $controller->urlToMethod('createModel'); ?>">new</a>)</h2>
 <p>Location: <a href="<?php echo $codeController->urlToMethod('packageInfo', substr($app->modelsPrefix,0,-1)); ?>"><?php echo $app->modelsPrefix; ?></a></p>
 <?php
 function printClassesInNamespace($namespace, $codeController) {
@@ -35,8 +34,7 @@ printClassesInNamespace($app->modelsPrefix, $codeController);
 ?>
 </div>
 <div class="span-6">
-<h2 class="bottom">Controllers</h2>
-<a href="<?php echo $controller->urlToMethod('createController'); ?>">Create New Controller</a>
+<h2 class="bottom">Controllers (<a href="<?php echo $controller->urlToMethod('createController'); ?>">new</a>)</h2>
 <p>Location: <a href="<?php echo $codeController->urlToMethod('packageInfo', substr($app->controllersPrefix,0,-1)); ?>"><?php echo $app->controllersPrefix; ?></a></p>
 <?php
 printClassesInNamespace($app->controllersPrefix, $codeController);
@@ -54,43 +52,8 @@ printClassesInNamespace($app->controllersPrefix, $codeController);
 <?php
 $routes = new RoutingNode();
 $app->addRoutesToRouter($routes);
-$routes = $routes->getStaticPaths();
-
-echo '<table>';
-echo '<thead><td>HTTP</td><td>Route</td><td>Controller</td><td>Method</td></thead>';
-echo '<tbody>';
-$fullPath = $_ENV['url.base'];
-if(strrpos($fullPath, '/') == strlen($fullPath) - 1) $fullPath = substr($fullPath,0,-1);
-printRoutes($codeController, array_shift($routes), $fullPath);
-echo '</tbody>';
-echo '</table>';
-
-function printRoutes($codeController, $routingNode, $fullPath) {
-	if($routingNode == null) return;
-	$staticPaths = $routingNode->getStaticPaths();
-	$parametricPaths = $routingNode->getParametricPaths();
-	$methods = $routingNode->getMethods();
-	if(!empty($methods)) {
-		foreach($methods as $method => $route) {
-			echo '<tr><td>' . $method . '</td>';
-			echo '<td>' . $fullPath . '</td>';
-			echo '<td><a href="' . $codeController->urlToMethod('classInfo',$route->class) . '">' . Library::getClassName($route->class) . '</a></td>';
-			echo '<td><a href="' . $codeController->urlToMethod('classInfo',$route->class) . '#method_' . $route->function . '">'. $route->function . '</a></td>';
-			echo '</tr>';
-		}		
-	} 
-
-	if(!empty($staticPaths) || !empty($parametricPaths)) {
-		ksort($staticPaths);
-		ksort($parametricPaths);
-		foreach($staticPaths as $path => $node) {
-			printRoutes($codeController, $node, $fullPath . '/' . $path);
-		}
-		foreach($parametricPaths as $path => $node) {
-			printRoutes($codeController, $node, $fullPath . '/$' . $path);
-		}
-	}
-}
+include_once($viewsDir . 'common/printRoutes.php');
+printRoutes($routes, $codeController);
 ?>
 
 <hr />

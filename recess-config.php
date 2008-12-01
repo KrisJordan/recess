@@ -2,7 +2,7 @@
 
 /* RECESS FRAMEWORK CONFIGURATION SETTINGS */
 
-Config::$mode = Config::DEVELOPMENT; // Config::PRODUCTION
+Config::$mode = Config::DEVELOPMENT; // or Config::PRODUCTION
 
 // Paths to the recess and apps directories
 Config::$recessDir = $_ENV['dir.documentRoot'] . 'recess/';
@@ -32,8 +32,6 @@ Config::$applications
 //	= array( 	'recess.framework.plugins.ContentCaching'
 //			);
 
-
-			
 //Config::$namedDataSources 
 //	= array( 	'name' => array('dsn'),
 //				'name' => array('dsn','user','pass','options')

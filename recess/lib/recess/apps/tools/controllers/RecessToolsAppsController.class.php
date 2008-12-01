@@ -17,7 +17,8 @@ class RecessToolsAppsController extends Controller {
 	
 	/** !Route GET, uninstall/$appClass */
 	public function uninstall($appClass) {
-		echo $appClass; exit;
+		//Library::getFullyQualifiedClassName($appClass);
+		$this->app = new $appClass;
 	}
 	
 	/** !Route GET, new */
@@ -74,6 +75,7 @@ class RecessToolsAppsController extends Controller {
 		$this->appName = $appName;
 		
 		$routesPrefix = $this->request->post['routingPrefix'];
+		if(substr($routesPrefix,-1) != '/') { $routesPrefix .= '/'; }
 		$appDir = $_ENV['dir.apps'] . $camelProgrammaticName;
 		
 		$this->messages = array();

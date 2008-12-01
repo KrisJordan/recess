@@ -42,10 +42,16 @@ class RoutingNode {
 	public function addRoute($app, Route $route, $prefix) {
 		if($route->path == '') return;
 		
+		$route = clone $route;
+		
 		$route->app = $app;
 		
 		if($route->path[0] != '/') {
-			$route->path = $prefix . '/' . trim($route->path);
+			if(substr($route->path,-1) != '/') {
+				$route->path = $prefix . '/' . trim($route->path);
+			}else{
+				$route->path = $prefix . trim($route->path);
+			}
 		}
 		
 		$pathParts = $this->getRevesedPathParts($route->path);

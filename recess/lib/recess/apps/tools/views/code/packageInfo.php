@@ -1,4 +1,9 @@
 <?php
+$title = 'Package ' . $package->name; 
+$selectedNav = 'code';
+include_once($viewsDir . 'common/header.php');
+?>
+<?php
 
 function linkedPackagePath($package, $linkPrefix = "") {
 	$parts = explode('.', $package);
@@ -33,3 +38,7 @@ foreach($package->classes() as $class) {
 }
 ?>
 </ul>
+
+<?php
+include_once($viewsDir . 'common/footer.php');
+?>

@@ -1,6 +1,9 @@
 body { margin: 1em 0 0 0; }
 
 h3 {  }
+thead { background-color: #eef; font-size: 1.2em; }
+
+.input-flash { background: yellow; padding: 0 0 0 1em; }
 
 .header { background-image: url('/content/images/recess/logo.gif'); background-repeat: no-repeat; background-position: -5px -5px;}
 .header h1 { visibility: hidden; }
@@ -26,6 +29,6 @@ h3 {  }
 
 .footer { background: #eef; margin: 10em 0; text-align: center;}
 
-.highlight { background: #0b2c9e; color: white; }
+.navigation .highlight { background: #0b2c9e; color: white; }
 .highlight li { }
 .highlight a { color: white; margin: 1em; text-decoration: none;}

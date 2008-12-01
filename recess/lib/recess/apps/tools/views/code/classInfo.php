@@ -1,5 +1,6 @@
 <?php
-$title = 'Model ' . $reflection->name; 
+$title = 'Model ' . $reflection->name;
+$selectedNav = 'code';
 include_once($viewsDir . 'common/header.php');
 ?>
 
@@ -171,7 +172,7 @@ function printAttachedMethods($methods) { ?>
 	<?php
 	sort($methods);
 	foreach($methods as $method) {
-		echo '<li>' . $method->name . ' ( ';
+		echo '<li><a name="method_' . $method->name .'"></a>' . $method->name . ' ( ';
 		$first = true;
 		foreach($method->getParameters() as $param) {
 			if($first) $first = false;
@@ -192,7 +193,7 @@ function printAttachedMethods($methods) { ?>
 	<?php
 	foreach($methods as $method) {
 		if($method->name != '__call') {
-			echo '<li>' . $method->name . ' ( ';
+			echo '<li><a name="method_' . $method->name .'"></a>' . $method->name . ' ( ';
 			$first = true;
 			foreach($method->getParameters() as $param) {
 				if($first) $first = false;
@@ -212,7 +213,7 @@ function printStaticMethods($methods) { ?>
 	<ul class="static-methods">
 	<?php
 	foreach($methods as $method) {
-		echo '<li>' . $method->name . ' ( ';
+		echo '<li><a name="method_' . $method->name .'"></a>' . $method->name . ' ( ';
 		$first = true;
 		foreach($method->getParameters() as $param) {
 			if($first) $first = false;

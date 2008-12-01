@@ -173,6 +173,18 @@ class RoutingNode {
 		return $result;
 	}
 	
+	public function getStaticPaths() {
+		return $this->static_children;
+	}
+	
+	public function getParametricPaths() {
+		return $this->parametric_children;
+	}
+	
+	public function getMethods() {
+		return $this->methods;
+	}
+	
 	public function matches($path) {
 		// TODO: Add regexp support
 		return $path != '';

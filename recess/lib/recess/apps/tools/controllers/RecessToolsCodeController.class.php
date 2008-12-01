@@ -19,7 +19,7 @@ class RecessToolsCodeController extends Controller {
 		
 	}
 	
-	/** !Route GET, /index */
+	/** !Route GET, index */
 	public function index() {
 		$this->recursiveIndex($_ENV['dir.apps']);
 		$this->recursiveIndex($_ENV['dir.lib']);
@@ -34,8 +34,7 @@ class RecessToolsCodeController extends Controller {
 	/** !Route GET, byPackage */
 	public function byPackage() {
 		
-	}
-	
+	}	
 	
 	private function recursiveIndex($base, $dir = '') {
 		$dirInfo = scandir($base . $dir);
@@ -95,17 +94,16 @@ class RecessToolsCodeController extends Controller {
 		}
 	}
 	 
-	/** !Route GET, code/package/$package */
+	/** !Route GET, package/$package */
 	function packageInfo ($package) {
-		
-		Library::import('recess.apps.ide.models.RecessReflectorPackage');
+		Library::import('recess.apps.tools.models.RecessReflectorPackage');
 		$package = new RecessReflectorPackage($package);
 		$this->package = $package->find()->first();
 		
 	}
 	
 	
-	/** !Route GET, code/model/$fullyQualifiedModel/create */
+	/** !Route GET, model/$fullyQualifiedModel/create */
 	function createTable ($fullyQualifiedModel) {
 		if(!Library::classExists($fullyQualifiedModel)) {
 			return new NotFoundResponse($this->request);

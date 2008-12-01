@@ -22,7 +22,7 @@ abstract class Controller extends RecessObject {
 	/** The formats/content-types which a controller responds to. */
 	protected $formats = array(Formats::xhtml);
 	
-	public function __construct($application) {
+	public function __construct($application = null) {
 		$this->application = $application;
 	}
 	
@@ -103,8 +103,7 @@ abstract class Controller extends RecessObject {
 				throw new RecessException('Missing arguments in urlToMethod(' . $methodName . '). Provide values for missing arguments: ' . $url, get_defined_vars());
 			}
 			
-			
-			return $_ENV['url.base'] . $url;
+			return trim($_ENV['url.base'] . $url);
 		} else {
 			throw new RecessException('No url for method ' . $methodName . ' exists.', get_defined_vars());
 		}
@@ -205,9 +204,27 @@ abstract class Controller extends RecessObject {
 		return $response;
 	}
 	
+	protected function conflict($viewName) {
+		Library::import('recess.http.responses.ConflictResponse');
+		$response = new ConflictResponse($this->request);
+		$response->meta->viewName = $viewName;
+		return $response;
+	}
+	
+	protected function redirect($redirectUri) {
+		Library::import('recess.http.responses.TemporaryRedirectResponse');
+		$response = new TemporaryRedirectResponse($this->request, $redirectUri);
+		return $response;
+	}
+	
 	protected function forwardOk($forwardedUri) {
 		Library::import('recess.http.responses.ForwardingOkResponse');
 		return new ForwardingOkResponse($this->request, $forwardedUri);
+	}
+	
+	protected function forwardNotFound($forwardUri, $flash = '') {
+		Library::import('recess.http.responses.ForwardingNotFoundResponse');
+		return new ForwardingNotFoundResponse($this->request, $forwardUri, array('flash' => $flash));
 	}
 	
 	protected function created($resourceUri, $contentUri = '') {

@@ -6,15 +6,15 @@ Library::import('recess.sources.db.orm.Model');
 
 abstract class Application {
 	
+	public $name = 'Unnamed Application';
+	
 	public $controllersPrefix = ''; // OVERRIDE THIS with appname.controllers.
+	
+	public $modelsPrefix = ''; // OVERRIDE THIS with appname.models.
 	
 	public $viewsDir = ''; // OVERRIDE THIS with appname/views/
 	
 	public $routingPrefix = '/';
-	
-	function __construct() {
-		$this->viewsDir = $_ENV['dir.apps'] . $this->viewsDir;
-	}
 	
 	function addRoutesToRouter(RoutingNode $router) {
 		$classes = Library::findClassesIn($this->controllersPrefix);

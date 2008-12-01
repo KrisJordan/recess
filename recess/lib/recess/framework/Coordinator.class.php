@@ -18,8 +18,13 @@ final class Coordinator {
 	 */
 	public static function main(Request $request, IPolicy $policy, array $apps, RoutingNode $routes, array $plugins = array()) {
 		static $callDepth = 0;
+		static $calls = array();
 		$callDepth++;
-		if($callDepth > 2) { echo 'too nested in main'; exit; }
+		$calls[] = $request;
+		if($callDepth > 3) { 
+			print_r($calls);
+			die('Forwarding loop in main?');
+		}
 		
 		$pluggedPolicy = $policy;
 		
@@ -38,14 +43,15 @@ final class Coordinator {
 		
 		$view = $pluggedPolicy->getViewFor($response);
 		
-		if($callDepth > 5) throw new RecessException('Forwarding depth too great.', get_defined_vars());
-		
 		$view->respondWith($response);
 		
 		if($response instanceof ForwardingResponse) {
 			$forwardRequest = new Request();
 			$forwardRequest->setResource($response->forwardUri);
 			$forwardRequest->method = Methods::GET;
+			if(isset($response->context)) {
+				$forwardRequest->get = $response->context;
+			}
 			Coordinator::main($forwardRequest, $policy, $apps, $routes, $plugins);
 		}
 		

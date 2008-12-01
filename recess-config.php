@@ -17,15 +17,16 @@ Config::$defaultDataSource
 
 Config::$cacheProviders 
 	= array(	// 'Apc',
-				// 'Memcache',
+				// 'Memcache'
 				// 'Disk'
 			);
 
-Config::$useTurboSpeed = false; // I wanna go FAST!
+Config::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.)
 
 Config::$applications 
 	= array(	'recess.apps.tools.RecessToolsApplication',
-				'blog.BlogApplication'
+				'blog.BlogApplication',
+				'backend.BackendApplication'
 			);
 
 //Config::$plugins 
@@ -79,6 +80,8 @@ abstract class Config {
 		
 		date_default_timezone_set(self::$defaultTimeZone);
 		
+		require_once(self::$recessDir . 'lib/recess/Recess.php');
+		
 		if(self::$useTurboSpeed) {
 			Library::$useNamedRuns = true;
 			$cacheProvidersReversed = array_reverse(self::$cacheProviders);
@@ -88,16 +91,20 @@ abstract class Config {
 			}
 		}
 		
-		require_once(self::$recessDir . 'lib/recess/Recess.php');
-		
 		Library::init();
 		Library::beginNamedRun('recess');
 		
 		Library::addClassPath(self::$appsDir);
 		
-		// TODO: GET RID OF THIS
 		Library::import('recess.framework.Application');
-		self::$applications = array_map(create_function('$class','return Library::importAndInstantiate($class);'),Config::$applications);
+		foreach(self::$applications as $key => $app) {
+			if(!Library::classExists($app)) {
+				die('Application "' . $app . '" does not exist. Remove it from recess-config.php, Config::$applications array.');
+			} else {
+				$app = Library::getClassName($app);
+				self::$applications[$key] = new $app;
+			}
+		}
 		
 		Library::import('recess.sources.db.DbSources');
 		Library::import('recess.sources.db.orm.ModelDataSource');

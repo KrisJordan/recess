@@ -11,8 +11,8 @@
 		printNavItem($selectedNav, 'apps', 'Apps');
 		printNavItem($selectedNav, 'database', 'Database');
 		printNavItem($selectedNav, 'code', 'Code');
-		printNavItem($selectedNav, 'tests', 'Tests');
 		printNavItem($selectedNav, 'routes', 'Routes');
+		printNavItem($selectedNav, 'tests', 'Tests');
 		?>
 	</ul>
 </div>

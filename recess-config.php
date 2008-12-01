@@ -25,8 +25,7 @@ Config::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.
 
 Config::$applications 
 	= array(	'recess.apps.tools.RecessToolsApplication',
-				'blog.BlogApplication',
-				'backend.BackendApplication'
+				'blog.BlogApplication'
 			);
 
 //Config::$plugins 

@@ -1,9 +1,11 @@
+<?php 
+$title = 'Comments';
+include_once($viewsDir . 'common/header.php'); ?>
+
 <form method="POST">
 	<input type="text" name="comment"></input>
 	<input type="submit"></input>
 </form>
-
-
 
 <?php
 
@@ -19,3 +21,4 @@ foreach($comments as $comment) {
 }
 
 ?>
+<?php include_once($viewsDir . 'common/footer.php'); ?>

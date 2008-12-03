@@ -103,7 +103,7 @@ class RecessToolsCodeController extends Controller {
 	}
 	
 	
-	/** !Route GET, model/$fullyQualifiedModel/create */
+	/** !Route GET, class/$fullyQualifiedModel/create */
 	function createTable ($fullyQualifiedModel) {
 		if(!Library::classExists($fullyQualifiedModel)) {
 			return new NotFoundResponse($this->request);

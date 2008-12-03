@@ -88,6 +88,16 @@ class BelongsToRelationship extends Relationship {
 	function onDeleteNullify(Model $model) {
 		// no-op
 	}
+	
+	function __set_state($array) {
+		$relationship = new BelongsToRelationship();
+		$relationship->name = $array['name'];
+		$relationship->localClass = $array['localClass'];
+		$relationship->foreignClass = $array['foreignClass'];
+		$relationship->onDelete = $array['onDelete'];
+		$relationship->through = $array['through'];
+		return $relationship;
+	}
 }
 
 ?>

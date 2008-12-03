@@ -16,12 +16,13 @@ Config::$defaultDataSource
 			);
 
 Config::$cacheProviders 
-	= array(	// 'Apc',
-				// 'Memcache'
-				// 'Disk'
+	= array(	
+				// 'Apc',
+				// 'Memcache',
+				'Sqlite',
 			);
 
-Config::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.)
+Config::$useTurboSpeed = true; // I wanna go FAST! (Note: Experimental feature.)
 
 Config::$applications 
 	= array(	'recess.apps.tools.RecessToolsApplication',

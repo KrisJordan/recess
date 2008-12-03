@@ -34,6 +34,15 @@ class RoutingNode {
 	protected $static_children = array();
 	protected $parametric_children = array();
 	
+	public static function __set_state($array) {
+		$node = new RoutingNode();
+		$node->condition = $array['condition'];
+		$node->methods = $array['methods'];
+		$node->static_children = $array['static_children'];
+		$node->parametric_children= $array['parametric_children'];
+		return $node;
+	}
+	
 	/**
 	 * Used to add a route to the routing tree.
 	 * 

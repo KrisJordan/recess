@@ -180,6 +180,10 @@ class RecessObjectAttachedMethod {
 		$this->name = $name;
 	}
 	
+	static function __set_state($array) {
+		return new RecessObjectAttachedMethod($array['object'], $array['method'], $array['name']);
+	}
+	
 	function isFinal() { return true; }
     function isAbstract() { return false; }
     function isPublic() { return true; }

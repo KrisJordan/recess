@@ -240,6 +240,17 @@ class ControllerDescriptor extends RecessObjectDescriptor {
 	public $routesPrefix = '';
 	public $viewClass = 'recess.framework.views.NativeView';
 	public $viewPrefix = '';
+	
+	public static function __set_state($array) {
+		$descriptor = new ControllerDescriptor();
+		$descriptor->routes = $array['routes'];
+		$descriptor->methodUrls = $array['methodUrls'];
+		$descriptor->routesPrefix = $array['routesPrefix'];
+		$descriptor->viewClass = $array['viewClass'];
+		$descriptor->viewPrefix = $array['viewPrefix'];
+		$descriptor->attachedMethods = $array['attachedMethods'];
+		return $descriptor;
+	}
 }
 
 ?>

@@ -178,6 +178,16 @@ class HasManyRelationship extends Relationship {
 		
 		$source->executeStatement($queryBuilder->update(), $queryBuilder->getPdoArguments());
 	}
+	
+	function __set_state($array) {
+		$relationship = new HasManyRelationship();
+		$relationship->name = $array['name'];
+		$relationship->localClass = $array['localClass'];
+		$relationship->foreignClass = $array['foreignClass'];
+		$relationship->onDelete = $array['onDelete'];
+		$relationship->through = $array['through'];
+		return $relationship;
+	}
 
 }
 

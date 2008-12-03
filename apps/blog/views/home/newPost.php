@@ -1,4 +1,4 @@
-<?php include_once('header.php'); ?>
+<?php include_once($viewsDir . 'common/header.php'); ?>
 
 <h1>Create New Post</h1>
 
@@ -10,4 +10,4 @@
 	</table>
 </form>
 
-<?php include_once('footer.php'); ?>
+<?php include_once($viewsDir . 'common/footer.php'); ?>

@@ -7,7 +7,7 @@
 		  <![endif]-->
 		  <link rel="stylesheet" href="/content/css/recess.css" />
 		  
-		<link type="text/css" rel="stylesheet" href="/content/css/SyntaxHighlighter.css"></link>
+		<link type="text/css" rel="stylesheet" href="/content/css/SyntaxHighlighter.css" />
 		<script language="javascript" src="/content/js/shCore.js"></script>
 		<script language="javascript" src="/content/js/shBrushPhp.js"></script>
 		<script language="javascript">
@@ -15,7 +15,12 @@
 				dp.SyntaxHighlighter.ClipboardSwf = '/content/flash/clipboard.swf';
 				dp.SyntaxHighlighter.HighlightAll('code');
 			}
+			
+			addField = function() {
+				$("modelForm").append('<p>Hello</p>');
+			}
 		</script>
+		<script type="text/javascript" src="/content/js/jquery/jquery-1.2.6.js"></script> 
 	</head>
 	<body>
 		<div class="container">
@@ -51,6 +56,14 @@
 				</div>
 				<div class="span-16 last">
 					<h3>Package: <a href="">recess.lang</a></h3>
+		<form id="modelForm">
+			<div class="an-input"><label for="field[0]">Field:</label><input type="text" name="field[0]" id="field[0]" /></div>
+		</form>
+		<a href="javascript:addField()">Add Field</a>
+		
+		
+		
+		
 					<h2>RecessObject <span class="quiet">extends <a href="">StdClass</a></span></h2>
 					<pre name="code" class="php">&lt;?php 
 	class RecessObject extends StdClass {

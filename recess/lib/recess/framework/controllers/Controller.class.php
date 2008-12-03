@@ -102,7 +102,6 @@ abstract class Controller extends RecessObject {
 			if(strpos($url, '$') !== false) { 
 				throw new RecessException('Missing arguments in urlToMethod(' . $methodName . '). Provide values for missing arguments: ' . $url, get_defined_vars());
 			}
-			
 			return trim($_ENV['url.base'] . $url);
 		} else {
 			throw new RecessException('No url for method ' . $methodName . ' exists.', get_defined_vars());

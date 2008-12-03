@@ -15,7 +15,25 @@ class PdoDataSource extends PDO {
 	
 	protected $provider = null;
 	
+	/**
+	 * Creates a data source instance to represent a connection to the database.
+	 * The first argument can either be a string DSN or an array which contains
+	 * the construction arguments.
+	 *
+	 * @param mixed $dsn String DSN or array of arguments (dsn, username, password)
+	 * @param string $username
+	 * @param string $password
+	 * @param array $driver_options
+	 */
 	function __construct($dsn, $username = '', $password = '', $driver_options = array()) {
+		if(is_array($dsn)) {
+			$args = $dsn;
+			if(isset($args[0])) { $dsn = $args[0]; }
+			if(isset($args[1])) { $username = $args[1];	}
+			if(isset($args[2])) { $password = $args[2];	}
+			if(isset($args[3])) { $driver_options = $args[3]; }
+		}
+		
 		try {
 			parent::__construct($dsn, $username, $password, $driver_options);
 			parent::setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -119,6 +137,39 @@ class PdoDataSource extends PDO {
 	 */
 	function getColumns($table) {
 		return $this->provider->getColumns($table);
+	}
+	
+	/**
+	 * Retrieve the a table's RecessTableDefinition.
+	 *
+	 * @param string $table
+	 * @return RecessTableDefinition
+	 */
+	function getTableDefinition($table) {
+		return $this->provider->getTableDefinition($table);
+	}
+	
+	/**
+	 * Drop a table from the database.
+	 *
+	 * @param string $table
+	 */
+	function dropTable($table) {
+		return $this->provider->dropTable($table);
+	}
+	
+	/**
+	 * Empty a table in the database.
+	 *
+	 * @param string $table
+	 */
+	function emptyTable($table) {
+		return $this->provider->emptyTable($table);
+	}
+	
+	
+	function createTable($tableDefinition) {
+		
 	}
 }
 

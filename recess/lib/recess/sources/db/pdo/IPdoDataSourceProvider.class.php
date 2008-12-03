@@ -26,6 +26,30 @@ interface IPdoDataSourceProvider {
 	 */
 	function getColumns($table);
 	
+	
+	/**
+	 * Retrieve the a table's RecessTableDefinition.
+	 *
+	 * @param string $table Name of table.
+	 * @return RecessTableDefinition
+	 */
+	function getTableDefinition($table);
+	
+	
+	/**
+	 * Drop a table from the data source.
+	 *
+	 * @param string $table Table to drop.
+	 */
+	function dropTable($table);
+	
+	/**
+	 * Empty a table in the data source.
+	 *
+	 * @param string $table Table to drop.
+	 */
+	function emptyTable($table);
+	
 }
 
 ?>

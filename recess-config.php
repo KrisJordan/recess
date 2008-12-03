@@ -4,16 +4,31 @@
 
 Config::$mode = Config::DEVELOPMENT; // or Config::PRODUCTION
 
-// Paths to the recess and apps directories
-Config::$recessDir = $_ENV['dir.documentRoot'] . 'recess/';
-Config::$appsDir = $_ENV['dir.documentRoot'] . 'apps/';
-
+Config::$applications 
+	= array(	'recess.apps.tools.RecessToolsApplication',
+				'blog.BlogApplication',
+			);
+			
 Config::$defaultTimeZone = 'America/New_York';
 
 Config::$defaultDataSource 
-	= array(	'sqlite:' . $_ENV['dir.documentRoot'] . '/recess/sqlite/default.db'
+	= array(	'sqlite:' . $_ENV['dir.documentRoot'] . 'recess/sqlite/default.db'
 				// 'mysql:host=localhost;dbname=recess', 'recess', 'recess'
 			);
+
+Config::$namedDataSources 
+	= array( 	// 'name' => array('sqlite:' . $_ENV['dir.documentRoot'] . 'recess/sqlite/default.db')
+				// 'name' => array('mysql:host=localhost;dbname=recess', 'username', 'password')
+//			 	'sqlite2' => 'sqlite:' . $_ENV['dir.documentRoot'] . 'recess/sqlite/sqlite2.db',
+//				'recess' => array(  
+//	                'mysql:host=localhost;dbname=recess',  
+//	                'recess',  
+//	                'recess'),
+			);
+			
+// Paths to the recess and apps directories
+Config::$recessDir = $_ENV['dir.documentRoot'] . 'recess/';
+Config::$appsDir = $_ENV['dir.documentRoot'] . 'apps/';
 
 Config::$cacheProviders 
 	= array(	// 'Apc',
@@ -23,18 +38,8 @@ Config::$cacheProviders
 
 Config::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.)
 
-Config::$applications 
-	= array(	'recess.apps.tools.RecessToolsApplication',
-				'blog.BlogApplication'
-			);
-
 //Config::$plugins 
 //	= array( 	'recess.framework.plugins.ContentCaching'
-//			);
-
-//Config::$namedDataSources 
-//	= array( 	'name' => array('dsn'),
-//				'name' => array('dsn','user','pass','options')
 //			);
 
 /* END OF BASIC CONFIGURATION SETTINGS */
@@ -105,7 +110,13 @@ abstract class Config {
 		
 		Library::import('recess.sources.db.DbSources');
 		Library::import('recess.sources.db.orm.ModelDataSource');
-		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource[0]));//,Config::$defaultDataSource[1],Config::$defaultDataSource[2]));
+		DbSources::setDefaultSource(new ModelDataSource(Config::$defaultDataSource));//,Config::$defaultDataSource[1],Config::$defaultDataSource[2]));
+		
+		if(!empty(Config::$namedDataSources)) {
+			foreach(Config::$namedDataSources as $name => $sourceInfo) {
+				DbSources::addSource($name, new ModelDataSource($sourceInfo));
+			}
+		}
 		
 		Library::import('recess.framework.DefaultPolicy');
 		self::$policy = new DefaultPolicy();

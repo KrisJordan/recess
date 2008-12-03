@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.sources.db.pdo.IPdoDataSourceProvider');
-
+Library::import('recess.sources.db.pdo.RecessTableDefinition');
 /**
  * Sqlite 3 Data Source Provider
  * @author Kris Jordan
@@ -55,6 +55,49 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 		sort($columns);
 		
 		return $columns;
+	}
+	
+	/**
+	 * Retrieve the a table's RecessTableDefinition.
+	 *
+	 * @param string $table Name of table.
+	 * @return RecessTableDefinition
+	 */
+	function getTableDefinition($table) {
+		$results = $this->pdo->query('PRAGMA table_info("' . $table . '");');
+		
+		$columns = array();
+		
+		$tableDefinition = new RecessTableDefinition();
+		
+		foreach($results as $result) {
+			$tableDefinition->addColumn(
+				$result['name'],
+				$result['type'],
+				$result['notnull'] == 0 ? true : false,
+				$result['pk'] == 1 ? true : false,
+				$result['dflt_value'] == null ? '' : $result['dflt_value']);
+		}
+		
+		return $tableDefinition;
+	}
+	
+	/**
+	 * Drop a table from SQLite database.
+	 *
+	 * @param string $table Name of table.
+	 */
+	function dropTable($table) {
+		return $this->pdo->exec('DROP TABLE ' . $table);
+	}
+	
+	/**
+	 * Empty a table from SQLite database.
+	 *
+	 * @param string $table Name of table.
+	 */
+	function emptyTable($table) {
+		return $this->pdo->exec('DELETE FROM ' . $table);
 	}
 }
 ?>

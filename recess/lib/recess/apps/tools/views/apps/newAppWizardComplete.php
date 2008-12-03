@@ -21,7 +21,7 @@ foreach($messages as $message) {
 Config::$applications 
      = array(
          'recess.apps.tools.RecessToolsApplication',
-         '<?php echo $applicationFullClass; ?>' // &lt;-- ADD THIS LINE
+         '<?php echo $applicationFullClass; ?>', // &lt;-- ADD THIS LINE
        );
 </pre>
 

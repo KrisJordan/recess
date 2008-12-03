@@ -28,7 +28,6 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 		$tables = array();
 		
 		foreach($results as $result) {
-			print_r($result);
 			$tables[] = $result[0];
 		}
 		
@@ -58,6 +57,50 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 		sort($columns);
 		
 		return $columns;
+	}
+	
+	/**
+	 * Retrieve the a table's RecessTableDefinition.
+	 *
+	 * @param string $table Name of table.
+	 * @return RecessTableDefinition
+	 */
+	function getTableDefinition($table) {
+		$results = $this->pdo->query('SHOW COLUMNS FROM ' . $table . ';');
+		
+		$columns = array();
+		
+		$tableDefinition = new RecessTableDefinition();
+		
+		foreach($results as $result) {
+			$tableDefinition->addColumn(
+				$result['Field'],
+				$result['Type'],
+				$result['Null'] == 'No' ? false : true,
+				$result['Key'] == 'PRI' ? true : false,
+				$result['Default'] == null ? '' : $result['Default']);
+				array($result['Extra']);
+		}
+		
+		return $tableDefinition;
+	}
+	
+	/**
+	 * Drop a table from MySql database.
+	 *
+	 * @param string $table Name of table.
+	 */
+	function dropTable($table) {
+		return $this->pdo->exec('DROP TABLE ' . $table);
+	}
+	
+	/**
+	 * Empty a table from MySql database.
+	 *
+	 * @param string $table Name of table.
+	 */
+	function emptyTable($table) {
+		return $this->pdo->exec('DELETE FROM ' . $table);
 	}
 }
 ?>

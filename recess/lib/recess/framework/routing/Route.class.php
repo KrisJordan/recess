@@ -23,5 +23,12 @@ class Route {
 		else { $this->methods[] = $methods; }
 		$this->path = $path;
 	}
+	
+	public static function __set_state($array) {
+		$route = new Route($array['class'], $array['function'], $array['methods'], $array['path']);
+		$route->app = $array['app'];
+		$route->args = $array['args'];
+		return $route;
+	}
 }
 ?>

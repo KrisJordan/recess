@@ -17,5 +17,15 @@ class BlogApplication extends Application {
 		$this->routingPrefix = 'blog/';
 		
 	}
+	
+	public static function __set_state($array) {
+		$app = new BlogApplication();
+		$app->name = $array['name'];
+		$app->controllersPrefix = $array['controllersPrefix'];
+		$app->modelsPrefix = $array['modelsPrefix'];
+		$app->viewsDir = $array['viewsDir'];
+		$app->routingPrefix = $array['routingPrefix'];
+		return $app;
+	}
 }
 ?>

@@ -1,4 +1,6 @@
 <?php
+Library::beginNamedRun('models');
+
 Library::import('recess.lang.Inflector');
 Library::import('recess.lang.RecessObject');
 Library::import('recess.lang.RecessReflectionClass');
@@ -232,6 +234,17 @@ class ModelProperty {
 	public $autoincrement = false;
 	public $isPrimaryKey = false;
 	public $isForeignKey = false;
+	
+	function __set_state($array) {
+		$prop = new ModelProperty();
+		$prop->name = $array['name'];
+		$prop->type = $array['type'];
+		$prop->pkCallback = $array['pkCallback'];
+		$prop->autoincrement = $array['autoincrement'];
+		$prop->isPrimaryKey = $array['isPrimaryKey'];
+		$prop->isForeignKey = $array['isForeignKey'];
+		return $prop;
+	}
 }
 
 class ModelDescriptor extends RecessObjectDescriptor {
@@ -244,8 +257,6 @@ class ModelDescriptor extends RecessObjectDescriptor {
 	public $columns;
 	public $properties;
 	
-	// TODO: This will need to be refactored to reference the source_name verses the source
-	public $source_name;
 	public $source;
 	
 	function __construct($class) {
@@ -256,6 +267,18 @@ class ModelDescriptor extends RecessObjectDescriptor {
 		$this->columns = $this->getSource()->getColumns($this->table);
 		$this->primaryKeyColumn = 'id';
 		$this->modelClass = $class;
+	}
+	
+	function __set_state($array) {
+		$descriptor = new ModelDescriptor($array['modelClass']);
+		$descriptor->primaryKey = $array['primaryKey'];
+		$descriptor->table = $array['table'];
+		$descriptor->relationships = $array['relationships'];
+		$descriptor->columns = $array['columns'];
+		$descriptor->properties = $array['properties'];
+		$descriptor->source = $array['source'];
+		$descriptor->attachedMethods = $array['attachedMethods'];
+		return $descriptor;
 	}
 	
 	function setTable($table) {

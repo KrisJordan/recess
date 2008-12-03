@@ -1,7 +1,7 @@
-<html>
-<head></head>
-<body>
-<h1>My Blog</h1>
+<?php 
+$title = 'Home';
+include_once($viewsDir . 'common/header.php');
+?>
 <a href="./new">Write New Post</a>
 <?php
 
@@ -14,7 +14,5 @@ foreach($latestPosts as $post) {
 	echo '<p><a href="comments/' . $post->id . '">' . $post->comments()->count() . ' Comments</a></p>';
 
 }
-
 ?>
-</body>
-</html>
+<?php include_once($viewsDir . 'common/footer.php'); ?>

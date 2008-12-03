@@ -31,12 +31,13 @@ Config::$recessDir = $_ENV['dir.documentRoot'] . 'recess/';
 Config::$appsDir = $_ENV['dir.documentRoot'] . 'apps/';
 
 Config::$cacheProviders 
-	= array(	// 'Apc',
-				// 'Memcache'
-				// 'Disk'
+	= array(	
+				// 'Apc',
+				// 'Memcache',
+				'Sqlite',
 			);
 
-Config::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.)
+Config::$useTurboSpeed = true; // I wanna go FAST! (Note: Experimental feature.)
 
 //Config::$plugins 
 //	= array( 	'recess.framework.plugins.ContentCaching'

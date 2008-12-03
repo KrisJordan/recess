@@ -1,3 +1,5 @@
 *.cache
 *.settings
 .project
+.db
+recess/temp/*

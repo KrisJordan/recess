@@ -7,7 +7,7 @@ class PostsController extends Controller {
 	
 	protected $formats = array(Formats::xhtml, Formats::json);
 	
-	/** !Route GET, /blog/ */
+	/** !Route GET */
 	function home() {
 
 		$this->latestPosts = Make::a('Post')->find()->orderBy('id DESC')->range(0,5);

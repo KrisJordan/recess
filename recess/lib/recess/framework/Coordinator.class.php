@@ -16,7 +16,7 @@ final class Coordinator {
 	 * @package recess
 	 * @static 
 	 */
-	public static function main(Request $request, IPolicy $policy, array $apps, RoutingNode $routes, array $plugins = array()) {
+	public static function main(Request $request, IPolicy $policy, array $apps, RtNode $routes, array $plugins = array()) {
 		static $callDepth = 0;
 		static $calls = array();
 		$callDepth++;

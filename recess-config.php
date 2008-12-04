@@ -37,11 +37,7 @@ Config::$cacheProviders
 				'Sqlite',
 			);
 
-Config::$useTurboSpeed = true; // I wanna go FAST! (Note: Experimental feature.)
-
-//Config::$plugins 
-//	= array( 	'recess.framework.plugins.ContentCaching'
-//			);
+Config::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.)
 
 /* END OF BASIC CONFIGURATION SETTINGS */
 
@@ -123,17 +119,19 @@ abstract class Config {
 		self::$policy = new DefaultPolicy();
 	}
 	
-	static function getRouter() {
-		Library::import('recess.framework.routing.RoutingNode');
+	const ROUTES_CACHE_KEY = 'Recess::Routes';
+	
+	static function getRoutes() {
+		Library::import('recess.framework.routing.RtNode');
 		Library::import('recess.framework.routing.Route');
 
-		$router = Cache::get('router');
+		$router = Cache::get(self::ROUTES_CACHE_KEY);
 		if($router === false) {
-			$router = new RoutingNode();
+			$router = new RtNode();
 			foreach(self::$applications as $app) {
 				$app->addRoutesToRouter($router);
 			}
-			Cache::set('router', $router);	
+			Cache::set(self::ROUTES_CACHE_KEY, $router);	
 		}
 
 		return $router;

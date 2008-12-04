@@ -1,5 +1,4 @@
 <?php
-
 Library::import('recess.lang.RecessObjectRegistry');
 
 Library::import('recess.sources.db.DbSources');

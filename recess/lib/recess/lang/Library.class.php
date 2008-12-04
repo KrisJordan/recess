@@ -25,9 +25,9 @@ class Library {
 	const dotSeparator = '.';
 	const pathSeparator = '/';
 	
-	const CLASSES_X_CLASS_CACHE_KEY = 'Library::$classesByClass';
-	const CLASSES_X_FULL_CACHE_KEY = 'Library::$classesByFull';
-	const PATHS_CACHE_KEY = 'Library::$paths';
+	const CLASSES_X_CLASS_CACHE_KEY = 'Recess::*::Library::$classesByClass';
+	const CLASSES_X_FULL_CACHE_KEY = 'Recess::*::Library::$classesByFull';
+	const PATHS_CACHE_KEY = 'Recess::*::Library::$paths';
 	const NAMED_DIRS_PATH = 'namedRuns/';
 	const PHP_EXTENSION = '.php';
 	

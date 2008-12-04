@@ -18,5 +18,5 @@ set_exception_handler('Diagnostics::handleException');
 
 Library::import('recess.framework.Coordinator');
 Library::import('recess.http.Environment');
-Coordinator::main(Environment::getRawRequest(), Config::$policy, Config::$applications, Config::getRouter(), Config::$plugins);
+Coordinator::main(Environment::getRawRequest(), Config::$policy, Config::$applications, Config::getRoutes(), Config::$plugins);
 ?>

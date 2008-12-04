@@ -17,7 +17,8 @@ function printRoutesRecursive($codeController, $routingNode, $fullPath) {
 	$parametricPaths = $routingNode->getParametricPaths();
 	$methods = $routingNode->getMethods();
 	if(!empty($methods)) {
-		foreach($methods as $method => $route) {
+		foreach($methods as $method => $rt) {
+			$route = $rt->toRoute();
 			$i++;
 			if($i % 2 == 0) {
 				echo '<tr class="light">';

@@ -162,9 +162,7 @@ class RecessToolsAppsController extends Controller {
 		$form->fill($fillValues);
 		return $form;
 	}
-	
 
-	
 	/** !Route GET, $appClass */
 	public function app($appClass) {
 		$application = $this->getApplication($appClass);
@@ -175,12 +173,12 @@ class RecessToolsAppsController extends Controller {
 		$this->app = $application;
 	}
 	
-	/** !Route GET, gen/model */
+	/** !Route GET, model/gen */
 	public function createModel() {
 		
 	}
 	
-	/** !Route GET, gen/controller */
+	/** !Route GET, controller/gen */
 	public function createController() {
 		
 	}

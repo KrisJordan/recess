@@ -116,11 +116,15 @@ class SqliteCacheProvider implements ICacheProvider {
 	protected $pdo;
 	protected $setStatement;
 	protected $getStatement;
+	protected $getManyStatement;
 	protected $deleteStatement;
 	protected $time;
+	
+	protected $entries = array();
 
 	const VALUE = 0;
 	const EXPIRE = 1;
+	const KEY = 2;
 	
 	function __construct() {
 		$this->pdo = new Pdo('sqlite:' . $_ENV['dir.temp'] . 'sqlite-cache.db');
@@ -128,11 +132,13 @@ class SqliteCacheProvider implements ICacheProvider {
 		try {
 			$this->setStatement = $this->pdo->prepare('INSERT OR REPLACE INTO cache (key,value,expire) values (:key,:value,:expire)');
 			$this->getStatement = $this->pdo->prepare('SELECT value,expire FROM cache WHERE key = :key');
+			$this->getManyStatement = $this->pdo->prepare('SELECT value,expire,key FROM cache WHERE key LIKE :key');
 		} catch(PDOException $e) {
 			$this->pdo->exec('CREATE TABLE "cache" ("key" TEXT PRIMARY KEY  NOT NULL , "value" TEXT NOT NULL , "expire" INTEGER NOT NULL)');
 			$this->pdo->exec('CREATE INDEX "expiration" ON "cache" ("expire" ASC)');
 			$this->setStatement = $this->pdo->prepare('INSERT OR REPLACE INTO cache (key,value,expire) values (:key,:value,:expire)');
 			$this->getStatement = $this->pdo->prepare('SELECT value,expire FROM cache WHERE key = :key');
+			$this->getManyStatement = $this->pdo->prepare('SELECT value,expire,key FROM cache WHERE key LIKE :key');
 		}
 		$this->time = time();
 	}
@@ -152,8 +158,9 @@ class SqliteCacheProvider implements ICacheProvider {
 	}
 	
 	function set($key, $value, $duration = 0) {
-		$this->setStatement->execute(array(':key' => $key, ':value' => var_export($value, true), ':expire' => $duration == 0 ? 0 : time() + $duration));
+		$this->setStatement->execute(array(':key' => $key, ':value' => serialize($value), ':expire' => $duration == 0 ? 0 : time() + $duration));
 		$this->reportsTo->set($key, $value, $duration);
+		$this->entries[$key] = $value;
 	}
 	
 	function clearStaleEntries() {
@@ -161,23 +168,42 @@ class SqliteCacheProvider implements ICacheProvider {
 	}
 	
 	function get($key) {
-		$this->getStatement->execute(array(':key' => $key));
-		$result = $this->getStatement->fetch(PDO::FETCH_NUM);
-		
-		if($result !== false) {
-			if($result[self::EXPIRE] == 0 || $result[self::EXPIRE] <= $this->time) {
-				echo $key . ' ';
-				echo $result[self::VALUE];
-				echo '<br /><br />';
-				eval('$result = ' . $result[self::VALUE] . ';');
-			} else {
-				$this->clearStaleEntries();
-			}
+		if(isset($this->entries[$key])) {
+			return $this->entries[$key];
+		}
+
+		if(($starPos = strpos($key,'*')) === false) {
+			// Fetch Single
+			$this->getStatement->execute(array(':key' => $key));
+			$entries = $this->getStatement->fetchAll(PDO::FETCH_NUM);
 		} else {
-			$result = $this->reportsTo->get($key);
+			// Prefetch With Wildcard
+			$this->getManyStatement->execute(array(':key' => substr($key,0,$starPos+1) . '%'));
+			$entries = $this->getManyStatement->fetchAll(PDO::FETCH_NUM);
 		}
 		
-		return $result;
+		$clearStaleEntries = false;
+		foreach($entries as $entry) {
+			if($entry[self::EXPIRE] == 0 || $entry[self::EXPIRE] <= $this->time) {
+				if(isset($entry[self::KEY])) {
+					$this->entries[$entry[self::KEY]] = unserialize($entry[self::VALUE]);
+				} else {
+					$this->entries[$key] = unserialize($entry[self::VALUE]);
+				}
+			} else {
+				$clearStaleEntries = true;
+			}
+		}
+		
+		if($clearStaleEntries) {
+			$this->clearStaleEntries();
+		}
+		
+		if(isset($this->entries[$key])) {
+			return $this->entries[$key];
+		} else{
+			return $this->reportsTo->get($key);
+		}
 	}
 	
 	function delete($key) {
@@ -193,5 +219,4 @@ class SqliteCacheProvider implements ICacheProvider {
 		$this->reportsTo->clear();
 	}
 }
-
 ?>

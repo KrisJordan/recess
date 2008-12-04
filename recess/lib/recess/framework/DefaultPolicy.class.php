@@ -27,7 +27,7 @@ class DefaultPolicy implements IPolicy {
 		return $request;
 	}
 	
-	public function getControllerFor(Request &$request, array $applications, RoutingNode $routes) {
+	public function getControllerFor(Request &$request, array $applications, RtNode $routes) {
 		
 		$routeResult = $routes->findRouteFor($request);
 		

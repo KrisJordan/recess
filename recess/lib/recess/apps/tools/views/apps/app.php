@@ -50,7 +50,7 @@ printClassesInNamespace($app->controllersPrefix, $codeController);
 <h2 class="bottom">Routes</h2>
 <p class="bottom">Route Prefix: <?php echo $app->routingPrefix; ?></p>
 <?php
-$routes = new RoutingNode();
+$routes = new RtNode();
 $app->addRoutesToRouter($routes);
 include_once($viewsDir . 'common/printRoutes.php');
 printRoutes($routes, $codeController);

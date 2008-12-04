@@ -1,6 +1,4 @@
 <?php
-Library::beginNamedRun('models');
-
 Library::import('recess.lang.Inflector');
 Library::import('recess.lang.RecessObject');
 Library::import('recess.lang.RecessReflectionClass');

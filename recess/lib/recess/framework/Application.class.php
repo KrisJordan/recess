@@ -16,7 +16,7 @@ abstract class Application {
 	
 	public $routingPrefix = '/';
 	
-	function addRoutesToRouter(RoutingNode $router) {
+	function addRoutesToRouter(RtNode $router) {
 		$classes = Library::findClassesIn($this->controllersPrefix);
 		
 		foreach($classes as $class) {

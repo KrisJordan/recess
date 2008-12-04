@@ -13,7 +13,6 @@ class Route {
 	public $app;
 	public $methods = array();
 	public $path;
-	public $args = array();
 	
 	public function __construct($class, $function, $methods, $path) {
 		$this->class = $class;
@@ -27,7 +26,6 @@ class Route {
 	public static function __set_state($array) {
 		$route = new Route($array['class'], $array['function'], $array['methods'], $array['path']);
 		$route->app = $array['app'];
-		$route->args = $array['args'];
 		return $route;
 	}
 }

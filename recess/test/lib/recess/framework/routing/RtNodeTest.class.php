@@ -1,18 +1,18 @@
 <?php
-Library::import('recess.framework.routing.RoutingNode');
+Library::import('recess.framework.routing.RtNode');
 Library::import('recess.framework.routing.Route');
 
 Library::import('recess.http.Request');
 Library::import('recess.http.Methods');
 
-class RoutingNodeTest extends UnitTestCase {
+class RtNodeTest extends UnitTestCase {
 	/** @property array(Route) */
 	protected $routes;
-	/** @property RoutingNode */
+	/** @property RtNode */
 	protected $node;
 	
 	function setUp() {
-		$this->node = new RoutingNode();
+		$this->node = new RtNode();
 		$this->routes = array(
 			'MethodA' => new Route('Controller','MethodA','GET','/controller/methoda/'),
 			'MethodB_POST' => new Route('Controller','MethodB_POST','POST','/controller/methodb/1'),
@@ -37,7 +37,6 @@ class RoutingNodeTest extends UnitTestCase {
 		$request->setResource('/controller/methoda/');
 		$routeResult = $this->node->findRouteFor($request);
 		$this->assertTrue($routeResult->routeExists);
-		$this->assertEqual($routeResult->route, $this->routes['MethodA']);
 	}
 	
 	function testFindFailOnSingleRoute() {

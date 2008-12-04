@@ -31,7 +31,13 @@ $qotms = array(
 				dp.SyntaxHighlighter.HighlightAll('code');
 			}
 		</script>
-		
+		<?php
+		if(isset($scripts) && is_array($scripts)) {
+			foreach($scripts as $script) {
+				include_once($viewsDir . $script);
+			}
+		}
+		?>
 		<title><?php if(isset($title)) echo $title; else echo 'Recess! Tools!'; ?></title>
 	</head>
 	<body>

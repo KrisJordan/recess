@@ -198,8 +198,6 @@ class RecessToolsAppsController extends Controller {
 		}
 		$propertyNames = $values['fields'];
 		$types = $values['types'];
-		$requireds = $values['nullables'];
-		$defaultValues = $values['defaultValues'];
 		
 		Library::import('recess.sources.db.orm.Model', true); 
 			// Forcing b/c ModelDescriptor is in Model
@@ -208,12 +206,23 @@ class RecessToolsAppsController extends Controller {
 		$modelDescriptor->setSource($dataSource);
 		$modelDescriptor->setTable($tableName, false);
 		
+		$pkFound = false;
 		foreach($propertyNames as $i => $name) {
 			if($name == "") continue;
 			$property = new ModelProperty();
 			$property->name = $name;
-			$property->type = $types[$i];
-			$property->required = $requireds[$i];
+			if($types[$i] == 'primaryKey') {
+				if($pkFound) {
+					$property->type = 'integer';
+				} else {
+					$pkFound = true;
+					$property->type = 'integer';
+					$property->isPrimaryKey = true;
+					$property->autoincrement = true;
+				}
+			} else {
+				$property->type = $types[$i];
+			}
 			$modelDescriptor->properties[] = $property;
 		}
 		

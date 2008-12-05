@@ -3,7 +3,7 @@ $title = 'New Application Instructions';
 $selectedNav = 'apps';
 include_once($viewsDir . 'common/header.php');
 ?>
-<h1>Introducing <strong><?php echo $modelName; ?></strong> Model...</h1>
+<h1>Creating <strong><?php echo $modelName; ?></strong> Model...</h1>
 
 <h3 class="bottom">Code Gen <?php if($modelWasSaved){ echo '<span class="added">Done</a>'; } else { echo '<span class="highlight">Almost Done</span>'; } ?></h3>
 <?php if($modelWasSaved): ?>

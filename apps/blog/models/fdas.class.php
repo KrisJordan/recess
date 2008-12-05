@@ -19,10 +19,13 @@ class fdas extends Model {
 	/** !Type text */
 	public $docComment;
 
-	/** !Type text */
+	/**
+	 * !Type text
+	 * !Required
+	 */
 	public $file;
 
-	/** !Type integer */
+	/** !Column integer, PrimaryKey */
 	public $lastModified;
 
 }

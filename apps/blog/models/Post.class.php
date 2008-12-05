@@ -1,18 +1,23 @@
 <?php
-Library::import('blog.models.Comment');
-
 /**
- * !HasMany comments, OnDelete: Cascade
- * !BelongsTo author, Class: User
- * !HasMany tags, Through: PostsTags
+ * !Source Default
+ * !Table posts
  */
-class Post extends Model { }
+class Post extends Model {
+	/** !Type integer */
+	public $id;
 
-class BlogController extends Controller {
-	/** !Route GET, /posts/ */
-	function showPosts() {
-		$this->posts = Make::a('Post')->all();
-	}
+	/** !Type string */
+	public $title;
+
+	/** !Type text */
+	public $body;
+
+	/** !Type boolean */
+	public $public;
+
+	/** !Type timestamp */
+	public $lastEdited;
+
 }
-
 ?>

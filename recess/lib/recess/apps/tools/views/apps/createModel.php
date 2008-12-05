@@ -20,6 +20,15 @@ include_once($viewsDir . 'common/header.php');
 		<td><label for="dataSource">Data Source:</label></td>
 		<td><select name="dataSource">
 				<option value="Default">Default</option>
+				<?php
+				foreach($sources as $sourceName => $source):
+					if($sourceName != "Default"):
+				?>
+				<option value="<?php echo $sourceName; ?>"><?php echo $sourceName; ?></option>
+				<?php
+					endif;		
+				endforeach;
+				?>
 		</select></td>
 		</tr>
 		<tr>
@@ -71,13 +80,12 @@ include_once($viewsDir . 'common/header.php');
 </div>
 <hr />
 <h2>Step 3) Properties</h2>
+<div class="span-8">
 	<table>
 		<thead>
 			<tr>
 				<td>Property Name</td>
 				<td>Type</td>
-				<td>Nullable?</td>
-				<td>Default Value</td>
 				<td>Remove</td>
 			</tr>
 		</thead>
@@ -87,6 +95,8 @@ include_once($viewsDir . 'common/header.php');
 			<td><select name="types[]" class="type">
 					<option value="string">String</option>
 					<option value="text">Text</option>
+					
+					<option value="primaryKey">PrimaryKey</option>
 					
 					<option value="integer">Integer</option>
 					<option value="decimal">Decimal</option>
@@ -100,14 +110,12 @@ include_once($viewsDir . 'common/header.php');
 					<option value="blob">Blob</option>
 					<option value="boolean">Boolean</option>
 			</select></td>
-			<td><input class="nullable" type="checkbox" name="nullables[]" value="1" checked="checked" /></td>
-			<td><input class="defaultValue" type="text" name="defaultValues[]" /></td>
 			<td><input class="removeField" type="button" value="X"></input></td>
 		</tr>
 		</tbody>
 	</table>
-	<input type="button" class="addField" value="Add a Property" />
-</p>
+	<input type="button" class="addField top" value="Add a Property" />
+</div>
 <hr />
 <h2>Step 4) Relationships</h2>
 	<table>

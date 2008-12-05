@@ -160,15 +160,11 @@
 			$(".addField").show();
 		}
 		
-		function addProperty(name, type, nullable, defaultValue) {
+		function addProperty(name, type) {
 			addField();
 			propertiesForm = $("#propertiesForm tr:last");
 			propertiesForm.find(".fieldName").val(name);
 			propertiesForm.find(".type").val(type);
-			if(!nullable) {
-				propertiesForm.find(".nullable").attr('checked', false);
-			}
-			propertiesForm.find(".defaultValue").val(defaultValue);
 			$("#propertiesForm").parent().find("button").focus();
 		}
 		
@@ -180,9 +176,7 @@
 						clearProperties();
 						for (var i in data.columns) {
 							addProperty(data.columns[i].name,
-										data.columns[i].type,
-										data.columns[i].nullable,
-										data.columns[i].defaultValue);
+										data.columns[i].type);
 						}
 					}
 				);

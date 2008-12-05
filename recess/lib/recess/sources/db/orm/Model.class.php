@@ -232,6 +232,7 @@ class ModelProperty {
 	public $autoincrement = false;
 	public $isPrimaryKey = false;
 	public $isForeignKey = false;
+	public $required = false;
 	
 	function __set_state($array) {
 		$prop = new ModelProperty();
@@ -257,12 +258,16 @@ class ModelDescriptor extends RecessObjectDescriptor {
 	
 	public $source;
 	
-	function __construct($class) {
+	function __construct($class, $loadColumns = true) {
 		$this->table = Inflector::toPlural(Inflector::toUnderscores($class));
 		$this->relationships = array();
 		$this->properties = array();
 		$this->source = false;
-		$this->columns = $this->getSource()->getColumns($this->table);
+		if($loadColumns) {
+			$this->columns = $this->getSource()->getColumns($this->table);
+		} else {
+			$this->columns = array();
+		}
 		$this->primaryKeyColumn = 'id';
 		$this->modelClass = $class;
 	}
@@ -279,13 +284,21 @@ class ModelDescriptor extends RecessObjectDescriptor {
 		return $descriptor;
 	}
 	
-	function setTable($table) {
+	function setTable($table, $loadColumns = true) {
 		$this->table = $table;
-		$this->columns = $this->getSource()->getColumns($this->table);
+		if($loadColumns) {
+			$this->columns = $this->getSource()->getColumns($this->table);
+		} else {
+			$this->columns = array();
+		}
 	}
 	
 	function getTable() {
 		return $this->table;
+	}
+	
+	function setSource($source) {
+		$this->source = $source;		
 	}
 	
 	function getSource() {

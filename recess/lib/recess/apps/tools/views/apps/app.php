@@ -17,7 +17,7 @@ $codeController = new RecessToolsCodeController($response->request->meta->app);
 					)
 				); ?>"><?php echo get_class($app); ?></a></p>
 <div class="span-6">
-<h2 class="bottom">Models (<a href="<?php echo $controller->urlToMethod('createModel'); ?>">new</a>)</h2>
+<h2 class="bottom">Models (<a href="<?php echo $controller->urlToMethod('createModel',get_class($app)); ?>">new</a>)</h2>
 <p>Location: <a href="<?php echo $codeController->urlToMethod('packageInfo', substr($app->modelsPrefix,0,-1)); ?>"><?php echo $app->modelsPrefix; ?></a></p>
 <?php
 function printClassesInNamespace($namespace, $codeController) {

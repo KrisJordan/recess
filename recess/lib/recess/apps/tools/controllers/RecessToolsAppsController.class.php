@@ -173,14 +173,116 @@ class RecessToolsAppsController extends Controller {
 		$this->app = $application;
 	}
 	
-	/** !Route GET, model/gen */
-	public function createModel() {
+	/** !Route GET, app/$app/model/gen */
+	public function createModel($app) {
+		$this->sources = DbSources::getSources();
+		$this->tables = DbSources::getDefaultSource()->getTables();
+		$this->app = $app;
+	}
+	
+	/** !Route POST, app/$app/model/gen */
+	public function generateModel($app) { 
+		// TODO: Clean up this pile of crap
+		$values = $this->request->post;
 		
+		$modelName = $values['modelName'];
+		$tableExists = $values['tableExists'] == 'yes' ? true : false;
+		if(!$tableExists) {
+			$dataSource = $values['existingDataSource'];
+			$createTable = false;
+			$tableName = $values['existingTableName'];
+		} else {
+			$dataSource = $values['dataSource'];
+			$createTable = $values['createTable'] == 'Yes' ? true : false;
+			$tableName = $values['tableName'];
+		}
+		$propertyNames = $values['fields'];
+		$types = $values['types'];
+		$requireds = $values['nullables'];
+		$defaultValues = $values['defaultValues'];
+		
+		Library::import('recess.sources.db.orm.Model', true); 
+			// Forcing b/c ModelDescriptor is in Model
+			
+		$modelDescriptor = new ModelDescriptor($modelName, false);
+		$modelDescriptor->setSource($dataSource);
+		$modelDescriptor->setTable($tableName, false);
+		
+		foreach($propertyNames as $i => $name) {
+			if($name == "") continue;
+			$property = new ModelProperty();
+			$property->name = $name;
+			$property->type = $types[$i];
+			$property->required = $requireds[$i];
+			$modelDescriptor->properties[] = $property;
+		}
+		
+		Library::import('recess.sources.db.orm.ModelGen');
+		$this->modelCode = ModelGen::toCode($modelDescriptor, $_ENV['dir.temp'] . 'Model.class.php');
+		
+		$app = new $app;
+		if(strpos($app->modelsPrefix,'recess.apps.') !== false) {
+			$base = $_ENV['dir.lib'];
+		} else {
+			$base = $_ENV['dir.apps'];
+		}
+		$path = $base . str_replace(Library::dotSeparator,Library::pathSeparator,$app->modelsPrefix);
+		$path .= $modelName . '.class.php';
+		$this->path = $path;
+		
+		$this->modelWasSaved = false;
+		$this->codeGenMessage = '';
+		try {
+			if(file_exists($this->path)) {
+				if(file_get_contents($this->path) == $this->modelCode) {
+					$this->modelWasSaved = true;
+				} else {
+					$this->codeGenMessage = 'File already exists!';
+				}
+			} else {
+				file_put_contents($this->path, $this->modelCode);			
+				$this->modelWasSaved = true;
+			}
+		} catch(Exception $e) {	
+			$this->codeGenMessage = 'File could not be saved. Is models directory writeable?';
+			$this->modelWasSaved = false;
+		}
+		
+		$this->modelName = $modelName;
+		
+		$this->tableGenAttempted = $createTable;
+		$this->tableWasCreated = false;
+		
+		return $this->ok('newModelComplete');
+	}
+	
+	/** !Route GET, model/gen/analyzeModelName/$modelName */
+	public function analyzeModelName($modelName) {
+		Library::import('recess.lang.Inflector');
+		$this->tableName = Inflector::toPlural(Inflector::toUnderscores($modelName));
+		$this->isValid = preg_match('/^[a-zA-Z][_a-zA-z0-9]*$/', $modelName) == 1;
+	}
+	
+	/** !Route GET, model/gen/getTables/$sourceName */
+	public function getTables($sourceName) {
+		$this->tables = DbSources::getSource($sourceName)->getTables();
+	}
+	
+	/** !Route GET, model/gen/getTableProps/$sourceName/$tableName */
+	public function getTableProps($sourceName, $tableName) {
+		$source = DbSources::getSource($sourceName);
+		if($source == null) {
+			return $this->redirect($this->urlToMethod('home'));
+		} else {
+			$this->source = $source;
+		}
+		$this->sourceName = $sourceName;
+		$this->table = $tableName;
+		$this->columns = $this->source->getTableDefinition($tableName)->getColumns();
 	}
 	
 	/** !Route GET, controller/gen */
 	public function createController() {
-		
 	}
 	
 	private function getApplication($appClass) {

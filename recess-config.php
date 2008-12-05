@@ -20,10 +20,10 @@ Config::$namedDataSources
 	= array( 	// 'name' => array('sqlite:' . $_ENV['dir.documentRoot'] . 'recess/sqlite/default.db')
 				// 'name' => array('mysql:host=localhost;dbname=recess', 'username', 'password')
 //			 	'sqlite2' => 'sqlite:' . $_ENV['dir.documentRoot'] . 'recess/sqlite/sqlite2.db',
-//				'recess' => array(  
-//	                'mysql:host=localhost;dbname=recess',  
-//	                'recess',  
-//	                'recess'),
+				'recess' => array(  
+	                'mysql:host=localhost;dbname=recess',  
+	                'recess',  
+	                'recess'),
 			);
 			
 // Paths to the recess and apps directories

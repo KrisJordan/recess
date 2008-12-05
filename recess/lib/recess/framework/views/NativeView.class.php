@@ -19,6 +19,8 @@ class NativeView extends AbstractView {
 						$response->data[$key] = $value->toArray();
 					}
 				}
+				if(isset($response->data['application'])) unset ($response->data['application']);
+				if(isset($response->data['controller'])) unset ($response->data['controller']);
 				print json_encode($response->data);
 				exit;
 			default:

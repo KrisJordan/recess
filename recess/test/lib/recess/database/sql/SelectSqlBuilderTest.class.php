@@ -44,7 +44,7 @@ class SqlBuilderTest extends UnitTestCase  {
 	
 	function testMultipleWheres() {
 		$this->builder->from('table')->greaterThan('height',5.2)->lessThan('age',100);
-		$expected = 'SELECT * FROM table WHERE table.height > :table_height AND table.age < :table_age';
+		$expected = 'SELECT * FROM table WHERE table.height > 5.2 AND table.age < 100';
 		$this->assertEqual($this->builder->select(), $expected);
 	}
 	
@@ -88,7 +88,7 @@ class SqlBuilderTest extends UnitTestCase  {
 	
 	function testUpdate() {
 		$this->builder->table('authors')->equal('id',1)->assign('first_name','John');
-		$expected = 'UPDATE authors SET first_name = :assgn_authors_first_name WHERE authors.id  =  :authors_id';
+		$expected = 'UPDATE authors SET first_name = :assgn_authors_first_name WHERE authors.id  =  1';
 		$this->assertEqual($this->builder->update(),$expected);
 	}
 	
@@ -100,7 +100,7 @@ class SqlBuilderTest extends UnitTestCase  {
 
 	function testDeleteWhere() {
 		$this->builder->from('authors')->equal('id',1);
-		$expected = 'DELETE FROM authors WHERE authors.id  =  :authors_id';
+		$expected = 'DELETE FROM authors WHERE authors.id  =  1';
 		$this->assertEqual($this->builder->delete(), $expected);
 	}
 	

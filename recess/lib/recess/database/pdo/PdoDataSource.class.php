@@ -115,7 +115,11 @@ class PdoDataSource extends PDO {
 			throw new RecessException($e->getMessage() . ' SQL: ' . $statement,get_defined_vars());
 		}
 		
-		foreach($arguments as $argument) {
+		foreach($arguments as &$argument) {
+			// Begin workaround for PDO's poor numeric binding
+			$queryParameter = $argument->getQueryParameter();
+			if(is_numeric($queryParameter)) { continue; } 
+			// End Workaround
 			$statement->bindValue($argument->getQueryParameter(), $argument->value);
 		}
 		

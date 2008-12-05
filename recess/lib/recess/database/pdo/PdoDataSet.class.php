@@ -121,11 +121,11 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	function from($table) { $copy = clone $this; $copy->sqlBuilder->from($table); return $copy; }
 	function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $copy = clone $this; $copy->sqlBuilder->leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $copy; }
 	function innerJoin($table, $tablePrimaryKey, $fromTableForeignKey) { $copy = clone $this; $copy->sqlBuilder->innerJoin($table, $tablePrimaryKey, $fromTableForeignKey); return $copy; }
-	function select($options) { $copy = clone $this; $copy->sqlBuilder->select($select); return $copy; }
+	function selectAs($select, $as) { $copy = clone $this; $copy->sqlBuilder->selectAs($select, $as); return $copy; }
 	function distinct() { $copy = clone $this; $copy->sqlBuilder->distinct(); return $copy; }
 	function equal($lhs, $rhs){ $copy = clone $this; $copy->sqlBuilder->equal($lhs,$rhs); return $copy; }
 	function notEqual($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->notEqual($lhs,$rhs); return $copy; }
-	function between ($column, $lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->between($column, $lhs, $hrs); return $copy; }
+	function between ($column, $lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->between($column, $lhs, $rhs); return $copy; }
 	function greaterThan($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->greaterThan($lhs,$rhs); return $copy; }
 	function greaterThanOrEqualTo($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->greaterThanOrEqualTo($lhs,$rhs); return $copy; }
 	function lessThan($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->lessThan($lhs,$rhs); return $copy; }

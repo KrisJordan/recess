@@ -6,7 +6,7 @@ thead { background-color: #eef; font-size: 1.2em; }
 .light { background: #f5f5f5; }
 .input-flash { background: yellow; padding: 0 0 0 1em; }
 
-.header { background-image: url('/content/images/recess/logo.gif'); background-repeat: no-repeat; background-position: -5px -5px;}
+.header { background-image: url('../images/recess/logo.gif'); background-repeat: no-repeat; background-position: -5px -5px;}
 .header h1 { visibility: hidden; }
 
 .qotm { margin: 2.5em 0 0 0; }
@@ -21,7 +21,7 @@ thead { background-color: #eef; font-size: 1.2em; }
 .left-sidebar ul li { list-style: none; font-size: 1.2em; margin: .5em 0;}
 
 .infobar { background-color: #0b2c9e; margin: .5em 0;}
-.infobar h3 { background-color: #07278d;  background-image: url('/content/images/recess/resources.png'); background-repeat: no-repeat; background-position: 10px 10px; height: 2.5em; }
+.infobar h3 { background-color: #07278d;  background-image: url('../images/recess/resources.png'); background-repeat: no-repeat; background-position: 10px 10px; height: 2.5em; }
 .infobar h3 span { visibility: hidden; }
 .infobar p { margin: 1em; }
 .infobar a { color: white; }

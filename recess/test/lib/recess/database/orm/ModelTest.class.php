@@ -185,6 +185,21 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual(count($people),4);
 	}
 	
+	function testBetween() {
+		$people = Make::a('Person')->all()->between('age',21,25);
+		$this->assertEqual(count($people), 4);
+	}
+	
+	function testMultipleConditionsOnSingleProperty() {
+		$people = Make::a('Person')->greaterThan('age',21)->lessThan('age',25);
+		$this->assertEqual(count($people), 4);
+	}
+	
+	function testMultipleConditionsOnStrings() {
+		$people = Make::a('Person')->like('first_name','%K%')->like('first_name','%s%');
+		$this->assertEqual(count($people), 1);
+	}
+	
 	function testHasManyRelationship() {
 		$person = new Person();
 		$person->id = 4;

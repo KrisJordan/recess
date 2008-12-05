@@ -209,7 +209,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	
 	function equal($lhs, $rhs){ return $this->select()->equal($lhs,$rhs); }
 	function notEqual($lhs, $rhs) { return $this->select()->notEqual($lhs,$rhs); }
-	function between ($column, $lhs, $rhs) { return $this->select()->between($column, $lhs, $hrs); }
+	function between ($column, $lhs, $rhs) { return $this->select()->between($column, $lhs, $rhs); }
 	function greaterThan($lhs, $rhs) { return $this->select()->greaterThan($lhs,$rhs); }
 	function greaterThanOrEqualTo($lhs, $rhs) { return $this->select()->greaterThanOrEqualTo($lhs,$rhs); }
 	function lessThan($lhs, $rhs) { return $this->select()->lessThan($lhs,$rhs); }

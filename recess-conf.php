@@ -6,7 +6,7 @@ RecessConf::$mode = RecessConf::DEVELOPMENT; // or RecessConf::PRODUCTION
 
 RecessConf::$applications 
 	= array(	'recess.apps.tools.RecessToolsApplication',
-				'blog.BlogApplication',
+				'saranacFinder.SaranacFinderApplication',
 			);
 
 RecessConf::$defaultTimeZone = 'America/New_York';

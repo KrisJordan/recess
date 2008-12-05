@@ -1,6 +1,6 @@
 <script language="javascript">
 	window.onload = function() {
-		dp.SyntaxHighlighter.ClipboardSwf = '/content/flash/clipboard.swf';
+		dp.SyntaxHighlighter.ClipboardSwf = '<?php echo $_ENV['url.content']; ?>flash/clipboard.swf';
 		dp.SyntaxHighlighter.HighlightAll('code');
 		
 		function addField() {
@@ -132,7 +132,7 @@
 			$("#existingTableName").append("<option value=\"\"></option>");
 			$("#existingTableName").val("").css('color','black').css('background','yellow');
 			jQuery.getJSON(
-					"/recess/apps/model/gen/getTables/" + $("#existingDataSource").val() + ".json",
+					"<?php echo $_ENV['url.base']; ?>recess/apps/model/gen/getTables/" + $("#existingDataSource").val() + ".json",
 					null,
 					function(data) {
 						for (var i in data.tables) {
@@ -170,7 +170,7 @@
 		
 		function fillPropertiesFromExistingSource() {
 			jQuery.getJSON(
-					"/recess/apps/model/gen/getTableProps/" + $("#existingDataSource").val() + "/" + $("#existingTableName").val() + ".json",
+					"<?php echo $_ENV['url.base']; ?>recess/apps/model/gen/getTableProps/" + $("#existingDataSource").val() + "/" + $("#existingTableName").val() + ".json",
 					null,
 					function(data) {
 						clearProperties();

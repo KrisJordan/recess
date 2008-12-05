@@ -25,6 +25,9 @@ class Request {
 	}
 	
 	public function setResource($resource) {
+		if(isset($_ENV['url.base'])) {
+			$resource = str_replace($_ENV['url.base'], '/', $resource);
+		}
 		$this->resource = $resource;
 		$this->resourceParts = self::splitResourceString($resource);
 	}

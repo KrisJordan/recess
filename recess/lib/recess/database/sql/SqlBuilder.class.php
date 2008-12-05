@@ -90,6 +90,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	
 	/* UPDATE & DELETE */
 	protected $conditions = array();
+	protected $conditionsUsed = array();
 	protected $useAssignmentsAsConditions = false;
 	
 	public function delete() {
@@ -179,20 +180,30 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function like($column, $value)        { return $this->addCondition($column, $value, Criterion::LIKE); }
 	
 	protected function addCondition($column, $value, $operator) {
-		if(strpos($column, '.') === false) {
+		if(strpos($column, '.') === false && strpos($column, '(') === false && !in_array($column, array_keys($this->selectAs))) {
 			if(isset($this->table)) {
-				$this->conditions[] = new Criterion($this->tableAsPrefix() . '.' . $column, $value, $operator); 
+				$column = $this->tableAsPrefix() . '.' . $column;
 			} else {
 				throw new RecessException('Cannot use "' . $operator . '" operator without specifying table for column "' . $column . '".', get_defined_vars());
 			}
-		} else {
-			$this->conditions[] = new Criterion($column, $value, $operator);
 		}
+				
+		if(isset($this->conditionsUsed[$column])) {
+			$this->conditionsUsed[$column]++;
+			$pdoLabel = $column . '_' . $this->conditionsUsed[$column];
+		} else {
+			$this->conditionsUsed[$column] = 1;
+			$pdoLabel = null;
+		}
+		
+		$this->conditions[] = new Criterion($column, $value, $operator, $pdoLabel);
+		
 		return $this;
 	}
 	
 	/* SELECT */
 	protected $select = '*';
+	protected $selectAs = array();
 	protected $joins = array();
 	protected $limit;
 	protected $offset;
@@ -203,7 +214,13 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function select() {
 		$this->selectSanityCheck();
 
-		$sql = 'SELECT ' . $this->distinct . $this->select . ' FROM ' . $this->table;
+		$sql = 'SELECT ' . $this->distinct . $this->select;
+
+		foreach($this->selectAs as $selectAs) {
+			$sql .= ', ' . $selectAs;
+		}
+		
+		$sql .= ' FROM ' . $this->table;
 		
 		$sql .= $this->joinHelper();
 		
@@ -234,7 +251,13 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function range($start, $finish) { $this->offset = $start; $this->limit = $finish - $start; return $this; }
 	
 	public function orderBy($clause) {
-		if(isset($this->table) && strpos($clause,'.') === false) {
+		if(($spacePos = strpos($clause,' ')) !== false) {
+			$name = substr($clause,0,$spacePos);
+		} else {
+			$name = $clause;
+		}
+		
+		if(isset($this->table) && strpos($clause,'.') === false && !array_key_exists($name, $this->selectAs)) {
 			$this->orderBy[] = $this->tableAsPrefix() . '.' . $clause; 
 		} else {
 			$this->orderBy[] = $clause;
@@ -279,6 +302,10 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		$this->select = $this->tableAsPrefix() . '.*';
 		$this->joins[] = new Join($leftOrRight, $innerOrOuter, $table, $tablePrimaryKey, $fromTableForeignKey);	
 		return $this;
+	}
+	
+	public function selectAs($select, $as) {
+		$this->selectAs[$as] = $select . ' as ' . $as;
 	}
 	
 	public function distinct() { $this->distinct = ' DISTINCT '; return $this; }
@@ -358,6 +385,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 
 class Criterion {
 	public $column;
+	public $pdoLabel;
 	public $value;
 	public $operator;
 	
@@ -379,17 +407,28 @@ class Criterion {
 	
 	const UNDERSCORE = '_';
 	
-	public function __construct($column, $value, $operator){
+	public function __construct($column, $value, $operator, $pdoLabel = null){
 		$this->column = $column;
 		$this->value = $value;
 		$this->operator = $operator;
+		if(!isset($pdoLabel)) {
+			$this->pdoLabel = preg_replace('/[ \-.,\(\)]/', '_', $column);
+		} else {
+			$this->pdoLabel = preg_replace('/[ \-.,\(\)]/', '_', $pdoLabel);
+		}
 	}
 	
 	public function getQueryParameter() {
+		// Begin workaround for PDO's poor numeric binding
+		if(is_numeric($this->value)) {
+			return $this->value;
+		}
+		// End workaround
+		
 		if($this->operator == self::ASSIGNMENT) { 
-			return self::COLON . str_replace(Library::dotSeparator, self::UNDERSCORE, self::ASSIGNMENT_PREFIX . $this->column);
+			return self::COLON . self::ASSIGNMENT_PREFIX . $this->pdoLabel;
 		} else {
-			return self::COLON . str_replace(Library::dotSeparator, self::UNDERSCORE, $this->column);
+			return self::COLON . $this->pdoLabel;
 		}
 	}
 }

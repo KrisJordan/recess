@@ -5,7 +5,7 @@ include_once($viewsDir . 'common/header.php');
 ?>
 <h1>To <span class="removed">Uninstall</span> <?php echo $app->name; ?>...</h1>
 <ol>
-	<li><span class="highlight">Open <?php echo $_ENV['dir.documentRoot']; ?>recess-conf.php</span></li>
+	<li><span class="highlight">Open <?php echo $_ENV['dir.bootstrap']; ?>recess-conf.php</span></li>
 	<li>Find the <span class="highlight">RecessConf::$applications</span> array.</li>
 	<?php 
 	$appClass = Library::getFullyQualifiedClassName(get_class($app));

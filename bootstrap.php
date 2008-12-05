@@ -4,7 +4,7 @@
  * 
  * @author Kris Jordan
  */
-$_ENV['dir.documentRoot'] = str_replace('\\','/',realpath(dirname(__FILE__))) . '/';
+$_ENV['dir.bootstrap'] = str_replace('\\','/',realpath(dirname(__FILE__))) . '/';
 $_ENV['url.base'] = str_replace('bootstrap.php', '', $_SERVER['PHP_SELF']);
 
 $bootstrapped = true;

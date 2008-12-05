@@ -7,7 +7,7 @@ include_once($viewsDir . 'common/header.php');
 <p>Recess! allows for multiple named data sources. Currently only MySQL and Sqlite are supported.</p>
 
 <ol>
-	<li><span class="highlight">Open <?php echo $_ENV['dir.documentRoot']; ?>recess-conf.php</span></li>
+	<li><span class="highlight">Open <?php echo $_ENV['dir.bootstrap']; ?>recess-conf.php</span></li>
 	<li>Find the <span class="highlight">RecessConf::$namedDatabases</span> variable.</li>
 	<li>Add a new keyed entry to the $namedDatabasesarray based on your RDBMS:
 	<ul>

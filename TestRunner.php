@@ -5,11 +5,11 @@ require_once('recess/lib/simpletest/autorun.php');
 require_once('recess/lib/simpletest/mock_objects.php');
 require_once('recess/lib/simpletest/unit_tester.php');
 
-$_ENV['dir.documentRoot'] = str_replace('\\','/',realpath(dirname(__FILE__))) . '/';
+$_ENV['dir.bootstrap'] = str_replace('\\','/',realpath(dirname(__FILE__))) . '/';
 $_ENV['url.base'] = str_replace('TestRunner.php', '', $_SERVER['PHP_SELF']);
 
-$_ENV['dir.recess'] = $_ENV['dir.documentRoot'] . 'recess/';
-$_ENV['dir.apps'] = $_ENV['dir.documentRoot'] . 'apps/';
+$_ENV['dir.recess'] = $_ENV['dir.bootstrap'] . 'recess/';
+$_ENV['dir.apps'] = $_ENV['dir.bootstrap'] . 'apps/';
 $_ENV['dir.test'] = $_ENV['dir.recess'] . 'test/';
 $_ENV['dir.temp'] = $_ENV['dir.recess'] . 'temp/';
 $_ENV['dir.lib'] = $_ENV['dir.recess'] . 'lib/';

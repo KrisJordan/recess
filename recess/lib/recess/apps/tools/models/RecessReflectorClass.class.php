@@ -1,44 +1,39 @@
 <?php
-Library::import('recess.sources.db.orm.Model');
+Library::import('recess.database.orm.Model');
 Library::import('recess.apps.ide.models.RecessReflectorClassProperties');
 Library::import('recess.apps.ide.models.RecessReflectorClassMethods');
 
 /**
- * !HasMany properties, Class: RecessReflectorProperty, Through: RecessReflectorClassProperties, ForeignKey: propertyId, OnDelete: Delete
- * !HasMany methods, Class: RecessReflectorMethod, Through: RecessReflectorClassMethods, ForeignKey: methodId, OnDelete: Delete
  * !BelongsTo package, Class: RecessReflectorPackage, ForeignKey: packageId
  * !BelongsTo parent, Class: RecessReflectorClass, ForeignKey: parentId
  * !HasMany children, Class: RecessReflectorClass, ForeignKey: parentId
  * !Table classes
- * !Source reflector
  */
 class RecessReflectorClass extends Model {
 	
-	/** !PrimaryKey integer, AutoIncrement: true */
+	/** !Column PrimaryKey, integer, AutoIncrement */
 	public $id;
 	
-	/** !Type text */
+	/** !Column text */
 	public $name;
 	
 	/** 
-	 * !ForeignKey classes
-	 * !Type integer
+	 * !Column integer
 	 */
 	public $parentId;
 	
 	/** 
-	 * !ForeignKey packages
-	 * !Type integer
+	 * !Column integer
 	 */
 	public $packageId;
 	
-	/** !Type text */
+	/** !Column text */
 	public $docComment;
 	
-	/** !Type text */
+	/** !Column text */
 	public $file;
 	
-	/** !Type integer */
+	/** !Column integer */
 	public $lastModified;
 	
 	public function fromClass($class, $dir = '') {

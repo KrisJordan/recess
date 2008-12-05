@@ -11,7 +11,7 @@ Library::import('recess.lang.RecessObject');
  */
 abstract class AbstractView extends RecessObject {
 	/**
-	 * The entry point from the Coordinator with a Response to be rendered.
+	 * The entry point from the Recess with a Response to be rendered.
 	 * Delegates the two steps in rendering a view: 1) Send Headers, 2) Render Body
 	 *
 	 * @param Response $response

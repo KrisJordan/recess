@@ -14,7 +14,7 @@ class SmartyView extends AbstractView {
 		
 		$this->smarty->caching = 0;
 		$this->smarty->assign('url_base', $_ENV['url.base']);
-		$this->smarty->force_compile = Config::$mode == Config::DEVELOPMENT;
+		$this->smarty->force_compile = RecessConf::$mode == RecessConf::DEVELOPMENT;
 	}
 	
 	public function setTemplateDir($template_dir) {

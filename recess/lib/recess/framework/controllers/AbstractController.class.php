@@ -46,7 +46,7 @@ abstract class AbstractController {
 	}
 	
 	/**
-	 * The entry point from the Coordinator into a Controller. The Controller is responsible
+	 * The entry point from the Recess into a Controller. The Controller is responsible
 	 * for the Inversion-of-Control dispatch to one of its own methods.
 	 * @todo Should the meat of this logic be refactored out for a clean base class?
 	 * @param Request $request The preprocessed recess.http.Request

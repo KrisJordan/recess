@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Config_File class.
+ * RecessConf_File class.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,13 +25,13 @@
  * @package Smarty
  */
 
-/* $Id: Config_File.class.php 2702 2007-03-08 19:11:22Z mohrt $ */
+/* $Id: RecessConf_File.class.php 2702 2007-03-08 19:11:22Z mohrt $ */
 
 /**
- * Config file reading class
+ * RecessConf file reading class
  * @package Smarty
  */
-class Config_File {
+class RecessConf_File {
     /**#@+
      * Options
      * @var boolean
@@ -69,7 +69,7 @@ class Config_File {
      *
      * @param string $config_path (optional) path to the config files
      */
-    function Config_File($config_path = NULL)
+    function RecessConf_File($config_path = NULL)
     {
         if (isset($config_path))
             $this->set_path($config_path);
@@ -381,7 +381,7 @@ class Config_File {
      */
     function _trigger_error_msg($error_msg, $error_type = E_USER_WARNING)
     {
-        trigger_error("Config_File error: $error_msg", $error_type);
+        trigger_error("RecessConf_File error: $error_msg", $error_type);
     }
     /**#@-*/
 }

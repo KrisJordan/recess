@@ -9,7 +9,7 @@ class RecessToolsAppsController extends Controller {
 	
 	/** !Route GET */
 	public function home() {
-		$this->apps = Config::$applications;
+		$this->apps = RecessConf::$applications;
 		if(isset($this->request->get->flash)) {
 			$this->flash = $this->request->get['flash'];
 		}
@@ -175,8 +175,8 @@ class RecessToolsAppsController extends Controller {
 	
 	/** !Route GET, app/$app/model/gen */
 	public function createModel($app) {
-		$this->sources = DbSources::getSources();
-		$this->tables = DbSources::getDefaultSource()->getTables();
+		$this->sources = Databases::getSources();
+		$this->tables = Databases::getDefaultSource()->getTables();
 		$this->app = $app;
 	}
 	
@@ -199,7 +199,7 @@ class RecessToolsAppsController extends Controller {
 		$propertyNames = $values['fields'];
 		$types = $values['types'];
 		
-		Library::import('recess.sources.db.orm.Model', true); 
+		Library::import('recess.database.orm.Model', true); 
 			// Forcing b/c ModelDescriptor is in Model
 			
 		$modelDescriptor = new ModelDescriptor($modelName, false);
@@ -218,7 +218,7 @@ class RecessToolsAppsController extends Controller {
 					$pkFound = true;
 					$property->type = 'integer';
 					$property->isPrimaryKey = true;
-					$property->autoincrement = true;
+					$property->isAutoIncrement = true;
 				}
 			} else {
 				$property->type = $types[$i];
@@ -226,7 +226,7 @@ class RecessToolsAppsController extends Controller {
 			$modelDescriptor->properties[] = $property;
 		}
 		
-		Library::import('recess.sources.db.orm.ModelGen');
+		Library::import('recess.database.orm.ModelGen');
 		$this->modelCode = ModelGen::toCode($modelDescriptor, $_ENV['dir.temp'] . 'Model.class.php');
 		
 		$app = new $app;
@@ -274,12 +274,12 @@ class RecessToolsAppsController extends Controller {
 	
 	/** !Route GET, model/gen/getTables/$sourceName */
 	public function getTables($sourceName) {
-		$this->tables = DbSources::getSource($sourceName)->getTables();
+		$this->tables = Databases::getSource($sourceName)->getTables();
 	}
 	
 	/** !Route GET, model/gen/getTableProps/$sourceName/$tableName */
 	public function getTableProps($sourceName, $tableName) {
-		$source = DbSources::getSource($sourceName);
+		$source = Databases::getSource($sourceName);
 		if($source == null) {
 			return $this->redirect($this->urlToMethod('home'));
 		} else {
@@ -295,7 +295,7 @@ class RecessToolsAppsController extends Controller {
 	}
 	
 	private function getApplication($appClass) {
-		foreach(Config::$applications as $app) {
+		foreach(RecessConf::$applications as $app) {
 			if(get_class($app) == $appClass) {
 				return $app;
 			}

@@ -64,7 +64,7 @@ define('SMARTY_PHP_ALLOW',      3);
 class Smarty
 {
     /**#@+
-     * Smarty Configuration Section
+     * Smarty RecessConfuration Section
      */
 
     /**
@@ -396,10 +396,10 @@ class Smarty
      *
      * @var string
      */
-    var $config_class          =   'Config_File';
+    var $config_class          =   'RecessConf_File';
 
 /**#@+
- * END Smarty Configuration Section
+ * END Smarty RecessConfuration Section
  * There should be no need to touch anything below this line.
  * @access private
  */
@@ -441,7 +441,7 @@ class Smarty
     /**
      * configuration object
      *
-     * @var Config_file
+     * @var RecessConf_file
      */
     var $_conf_obj             = null;
 

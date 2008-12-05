@@ -1,6 +1,6 @@
 <?php
-require_once($_ENV['dir.recess'] . 'diagnostics/Diagnostics.class.php');
-require_once($_ENV['dir.recess'] . 'cache/Cache.class.php');
+require_once($_ENV['dir.lib'] . 'recess/diagnostics/Diagnostics.class.php');
+require_once($_ENV['dir.lib'] . 'recess/cache/Cache.class.php');
 
 /**
  * Used to include class files into the system

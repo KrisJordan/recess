@@ -236,8 +236,8 @@ class IteratorTest extends UnitTestCase() {
                 An example of this is an information holder with name/value pairs.
                 Say we have a configuration class like...
 <pre>
-class Configuration {
-    function Configuration() {
+class RecessConfuration {
+    function RecessConfuration() {
     }
     
     function getValue($key) {
@@ -253,7 +253,7 @@ class Configuration {
                 we want different results for different keys.
                 Luckily the mocks have a filter system...
 <pre>
-<strong>$config = &amp;new MockConfiguration();
+<strong>$config = &amp;new MockRecessConfuration();
 $config-&gt;setReturnValue('getValue', 'primary', array('db_host'));
 $config-&gt;setReturnValue('getValue', 'admin', array('db_user'));
 $config-&gt;setReturnValue('getValue', 'secret', array('db_password'));</strong>

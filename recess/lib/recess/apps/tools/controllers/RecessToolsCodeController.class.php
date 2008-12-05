@@ -128,7 +128,7 @@ class RecessToolsCodeController extends Controller {
 			
 			if($prop->isPrimaryKey) { 
 				$this->sql .= ' PRIMARY KEY';
-				if($prop->autoincrement) {
+				if($prop->isAutoIncrement) {
 					$this->sql .= ' AUTOINCREMENT';
 				}
 			}

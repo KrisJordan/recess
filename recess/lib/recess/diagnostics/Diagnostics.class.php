@@ -5,6 +5,10 @@ Library::import('recess.http.ResponseCodes');
 class Diagnostics {
 	
 	public static function handleException(Exception $exception) {
+		if(ob_get_level() > 1) {
+			ob_end_clean();
+		}
+		
 		if($exception instanceof LibraryException) {
 			// Special Case for LibraryException to shift front value from stack
 			$trace = $exception->getTrace();

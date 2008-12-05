@@ -301,13 +301,13 @@
                 <a href="http://sourceforge.net/projects/phpunit">PhpUnit</a>
                 dans le fichier <em>config_test.php</em>...
 <pre>
-<strong>class ConfigFileTest extends TestCase {
-    function ConfigFileTest() {
-        $this-&gt;TestCase('Config file test');
+<strong>class RecessConfFileTest extends TestCase {
+    function RecessConfFileTest() {
+        $this-&gt;TestCase('RecessConf file test');
     }
     
     function testContents() {
-        $config = new ConfigFile('test.conf');
+        $config = new RecessConfFile('test.conf');
         $this-&gt;assertRegexp('/me/', $config-&gt;getValue('username'));
     }
 }</strong>

@@ -12,11 +12,11 @@ class AllTests extends TestSuite {
 		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/lang/InflectorTest.class.php');
 		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/lang/RecessObjectTest.class.php');
 		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/framework/routing/RtNodeTest.class.php');
-		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/sources/db/sql/SelectSqlBuilderTest.class.php');
-		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/sources/db/pdo/PdoDataSetTest.class.php');
-		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/sources/db/pdo/SqlitePdoDataSourceTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/database/sql/SelectSqlBuilderTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/database/pdo/PdoDataSetTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/database/pdo/SqlitePdoDataSourceTest.class.php');
 		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/lang/RecessReflectionClassTest.class.php');
-		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/sources/db/orm/ModelTest.class.php');
+		$this->addFile(dirname(__FILE__) . '/recess/test/lib/recess/database/orm/ModelTest.class.php');
 	}
 }
 

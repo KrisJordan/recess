@@ -9,9 +9,9 @@ class RecessToolsApplication extends Application {
 		
 		$this->name = 'Recess Tools';
 		
-		$this->viewsDir = $_ENV['dir.recess'] . 'apps/tools/views/';	
+		$this->viewsDir = $_ENV['dir.lib'] . 'recess/apps/tools/views/';	
 		
-		$this->codeTemplatesDir = $_ENV['dir.recess'] . 'apps/tools/templates/';
+		$this->codeTemplatesDir = $_ENV['dir.lib'] . 'recess/apps/tools/templates/';
 		
 		$this->modelsPrefix = 'recess.apps.tools.models.';
 		

@@ -232,8 +232,8 @@ class IteratorTest extends UnitTestCase() {
                 Reprenons aussi le conteneur d'information bouchonné
                 avec des pairs clef / valeur...
 <pre>
-class Configuration {
-    function Configuration() {
+class RecessConfuration {
+    function RecessConfuration() {
     }
     
     function getValue($key) {
@@ -250,7 +250,7 @@ class Configuration {
                 et que nous voulons des résultats différents pour des clefs différentes.
                 Heureusement les objets fantaisie ont un système de filtrage...
 <pre>
-<strong>$config = &amp;new MockConfiguration($this);
+<strong>$config = &amp;new MockRecessConfuration($this);
 $config-&gt;setReturnValue('getValue', 'primary', array('db_host'));
 $config-&gt;setReturnValue('getValue', 'admin', array('db_user'));
 $config-&gt;setReturnValue('getValue', 'secret', array('db_password'));</strong>

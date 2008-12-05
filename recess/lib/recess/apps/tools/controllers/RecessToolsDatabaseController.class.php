@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
-Library::import('recess.sources.db.DbSources');
-Library::import('recess.sources.db.pdo.PdoDataSource');
+Library::import('recess.database.Databases');
+Library::import('recess.database.pdo.PdoDataSource');
 
 /**
  * !View Native, Prefix: database/
@@ -11,13 +11,13 @@ class RecessToolsDatabaseController extends Controller {
 	
 	/** !Route GET */
 	public function home() {
-		$this->default = DbSources::getDefaultSource();
-		$this->sources = DbSources::getSources();
+		$this->default = Databases::getDefaultSource();
+		$this->sources = Databases::getSources();
 	}
 	
 	/** !Route GET, source/$sourceName */
 	public function showSource($sourceName) {
-		$source = DbSources::getSource($sourceName);
+		$source = Databases::getSource($sourceName);
 		
 		if($source == null) {
 			return $this->redirect($this->urlToMethod('home'));
@@ -26,9 +26,9 @@ class RecessToolsDatabaseController extends Controller {
 		}
 		
 		if($sourceName != 'Default') {
-			$this->dsn = Config::$namedDataSources[$sourceName];
+			$this->dsn = RecessConf::$namedDatabases[$sourceName];
 		} else {
-			$this->dsn = Config::$defaultDataSource[0];
+			$this->dsn = RecessConf::$defaultDatabase[0];
 		}
 		
 		$this->name = $sourceName;
@@ -38,7 +38,7 @@ class RecessToolsDatabaseController extends Controller {
 	
 	/** !Route GET, source/$sourceName/table/$tableName */
 	public function showTable($sourceName, $tableName) {
-		$source = DbSources::getSource($sourceName);
+		$source = Databases::getSource($sourceName);
 		if($source == null) {
 			return $this->redirect($this->urlToMethod('home'));
 		} else {
@@ -58,7 +58,7 @@ class RecessToolsDatabaseController extends Controller {
 	
 	/** !Route POST, source/$sourceName/table/$tableName/drop */
 	public function dropTablePost($sourceName, $tableName) {
-		$source = DbSources::getSource($sourceName);
+		$source = Databases::getSource($sourceName);
 		$source->dropTable($tableName);
 		return $this->forwardOk($this->urlToMethod('showSource', $sourceName));
 	}
@@ -71,16 +71,16 @@ class RecessToolsDatabaseController extends Controller {
 	
 	/** !Route POST, source/$sourceName/table/$tableName/empty */
 	public function emptyTablePost($sourceName, $tableName) {
-		$source = DbSources::getSource($sourceName);
+		$source = Databases::getSource($sourceName);
 		$source->emptyTable($tableName);
 		return $this->forwardOk($this->urlToMethod('showTable', $sourceName, $tableName));
 	}
 	
 	private function getDsn($sourceName) {
 		if($sourceName != 'Default') {
-			$this->dsn = Config::$defaultDataSource[0];
+			$this->dsn = RecessConf::$defaultDatabase[0];
 		} else {
-			$this->dsn = Config::$namedDataSources[$sourceName];
+			$this->dsn = RecessConf::$namedDatabases[$sourceName];
 		}
 	}
 	

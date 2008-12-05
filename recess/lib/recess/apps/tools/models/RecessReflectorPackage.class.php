@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.sources.db.orm.Model');
+Library::import('recess.database.orm.Model');
 
 /**
  * !HasMany classes, Class: RecessReflectorClass, ForeignKey: packageId
@@ -9,21 +9,16 @@ Library::import('recess.sources.db.orm.Model');
  */
 class RecessReflectorPackage extends Model {
 	
-	/** !PrimaryKey integer, AutoIncrement: true */
+	/** !Column PrimaryKey, integer, AutoIncrement */
 	public $id;
 	
-	/** !Type text */
+	/** !Column text */
 	public $name;
 	
-	/**
-	 * !ForeignKey Table: packages
-	 * !Type integer
-	 */
+	/** !Column integer */
 	public $parentId;
 	
-	/**
-	 * !Type integer
-	 */
+	/** !Column integer */
 	public $modified;
 	
 	function childrenAlphabetically() {

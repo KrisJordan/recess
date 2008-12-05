@@ -28,7 +28,7 @@ class Library {
 	const CLASSES_X_CLASS_CACHE_KEY = 'Recess::*::Library::$classesByClass';
 	const CLASSES_X_FULL_CACHE_KEY = 'Recess::*::Library::$classesByFull';
 	const PATHS_CACHE_KEY = 'Recess::*::Library::$paths';
-	const NAMED_DIRS_PATH = 'namedRuns/';
+	const NAMED_RUNS_PATH = 'compiled/';
 	const PHP_EXTENSION = '.php';
 	
 	const NAME = 0;
@@ -51,7 +51,7 @@ class Library {
 			}
 		}
 		
-		$namedRunFile = $_ENV['dir.temp'] . self::NAMED_DIRS_PATH . $name . self::PHP_EXTENSION;
+		$namedRunFile = $_ENV['dir.temp'] . self::NAMED_RUNS_PATH . $name . self::PHP_EXTENSION;
 		if(file_exists($namedRunFile)) {
 			self::$inNamedRunImport = true;
 			include_once($namedRunFile);
@@ -68,7 +68,7 @@ class Library {
 		if(!isset($_ENV['dir.temp'])) return;
 		$tempDir = $_ENV['dir.temp'];
 		foreach(self::$namedRuns as $namedRun => $missedClasses) {
-			$namedRunDir = $_ENV['dir.temp'] . self::NAMED_DIRS_PATH;
+			$namedRunDir = $_ENV['dir.temp'] . self::NAMED_RUNS_PATH;
 			$namedRunFile = $namedRunDir . $namedRun . self::PHP_EXTENSION;
 			
 			if(!empty($missedClasses)) {

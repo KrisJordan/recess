@@ -6,7 +6,8 @@ Library::import('recess.database.pdo.IPdoDataSourceProvider');
  * @author Kris Jordan
  */
 class MysqlDataSourceProvider implements IPdoDataSourceProvider {
-	protected static $mappings;
+	protected static $mysqlToRecessMappings;
+	protected static $recessToMysqlMappings;
 	protected $pdo = null;
 	
 	/**
@@ -77,16 +78,19 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 			$tableDefinition->addColumn(
 				$result['Field'],
 				$this->getRecessType($result['Type']),
-				$result['Null'] == 'No' ? false : true,
+				$result['Null'] == 'NO' ? false : true,
 				$result['Key'] == 'PRI' ? true : false,
-				$result['Default'] == null ? '' : $result['Default']);
-				array($result['Extra']);
+				$result['Default'] == null ? '' : $result['Default'],
+				$result['Extra'] == 'auto_increment' ? array('autoincrement' => true) : array());
 		}
 		
 		return $tableDefinition;
 	}
 	
 	function getRecessType($mysqlType) {
+		if($mysqlType == 'TINYINT(1)')
+			return RecessType::BOOLEAN;
+		
 		if( ($parenPos = strpos($mysqlType,'(')) !== false ) {
 			$mysqlType = substr($mysqlType,0,$parenPos);
 		}
@@ -95,17 +99,17 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 		}
 		$mysqlType = strtolower(rtrim($mysqlType));
 		
-		$mappings = MysqlDataSourceProvider::getMysqlToRecessMappings();
-		if(isset($mappings[$mysqlType])) {
-			return $mappings[$mysqlType];
+		$mysqlToRecessMappings = MysqlDataSourceProvider::getMysqlToRecessMappings();
+		if(isset($mysqlToRecessMappings[$mysqlType])) {
+			return $mysqlToRecessMappings[$mysqlType];
 		} else {
 			return RecessType::STRING;
 		}
 	}
 	
 	static function getMysqlToRecessMappings() {
-		if(!isset(self::$mappings)) {
-			self::$mappings = array(
+		if(!isset(self::$mysqlToRecessMappings)) {
+			self::$mysqlToRecessMappings = array(
 				'enum' => RecessType::STRING,
 				'binary' => RecessType::STRING,
 				'varbinary' => RecessType::STRING,
@@ -147,7 +151,25 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 				'time' => RecessType::TIME,
 			); 
 		}
-		return self::$mappings;
+		return self::$mysqlToRecessMappings;
+	}
+	
+	static function getRecessToMysqlMappings() {
+		if(!isset(self::$recessToMysqlMappings)) {
+			self::$recessToMysqlMappings = array(
+				RecessType::BLOB => 'BLOB',
+				RecessType::BOOLEAN => 'TINYINT(1)',
+				RecessType::DATE => 'DATE',
+				RecessType::DATETIME => 'DATETIME',
+				RecessType::FLOAT => 'FLOAT',
+				RecessType::INTEGER => 'INTEGER',
+				RecessType::STRING => 'VARCHAR(255)',
+				RecessType::TEXT => 'TEXT',
+				RecessType::TIME => 'TIME',
+				RecessType::TIMESTAMP => 'TIMESTAMP',
+			);
+		}
+		return self::$recessToMysqlMappings;
 	}
 	
 	/**
@@ -175,7 +197,27 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 	 * @param RecessTableDefinition $tableDefinition
 	 */
 	function createTableSql(RecessTableDefinition $definition) {
-		throw new RecessException("Not implemented.", get_defined_vars());
+		$sql = 'CREATE TABLE ' . $definition->name;
+		
+		$mappings = MysqlDataSourceProvider::getRecessToMysqlMappings();
+		
+		$columnSql = null;
+		foreach($definition->getColumns() as $column) {
+			if(isset($columnSql)) { $columnSql .= ', '; }
+			$columnSql .= "\n\t" . $column->name . ' ' . $mappings[$column->type];
+			if($column->isPrimaryKey) {
+				$columnSql .= ' NOT NULL';
+			
+				if(isset($column->options['autoincrement'])) {
+					$columnSql .= ' AUTO_INCREMENT';
+				}
+				
+				$columnSql .= ' PRIMARY KEY';
+			}
+		}
+		$columnSql .= "\n";
+		
+		return $sql . ' (' . $columnSql . ')';
 	}
 }
 ?>

@@ -217,8 +217,12 @@ class RecessToolsAppsController extends Controller {
 				$property->isPrimaryKey = true;
 			}
 			if($types[$i] == 'Integer Autoincrement') {
-				$property->type = RecessType::INTEGER;
-				$property->isAutoIncrement = true;
+				if($property->isPrimaryKey) {
+					$property->type = RecessType::INTEGER;
+					$property->isAutoIncrement = true;
+				} else {
+					$property->type = RecessType::INTEGER;
+				}
 			} else {
 				$property->type = $types[$i];
 			}

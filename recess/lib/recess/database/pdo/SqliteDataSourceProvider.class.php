@@ -136,12 +136,8 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 			$columnSql .= "\n\t" . $column->name . ' ' . strtoupper($column->type);
 			if($column->isPrimaryKey) {
 				$columnSql .= ' PRIMARY KEY';
-			}
-			if(isset($column->options['autoincrement'])) {
-				if($column->isPrimaryKey) {
+				if(isset($column->options['autoincrement'])) {
 					$columnSql .= ' AUTOINCREMENT';
-				} else {
-					throw new RecessException('Only primary key columns can be "Integer Autoincrement" in SQLite.', get_defined_vars());
 				}
 			}
 		}

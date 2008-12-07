@@ -36,10 +36,10 @@ class DefaultPolicy implements IPolicy {
 				$controller = $this->getControllerFromRouteResult($request, $routeResult);
 			} else {
 				// TODO: Shortwire a result here for a method not supported HTTP response.
-				throw new RecessError('METHOD not supported.');
+				throw new RecessException('METHOD not supported.', get_defined_vars());
 			}
 		} else {
-			$controller = $this->getControllerFromResourceString($request, $applications);
+			throw new RecessException('Resource does not exist.', get_defined_vars());
 		}
 		
 		$this->controller = $controller;
@@ -112,80 +112,7 @@ class DefaultPolicy implements IPolicy {
 		$controller = new $controllerClass($routeResult->route->app);
 		return $controller;
 	}
-	
-	protected function getControllerFromResourceString(Request &$request, array $applications) {
-		$partsCount = count($request->resourceParts);
-		
-		$prefixes = array_map(create_function('$app','return $app->routingPrefix;'), $applications);
-		
-		$request->meta->controllerMethodArguments = array();
-		$request->meta->useAssociativeArguments = false;
-		// TODO: Clean this up. Throw better errors to reveal internal logic.
-		switch($partsCount) {
-			case 0: // DefaultApp, HomeController, home method
-				$defaultAppKey = array_search('',$prefixes);
-				if($defaultAppKey !== false) {
-					$request->meta->controllerMethod = 'home';
-					$request->meta->app = $applications[$defaultAppKey];
-						Library::beginNamedRun('HomeController');
-					return $applications[$defaultAppKey]->getController('HomeController');
-				}
-				break;
-			case 1: // 
-				$appKey = array_search($request->resourceParts[0], $prefixes);
-				if($appKey !== false) {
-					$request->meta->controllerMethod = 'home';
-					$request->meta->app = $applications[$appKey];
-						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
-					return $applications[$appKey]->getController('HomeController');
-				} else {
-					$defaultAppKey = array_search('',$prefixes);
-					if($defaultAppKey !== false) {
-						$request->meta->controllerMethod = 'home';
-						$request->meta->app = $applications[$defaultAppKey];
-						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
-						return $applications[$defaultAppKey]->getController($request->resourceParts[0] . 'Controller');
-					}
-				}
-				break;
-			case 2:
-				$appKey = array_search($request->resourceParts[0], $prefixes);
-				if($appKey !== false) {
-					$request->meta->controllerMethod = 'home';
-					$request->meta->app = $applications[$appKey];
-						Library::beginNamedRun($request->resourceParts[1] . 'Controller');
-					return $applications[$appKey]->getController($request->resourceParts[1] . 'Controller');
-				} else {
-					$defaultAppKey = array_search('',$prefixes);
-					if($defaultAppKey !== false) {
-						$request->meta->controllerMethod = $request->resourceParts[1];
-						$request->meta->app = $applications[$defaultAppKey];
-						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
-						return $applications[$defaultAppKey]->getController($request->resourceParts[0] . 'Controller');
-					}
-				}
-				break;
-			default:
-				$appKey = array_search($request->resourceParts[0], $prefixes);
-				if($appKey !== false) {
-					$request->meta->controllerMethodArguments = array_slice($request->resourceParts,3);
-					$request->meta->controllerMethod = $request->resourceParts[2];
-					$request->meta->app = $applications[$appKey];
-					Library::beginNamedRun($request->resourceParts[1] . 'Controller');
-					return $applications[$appKey]->getController($request->resourceParts[1] . 'Controller');
-				} else {
-					$defaultAppKey = array_search('',$prefixes);
-					if($defaultAppKey !== false) {
-						$request->meta->controllerMethodArguments = array_slice($request->resourceParts,2);
-						$request->meta->controllerMethod = $request->resourceParts[1];
-						$request->meta->app = $applications[$defaultAppKey];
-						Library::beginNamedRun($request->resourceParts[0] . 'Controller');
-						return $applications[$defaultAppKey]->getController($request->resourceParts[0] . 'Controller');
-					}
-				}
-				break;
-		}
-	}
+
 }
 
 ?>

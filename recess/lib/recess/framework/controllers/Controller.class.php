@@ -56,12 +56,36 @@ abstract class Controller extends RecessObject {
 		
 		$reflectedMethods = $reflection->getMethods(false);
 		$methods = array();
+		$unreachableMethods = array('serve','urlTo','__call','__construct');
 		foreach($reflectedMethods as $reflectedMethod) {
+			if(in_array($reflectedMethod->getName(),$unreachableMethods)) continue;
 			$annotations = $reflectedMethod->getAnnotations();
 			foreach($annotations as $annotation) {
 				if($annotation instanceof ControllerAnnotation) {
 					$annotation->massage(Library::getFullyQualifiedClassName($class), $reflectedMethod->name, $descriptor);
 				}
+			}
+			
+			if(	empty($annotations) && 
+				$reflectedMethod->isPublic() && 
+				!$reflectedMethod->isStatic()
+			   ) {
+			   	$parameters = $reflectedMethod->getParameters();
+			   	$parameterNames = array();
+			   	foreach($parameters as $parameter) {
+			   		$parameterNames[] = '$' . $parameter->getName();
+			   	}
+			   	if(!empty($parameterNames)) {
+			   		$parameterPath = '/' . implode('/',$parameterNames);
+			   	} else {
+			   		$parameterPath = '';
+			   	}
+				// Default Routing for Public Methods Without Annotations
+				$descriptor->routes[] = 
+					new Route(	$class, 
+								$reflectedMethod->getName(), 
+								Methods::GET, 
+								$descriptor->routesPrefix . $reflectedMethod->getName() . $parameterPath);
 			}
 		}
 		

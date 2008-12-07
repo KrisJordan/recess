@@ -27,8 +27,8 @@ function printRoutesRecursive($codeController, $routingNode, $fullPath) {
 			}
 			echo '<td>' . $method . '</td>';
 			echo '<td>' . $fullPath . '</td>';
-			echo '<td><a href="' . $codeController->urlToMethod('classInfo',$route->class) . '">' . Library::getClassName($route->class) . '</a></td>';
-			echo '<td><a href="' . $codeController->urlToMethod('classInfo',$route->class) . '#method_' . $route->function . '">'. $route->function . '</a></td>';
+			echo '<td><a href="' . $codeController->urlTo('classInfo',$route->class) . '">' . Library::getClassName($route->class) . '</a></td>';
+			echo '<td><a href="' . $codeController->urlTo('classInfo',$route->class) . '#method_' . $route->function . '">'. $route->function . '</a></td>';
 			echo '</tr>';
 		}		
 	} 

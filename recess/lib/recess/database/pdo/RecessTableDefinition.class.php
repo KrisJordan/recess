@@ -11,8 +11,8 @@ class RecessTableDefinition {
 	
 	protected $columns = array();
 	
-	function addColumn($name, $type, $nullable = true, $primaryKey = false, $defaultValue = '', $options = array()) {
-		$this->columns[$name] = new RecessColumnDefinition($name, $type, $nullable, $primaryKey, $defaultValue, $options);
+	function addColumn($name, $type, $nullable = true, $isPrimaryKey = false, $defaultValue = '', $options = array()) {
+		$this->columns[$name] = new RecessColumnDefinition($name, $type, $nullable, $isPrimaryKey, $defaultValue, $options);
 	}
 	
 	function getColumns() {

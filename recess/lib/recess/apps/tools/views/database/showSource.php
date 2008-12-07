@@ -10,7 +10,7 @@ include_once($viewsDir . 'common/header.php');
 <h2>Tables:</h2>
 
 <?php foreach($tables as $table): ?>
-	<h3><a href="<?php echo $controller->urlToMethod('showTable',$name,$table); ?>"><?php echo $table; ?></a></h3>
+	<h3><a href="<?php echo $controller->urlTo('showTable',$name,$table); ?>"><?php echo $table; ?></a></h3>
 <?php endforeach ?>
 
 <hr />

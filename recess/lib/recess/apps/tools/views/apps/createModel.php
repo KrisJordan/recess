@@ -6,7 +6,7 @@ include_once($viewsDir . 'common/header.php');
 ?>
 <h1>New <strong>Model</strong> Helper</h1>
 <p>The purpose of this helper is to help speed the process of creating Recess! Models. Please note <span class="highlight">this form is <strong>not</strong> child proof</span>!</p>
-<form class="modelForm" method="POST" action="<?php echo $controller->urlToMethod('generateModel',$app); ?>">
+<form class="modelForm" method="POST" action="<?php echo $controller->urlTo('generateModel',$app); ?>">
 <h2>Step 1) Name Your Model</h2>
 <label for="modelName">Model Class Name:</label> <input id="modelName" type="text" name="modelName" />
 <p>The name of your model must be a <span class="highlight">valid PHP class name</span>.</p>
@@ -84,6 +84,7 @@ include_once($viewsDir . 'common/header.php');
 	<table>
 		<thead>
 			<tr>
+				<td>PK</td>
 				<td>Property Name</td>
 				<td>Type</td>
 				<td>Remove</td>
@@ -91,24 +92,26 @@ include_once($viewsDir . 'common/header.php');
 		</thead>
 		<tbody id="propertiesForm">
 		<tr>
+			<td><input type="radio" name="primaryKey" class="primaryKey" /></td>
 			<td><input type="text" name="fields[]" class="fieldName" /></td>
 			<td><select name="types[]" class="type">
-					<option value="string">String</option>
-					<option value="text">Text</option>
+			<?php
+			Library::import('recess.database.pdo.RecessType');
+			?>
+					<option value="<?php echo RecessType::STRING; ?>">String</option>
+					<option value="<?php echo RecessType::TEXT; ?>">Text</option>
 					
-					<option value="primaryKey">PrimaryKey</option>
+					<option value="<?php echo RecessType::INTEGER; ?>">Integer</option>
+					<option value="<?php echo RecessType::INTEGER; ?> Autoincrement">Integer (AutoIncrement)</option>
+					<option value="<?php echo RecessType::FLOAT; ?>">Float</option>
 					
-					<option value="integer">Integer</option>
-					<option value="decimal">Decimal</option>
-					<option value="float">Float</option>
+					<option value="<?php echo RecessType::BOOLEAN; ?>">Boolean</option>
 					
-					<option value="time">Time</option>
-					<option value="timestamp">Timestamp</option>
-					<option value="date">Date</option>
-					<option value="datetime">Date/Time</option>
-					
-					<option value="blob">Blob</option>
-					<option value="boolean">Boolean</option>
+					<option value="<?php echo RecessType::TIMESTAMP; ?>">Timestamp</option>
+					<option value="<?php echo RecessType::DATETIME; ?>">Date/Time</option>
+					<option value="<?php echo RecessType::DATE; ?>">Date</option>
+					<option value="<?php echo RecessType::TIME; ?>">Time</option>
+					<option value="<?php echo RecessType::BLOB; ?>">Blob</option>
 			</select></td>
 			<td><input class="removeField" type="button" value="X"></input></td>
 		</tr>

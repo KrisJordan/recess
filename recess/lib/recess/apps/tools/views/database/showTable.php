@@ -5,7 +5,7 @@ include_once($viewsDir . 'common/header.php');
 ?>
 
 <h1>Table: <strong><?php echo $table;?></strong></h1>
-<h2>Source: <a href="<?php echo $controller->urlToMethod('showSource',$sourceName); ?>"><?php echo $sourceName;?></a></h2>
+<h2>Source: <a href="<?php echo $controller->urlTo('showSource',$sourceName); ?>"><?php echo $sourceName;?></a></h2>
 <h2>Columns:</h2>
 
 <table>
@@ -29,7 +29,7 @@ if($i % 2 == 0) {
 	echo '<tr>';
 }
 ?>
-		<td><?php echo $column->primaryKey ? 'Yes' : ''; ?></td>
+		<td><?php echo $column->isPrimaryKey ? 'Yes' : ''; ?></td>
 		<td><?php echo $column->name; ?></td>
 		<td><?php echo $column->type; ?></td>
 		<td><?php echo $column->nullable ? 'Y' : 'N'; ?></td>
@@ -39,5 +39,5 @@ if($i % 2 == 0) {
 </tbody>
 </table>
 <hr />
-<h3><a href="<?php echo $controller->urlToMethod('emptyTable',$sourceName,$table); ?>">Empty Table</a> - <a href="<?php echo $controller->urlToMethod('dropTable', $sourceName, $table); ?>">Drop Table</a></h3>
+<h3><a href="<?php echo $controller->urlTo('emptyTable',$sourceName,$table); ?>">Empty Table</a> - <a href="<?php echo $controller->urlTo('dropTable', $sourceName, $table); ?>">Drop Table</a></h3>
 <?php include_once($viewsDir . 'common/footer.php'); ?>

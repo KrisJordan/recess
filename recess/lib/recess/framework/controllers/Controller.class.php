@@ -2,9 +2,9 @@
 Library::import('recess.lang.RecessObject');
 Library::import('recess.lang.RecessReflectionClass');
 Library::import('recess.lang.Annotation', true);
-Library::import('recess.framework.annotations.ViewAnnotation', true);
-Library::import('recess.framework.annotations.RouteAnnotation', true);
-Library::import('recess.framework.annotations.RoutesPrefixAnnotation', true);
+Library::import('recess.framework.controllers.annotations.ViewAnnotation', true);
+Library::import('recess.framework.controllers.annotations.RouteAnnotation', true);
+Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation', true);
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,
@@ -68,7 +68,7 @@ abstract class Controller extends RecessObject {
 		return $descriptor;
 	}
 	
-	public function urlToMethod($methodName) {
+	public function urlTo($methodName) {
 		$args = func_get_args();
 		array_shift($args);
 		
@@ -87,7 +87,7 @@ abstract class Controller extends RecessObject {
 				$parameters = $reflectedMethod->getParameters();
 				
 				if(count($parameters) < count($args)) {
-					throw new RecessException('urlToMethod(\'' . $methodName . '\') called with ' . count($args) . ' arguments, method "' . $methodName . '" takes ' . count($parameters) . '.', get_defined_vars());
+					throw new RecessException('urlTo(\'' . $methodName . '\') called with ' . count($args) . ' arguments, method "' . $methodName . '" takes ' . count($parameters) . '.', get_defined_vars());
 				}
 				
 				$i = 0;
@@ -100,7 +100,7 @@ abstract class Controller extends RecessObject {
 			}
 			
 			if(strpos($url, '$') !== false) { 
-				throw new RecessException('Missing arguments in urlToMethod(' . $methodName . '). Provide values for missing arguments: ' . $url, get_defined_vars());
+				throw new RecessException('Missing arguments in urlTo(' . $methodName . '). Provide values for missing arguments: ' . $url, get_defined_vars());
 			}
 			return trim($_ENV['url.base'] . $url);
 		} else {

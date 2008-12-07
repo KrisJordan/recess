@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.framework.annotations.ControllerAnnotation');
+Library::import('recess.framework.controllers.annotations.ControllerAnnotation');
 Library::import('recess.framework.routing.Route');
 
 class RoutesPrefixAnnotation extends ControllerAnnotation {
@@ -14,7 +14,10 @@ class RoutesPrefixAnnotation extends ControllerAnnotation {
 	}
 	
 	function massage($controller, $method, ControllerDescriptor $descriptor) {
-		$descriptor->routesPrefix = $this->prefix;
+		if($this->prefix == '/')
+			$descriptor->routesPrefix = '';
+		else
+			$descriptor->routesPrefix = $this->prefix;
 	}
 }
 ?>

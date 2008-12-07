@@ -10,7 +10,7 @@ class RecessColumnDefinition {
 	
 	public $type;
 	
-	public $primaryKey = false;
+	public $isPrimaryKey = false;
 	
 	public $nullable = true;
 	
@@ -18,10 +18,10 @@ class RecessColumnDefinition {
 	
 	public $options = array();
 	
-	function __construct($name, $type, $nullable = true, $primaryKey = false, $defaultValue = '', $options = array()) {
+	function __construct($name, $type, $nullable = true, $isPrimaryKey = false, $defaultValue = '', $options = array()) {
 		$this->name = $name;
 		$this->type = $type;
-		$this->primaryKey = $primaryKey;
+		$this->isPrimaryKey = $isPrimaryKey;
 		$this->nullable = $nullable;
 		$this->defaultValue = $defaultValue;
 		$this->options = $options;

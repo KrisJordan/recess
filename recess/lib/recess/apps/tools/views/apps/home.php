@@ -15,17 +15,17 @@ if(isset($flash)) {
 <?php
 foreach($apps as $app) {
 	if(strpos($app->controllersPrefix,'recess.apps') === false) {
-		echo '<h2><a href="' . $controller->urlToMethod('app',get_class($app)) . '">' . $app->name . '</a></h2>';
+		echo '<h2><a href="' . $controller->urlTo('app',get_class($app)) . '">' . $app->name . '</a></h2>';
 	}
 }
 
 foreach($apps as $app) {
 	if(strpos($app->controllersPrefix,'recess.apps') !== false) {
-		echo '<h2><a href="' . $controller->urlToMethod('app',get_class($app)) . '">' . $app->name . '</a></h2>';
+		echo '<h2><a href="' . $controller->urlTo('app',get_class($app)) . '">' . $app->name . '</a></h2>';
 	}
 }
 ?>
 <hr />
-<h3><a href="<?php echo $controller->urlToMethod('newApp'); ?>">Start a New Application</a></h3>
+<h3><a href="<?php echo $controller->urlTo('newApp'); ?>">Start a New Application</a></h3>
 
 <?php include_once($viewsDir . 'common/footer.php'); ?>

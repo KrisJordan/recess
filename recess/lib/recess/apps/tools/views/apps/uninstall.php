@@ -13,5 +13,5 @@ include_once($viewsDir . 'common/header.php');
 	<li><span class="highlight">Remove the string '<?php echo $appClass; ?>'</span></li>
 	<li>[Optional] Delete the directory <?php echo $_ENV['dir.apps'] . substr($appClass,0,strpos($appClass,'.')); ?></li>
 </ol>
-<h2>Th-Th-Th-Th-That's all folks. <a href="<?php echo $controller->urlToMethod('home'); ?>">Head back to apps.</a></h2>
+<h2>Th-Th-Th-Th-That's all folks. <a href="<?php echo $controller->urlTo('home'); ?>">Head back to apps.</a></h2>
 <?php include_once($viewsDir . 'common/footer.php'); ?>

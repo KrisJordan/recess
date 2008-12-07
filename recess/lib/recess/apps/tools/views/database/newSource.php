@@ -39,5 +39,5 @@ RecessConf::$namedDatabases
 
 
 <hr />
-<h3><a href="<?php echo $controller->urlToMethod('home'); ?>">Return to Data Sources</a></h3>
+<h3><a href="<?php echo $controller->urlTo('home'); ?>">Return to Data Sources</a></h3>
 <?php include_once($viewsDir . 'common/footer.php'); ?>

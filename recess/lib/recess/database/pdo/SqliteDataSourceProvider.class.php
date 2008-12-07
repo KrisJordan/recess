@@ -66,6 +66,9 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 	function getTableDefinition($table) {
 		$results = $this->pdo->query('PRAGMA table_info("' . $table . '");');
 		
+		$tableSql = $this->pdo->query('SELECT sql FROM sqlite_master WHERE type="table" AND name = "' . addslashes($table) . '"')->fetch();
+		$tableSql = $tableSql['sql'];
+		
 		$columns = array();
 		
 		$tableDefinition = new RecessTableDefinition();
@@ -73,13 +76,31 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 		foreach($results as $result) {
 			$tableDefinition->addColumn(
 				$result['name'],
-				$result['type'],
+				SqliteDataSourceProvider::getRecessType($result['type']),
 				$result['notnull'] == 0 ? true : false,
 				$result['pk'] == 1 ? true : false,
-				$result['dflt_value'] == null ? '' : $result['dflt_value']);
+				$result['dflt_value'] == null ? '' : $result['dflt_value'],
+				strpos(	$tableSql, 
+						$result['name'] . ' INTEGER PRIMARY KEY AUTOINCREMENT'
+					  ) !== false 
+					  ? array('autoincrement'=>true) : array()
+				);
 		}
 		
 		return $tableDefinition;
+	}
+	
+	static function getRecessType($sqliteType) {
+		$recessType = $sqliteType;
+		if($recessType == 'DATETIME') {
+			$recessType = 'DateTime';
+		} else {
+			$recessType = ucfirst(strtolower($recessType));
+		}
+		if(!in_array($recessType, RecessType::all())) {
+			$recessType = RecessType::TEXT;
+		}
+		return $recessType;
 	}
 	
 	/**
@@ -99,5 +120,41 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 	function emptyTable($table) {
 		return $this->pdo->exec('DELETE FROM ' . $table);
 	}
+	
+	/**
+	 * Given a Table Definition, return the CREATE TABLE SQL statement
+	 * in the Sqlite's syntax.
+	 *
+	 * @param RecessTableDefinition $tableDefinition
+	 */
+	function createTableSql(RecessTableDefinition $definition) {
+		$sql = 'CREATE TABLE ' . $definition->name;
+		
+		$columnSql = null;
+		foreach($definition->getColumns() as $column) {
+			if(isset($columnSql)) { $columnSql .= ', '; }
+			$columnSql .= "\n\t" . $column->name . ' ' . strtoupper($column->type);
+			if($column->isPrimaryKey) {
+				$columnSql .= ' PRIMARY KEY';
+			}
+			if(isset($column->options['autoincrement'])) {
+				if($column->isPrimaryKey) {
+					$columnSql .= ' AUTOINCREMENT';
+				} else {
+					throw new RecessException('Only primary key columns can be "Integer Autoincrement" in SQLite.', get_defined_vars());
+				}
+			}
+		}
+		$columnSql .= "\n";
+		
+		return $sql . ' (' . $columnSql . ')';
+	}
+}
+
+class SqliteType {
+	const Text = 'TEXT';
+	const Integer = 'INTEGER';
+	const Real = 'REAL';
+	const Blob = 'BLOB';
 }
 ?>

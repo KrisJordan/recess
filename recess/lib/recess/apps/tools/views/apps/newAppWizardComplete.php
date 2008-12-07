@@ -25,7 +25,7 @@ RecessConf::$applications
        );
 </pre>
 
-<h2><span class="highlight">Did you add that line?</span> Great! Have fun building <a href="<?php echo $controller->urlToMethod('app', $applicationClass); ?>"><?php echo $appName; ?></a>!</h2>
+<h2><span class="highlight">Did you add that line?</span> Great! Have fun building <a href="<?php echo $controller->urlTo('app', $applicationClass); ?>"><?php echo $appName; ?></a>!</h2>
 
 <?php
 include_once($viewsDir . 'common/footer.php');

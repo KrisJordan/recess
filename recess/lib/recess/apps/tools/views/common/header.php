@@ -25,6 +25,7 @@ $qotms = array(
 		<link type="text/css" rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/SyntaxHighlighter.css"></link>
 		<script language="javascript" src="<?php echo $_ENV['url.content']; ?>js/shCore.js"></script>
 		<script language="javascript" src="<?php echo $_ENV['url.content']; ?>js/shBrushPhp.js"></script>
+		<script language="javascript" src="<?php echo $_ENV['url.content']; ?>js/shBrushSql.js"></script>
 		<script language="javascript">
 			window.onload = function() {
 				dp.SyntaxHighlighter.ClipboardSwf = '<?php echo $_ENV['url.content']; ?>flash/clipboard.swf';

@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.framework.annotations.ControllerAnnotation');
+Library::import('recess.framework.controllers.annotations.ControllerAnnotation');
 
 class ViewAnnotation extends ControllerAnnotation {
 

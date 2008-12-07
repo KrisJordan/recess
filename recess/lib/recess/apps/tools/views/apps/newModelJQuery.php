@@ -4,6 +4,8 @@
 		dp.SyntaxHighlighter.HighlightAll('code');
 		
 		function addField() {
+			isFirstField = $("#propertiesForm .removeField:last").length == 0;
+			
 			$("#propertiesForm .removeField:last").unbind('blur');
 			newField = $("#propertyTemplate").children().clone();
 			newField.appendTo("#propertiesForm");
@@ -14,7 +16,20 @@
 			});
 			setPropertyFocus();
 			colorTables();
+			
+			if(isFirstField) {
+				fieldTr = $("#propertiesForm .fieldName:last").parent().parent();
+				fieldTr.find(".fieldName").val("id");
+				fieldTr.find(".type").val("Integer Autoincrement");
+				fieldTr.find(".primaryKey").attr("checked","checked");
+			}
 		}
+
+		$("#propertiesForm").children().appendTo("#propertyTemplate");
+		$("#propertyTemplate .fieldName").val("");
+		$("#relationsForm").children().appendTo("#relationTemplate");
+		$("#tableOptions :radio").removeAttr("checked");
+		disablePropertiesForm();
 		
 		function addRelation() {
 			$("#relationTemplate").children().clone().appendTo("#relationsForm");
@@ -76,15 +91,11 @@
 		$("#modelName").focus();
 		
 		$("#propertiesForm .removeField:last").click(function() { $(this).parent().parent().remove(); });
-			
-		$("#propertiesForm").children().clone().appendTo("#propertyTemplate");
-		
-		$("#relationsForm").children().appendTo("#relationTemplate");
 		
 		// Check Model Name and Prefill Table
 		$("#modelName").blur( function () {
 			if($(this).val() != "" ) {
-				jQuery.getJSON("<?php echo $controller->urlToMethod('analyzeModelName', ''); ?>" + $(this).val() + ".json", 
+				jQuery.getJSON("<?php echo $controller->urlTo('analyzeModelName', ''); ?>" + $(this).val() + ".json", 
 							   null,
 							   function(data) {
 							   		if(!data.isValid) {
@@ -158,13 +169,26 @@
 			$("#propertiesForm :input").removeAttr("disabled");
 			$("#propertyTemplate :input").removeAttr("disabled");
 			$(".addField").show();
+			isEmpty = $("#propertiesForm .removeField:last").length == 0;
+			if(isEmpty) {
+				addField();
+				addField();
+			}
+			$("#tableName").focus();
 		}
 		
-		function addProperty(name, type) {
+		function addProperty(name, type, isPrimaryKey, options) {
 			addField();
 			propertiesForm = $("#propertiesForm tr:last");
 			propertiesForm.find(".fieldName").val(name);
 			propertiesForm.find(".type").val(type);
+			if(isPrimaryKey)
+				propertiesForm.find(":radio").attr("checked", "checked");
+			if(options.autoincrement != null) {
+				if(options.autoincrement == true) {
+					propertiesForm.find(".type").val("Integer Autoincrement");
+				}
+			}
 			$("#propertiesForm").parent().find("button").focus();
 		}
 		
@@ -176,16 +200,20 @@
 						clearProperties();
 						for (var i in data.columns) {
 							addProperty(data.columns[i].name,
-										data.columns[i].type);
+										data.columns[i].type,
+										data.columns[i].isPrimaryKey,
+										data.columns[i].options);
 						}
 					}
 				);
 		}
 		
 		$("form").submit( function() {
-			
 			$("#propertiesForm :input").removeAttr("disabled");
-			
+			checked = $("#propertiesForm :checked");
+			if(checked.length == 1) {
+				checked.val(checked.parent().parent().find(".fieldName").val());
+			}
 		} );
 		
 		

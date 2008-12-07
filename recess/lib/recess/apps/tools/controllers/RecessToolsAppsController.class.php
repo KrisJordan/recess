@@ -1,5 +1,6 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
+Library::import('recess.database.pdo.RecessType');
 
 /**
  * !View Native, Prefix: apps/
@@ -143,7 +144,7 @@ class RecessToolsAppsController extends Controller {
 		$form = new Form();
 		$form->method = "POST";
 		$form->flash = "";
-		$form->action = $this->urlToMethod('newApp');
+		$form->action = $this->urlTo('newApp');
 		$form->inputs['appName'] = new TextInput('appName', '', '','');
 		$form->inputs['programmaticName'] = new TextInput('programmaticName', '', '','');
 		$form->fill($fillValues);
@@ -155,7 +156,7 @@ class RecessToolsAppsController extends Controller {
 		$form = new Form();
 		$form->method = "POST";
 		$form->flash = "";
-		$form->action = $this->urlToMethod('newAppStep2');
+		$form->action = $this->urlTo('newAppStep2');
 		$form->inputs['appName'] = new HiddenInput('appName', '');
 		$form->inputs['programmaticName'] = new HiddenInput('programmaticName', '');
 		$form->inputs['routingPrefix'] = new TextInput('routingPrefix', '','','');
@@ -197,10 +198,11 @@ class RecessToolsAppsController extends Controller {
 			$tableName = $values['tableName'];
 		}
 		$propertyNames = $values['fields'];
+		$primaryKey = $values['primaryKey'];
 		$types = $values['types'];
 		
 		Library::import('recess.database.orm.Model', true); 
-			// Forcing b/c ModelDescriptor is in Model
+		// Forcing b/c ModelDescriptor is in Model
 			
 		$modelDescriptor = new ModelDescriptor($modelName, false);
 		$modelDescriptor->setSource($dataSource);
@@ -211,15 +213,12 @@ class RecessToolsAppsController extends Controller {
 			if($name == "") continue;
 			$property = new ModelProperty();
 			$property->name = $name;
-			if($types[$i] == 'primaryKey') {
-				if($pkFound) {
-					$property->type = 'integer';
-				} else {
-					$pkFound = true;
-					$property->type = 'integer';
-					$property->isPrimaryKey = true;
-					$property->isAutoIncrement = true;
-				}
+			if($name == $primaryKey) {
+				$property->isPrimaryKey = true;
+			}
+			if($types[$i] == 'Integer Autoincrement') {
+				$property->type = RecessType::INTEGER;
+				$property->isAutoIncrement = true;
 			} else {
 				$property->type = $types[$i];
 			}
@@ -261,8 +260,19 @@ class RecessToolsAppsController extends Controller {
 		
 		$this->tableGenAttempted = $createTable;
 		$this->tableWasCreated = false;
+		$this->tableSql = '';
+		if($createTable) {
+			$modelSource = Databases::getSource($dataSource);
+			$this->tableSql = $modelSource->createTableSql($modelDescriptor);
+			try {
+				$modelSource->exec($this->tableSql);
+				$this->tableWasCreated = true;
+			} catch(Exception $e) {
+				$this->tableWasCreated = false;
+			}
+		}
 		
-		return $this->ok('newModelComplete');
+		return $this->ok('createModelComplete');
 	}
 	
 	/** !Route GET, model/gen/analyzeModelName/$modelName */
@@ -281,7 +291,7 @@ class RecessToolsAppsController extends Controller {
 	public function getTableProps($sourceName, $tableName) {
 		$source = Databases::getSource($sourceName);
 		if($source == null) {
-			return $this->redirect($this->urlToMethod('home'));
+			return $this->redirect($this->urlTo('home'));
 		} else {
 			$this->source = $source;
 		}
@@ -300,7 +310,7 @@ class RecessToolsAppsController extends Controller {
 				return $app;
 			}
 		}
-		return $this->forwardNotFound($this->urlToMethod('home'), 'Application ' . $appClass . ' does not exist or is not enabled.');
+		return $this->forwardNotFound($this->urlTo('home'), 'Application ' . $appClass . ' does not exist or is not enabled.');
 	}
 	
 }

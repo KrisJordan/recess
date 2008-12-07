@@ -35,7 +35,6 @@ interface IPdoDataSourceProvider {
 	 */
 	function getTableDefinition($table);
 	
-	
 	/**
 	 * Drop a table from the data source.
 	 *
@@ -50,6 +49,13 @@ interface IPdoDataSourceProvider {
 	 */
 	function emptyTable($table);
 	
+	/**
+	 * Given a Table Definition, return the CREATE TABLE SQL statement
+	 * in the provider's desired syntax.
+	 *
+	 * @param RecessTableDefinition $tableDefinition
+	 */
+	function createTableSql(RecessTableDefinition $tableDefinition);
 }
 
 ?>

@@ -20,7 +20,7 @@ class RecessToolsDatabaseController extends Controller {
 		$source = Databases::getSource($sourceName);
 		
 		if($source == null) {
-			return $this->redirect($this->urlToMethod('home'));
+			return $this->redirect($this->urlTo('home'));
 		} else {
 			$this->source = $source;
 		}
@@ -40,7 +40,7 @@ class RecessToolsDatabaseController extends Controller {
 	public function showTable($sourceName, $tableName) {
 		$source = Databases::getSource($sourceName);
 		if($source == null) {
-			return $this->redirect($this->urlToMethod('home'));
+			return $this->redirect($this->urlTo('home'));
 		} else {
 			$this->source = $source;
 		}
@@ -60,7 +60,7 @@ class RecessToolsDatabaseController extends Controller {
 	public function dropTablePost($sourceName, $tableName) {
 		$source = Databases::getSource($sourceName);
 		$source->dropTable($tableName);
-		return $this->forwardOk($this->urlToMethod('showSource', $sourceName));
+		return $this->forwardOk($this->urlTo('showSource', $sourceName));
 	}
 	
 	/** !Route GET, source/$sourceName/table/$tableName/empty */
@@ -73,7 +73,7 @@ class RecessToolsDatabaseController extends Controller {
 	public function emptyTablePost($sourceName, $tableName) {
 		$source = Databases::getSource($sourceName);
 		$source->emptyTable($tableName);
-		return $this->forwardOk($this->urlToMethod('showTable', $sourceName, $tableName));
+		return $this->forwardOk($this->urlTo('showTable', $sourceName, $tableName));
 	}
 	
 	private function getDsn($sourceName) {

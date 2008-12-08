@@ -173,7 +173,7 @@ class RtNode {
 					$result = $child->findRouteRecursively($pathParts, $index - 1, $method);
 					if($result->routeExists) {
 						if($child->c != '') {
-							$result->arguments[$child->c] = $nextPart;
+							$result->arguments[$child->c] = urldecode($nextPart);
 						}
 						return $result;
 					}

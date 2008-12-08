@@ -107,39 +107,11 @@ class RecessToolsCodeController extends Controller {
 	function createTable ($fullyQualifiedModel) {
 		if(!Library::classExists($fullyQualifiedModel)) {
 			return new NotFoundResponse($this->request);
-		}	
-
-		$this->sql = '';
+		}
 
 		$class = Library::getClassName($fullyQualifiedModel);
 		
-		$props = Model::getProperties($class);
-		
-		$table = Model::tableFor($class);
-		
-		$this->sql = 'CREATE TABLE ' . $table . ' ( ';
-		
-		$first = true;
-		foreach($props as $prop) {
-			if($first) { $first = false; }
-			else { $this->sql .= ', '; }
-			
-			$this->sql .= $prop->name . ' ' . $prop->type;
-			
-			if($prop->isPrimaryKey) { 
-				$this->sql .= ' PRIMARY KEY';
-				if($prop->isAutoIncrement) {
-					$this->sql .= ' AUTOINCREMENT';
-				}
-			}
-		}
-		
-		$this->sql .= ' );';
-		
-		$source = Model::sourceFor($class);
-		
-		$source->executeStatement($this->sql, array());
-		
+		Model::createTableFor($class);
 	}
 	
 }

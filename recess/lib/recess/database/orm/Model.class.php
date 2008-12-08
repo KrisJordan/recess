@@ -98,7 +98,16 @@ abstract class Model extends RecessObject implements ISqlConditions {
 		}
 		$descriptor->properties = $properties;
 		
+		$modelSource = Databases::getSource($descriptor->getSourceName());
+		$modelSource->cascadeTableDescriptor($descriptor->getTable(), $modelSource->modelToTableDescriptor($descriptor));
+		
 		return $descriptor;
+	}
+	
+	static function createTableFor($class) {
+		$descriptor = self::getClassDescriptor($class);
+		$modelSource = Databases::getSource($descriptor->getSourceName());
+		$modelSource->exec($modelSource->createTableSql($descriptor));
 	}
 	
 	function all() { 

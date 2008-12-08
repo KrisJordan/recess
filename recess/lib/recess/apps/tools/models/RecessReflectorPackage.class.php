@@ -9,16 +9,16 @@ Library::import('recess.database.orm.Model');
  */
 class RecessReflectorPackage extends Model {
 	
-	/** !Column PrimaryKey, integer, AutoIncrement */
+	/** !Column PrimaryKey, Integer, AutoIncrement */
 	public $id;
 	
-	/** !Column text */
+	/** !Column String */
 	public $name;
 	
-	/** !Column integer */
+	/** !Column Integer */
 	public $parentId;
 	
-	/** !Column integer */
+	/** !Column Integer */
 	public $modified;
 	
 	function childrenAlphabetically() {

@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.database.pdo.IPdoDataSourceProvider');
-Library::import('recess.database.pdo.RecessTableDescriptor');
+
 /**
  * Sqlite 3 Data Source Provider
  * @author Kris Jordan
@@ -89,6 +89,46 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 		
 		return $tableDescriptor;
 	}
+	
+	/**
+	 * Sanity check and semantic sugar from higher level
+	 * representation of table pushed down to the RDBMS
+	 * representation of the table.
+	 *
+	 * @param string $table
+	 * @param RecessTableDescriptor $descriptor
+	 * @return RecessTableDescriptor
+	 */
+	function cascadeTableDescriptor($table, RecessTableDescriptor $descriptor) {
+		$sourceDescriptor = $this->getTableDescriptor($table);
+		
+		if(!$sourceDescriptor->tableExists) {
+			$descriptor->tableExists = false;
+			return $descriptor;
+		}
+		
+		$sourceColumns = $sourceDescriptor->getColumns();
+		
+		$errors = array();
+		
+		foreach($descriptor->getColumns() as $column) {
+			if(isset($sourceColumns[$column->name])) {
+				if($column->isPrimaryKey && !$sourceColumns[$column->name]->isPrimaryKey) {
+					$errors[] = 'Column "' . $column->name . '" is not the primary key in table ' . $table . '.';
+				}
+				$sourceColumns[$column->name]->type = $column->type;
+			} else {
+				$errors[] = 'Column "' . $column->name . '" does not exist in table ' . $table . '.';
+			}
+		}
+		
+		if(!empty($errors)) {
+			throw new RecessException(implode(' ', $errors), get_defined_vars());
+		} else {
+			return $sourceDescriptor;
+		}
+	}
+	
 	
 	static function getRecessType($sqliteType) {
 		$recessType = $sqliteType;

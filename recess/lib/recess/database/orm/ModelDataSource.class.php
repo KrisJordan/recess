@@ -13,9 +13,14 @@ class ModelDataSource extends PdoDataSource {
 		}
 	}
 	
-	function createTableSql(ModelDescriptor $descriptor) {
-		// Here we need to go between model descriptor and
-		// Recess Table Definition
+	
+	/**
+	 * Transform a model descriptor to a table descriptor.
+	 *
+	 * @param ModelDescriptor $descriptor
+	 * @return RecessTableDescriptor
+	 */
+	function modelToTableDescriptor(ModelDescriptor $descriptor) {
 		Library::import('recess.database.pdo.RecessTableDescriptor');
 		Library::import('recess.database.pdo.RecessColumnDescriptor');
 		$tableDescriptor = new RecessTableDescriptor();
@@ -30,7 +35,11 @@ class ModelDataSource extends PdoDataSource {
 								($property->isAutoIncrement ? array('autoincrement' => true) : array())
 							);
 		}
-		return parent::createTableSql($tableDescriptor);
+		return $tableDescriptor;
+	}
+	
+	function createTableSql(ModelDescriptor $descriptor) {
+		return parent::createTableSql($this->modelToTableDescriptor($descriptor));
 	}
 	
 }

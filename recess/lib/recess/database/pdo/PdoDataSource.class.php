@@ -180,6 +180,23 @@ class PdoDataSource extends PDO {
 	}
 	
 	/**
+	 * Take a table descriptor and apply it / verify it on top of the
+	 * table descriptor returned from a database. This is used to ensure
+	 * a model's marked up fields are in congruence with the table. Also
+	 * checks to ensure the number of columns in the cascaded descriptor
+	 * do not outnumber the actual number of columns. Finally with a database
+	 * like sqlite which largely ignores column typing it enables the model
+	 * to inform the actual Recess type of the column.
+	 *
+	 * @param string $table
+	 * @param RecessTableDescriptor $descriptor
+	 */
+	function cascadeTableDescriptor($table, $descriptor) { 
+		$cacheKey = $this->cachePrefix . $table . '::Descriptor';
+		Cache::set($cacheKey, $this->provider->cascadeTableDescriptor($table, $descriptor));
+	}
+	
+	/**
 	 * Drop a table from the database.
 	 *
 	 * @param string $table

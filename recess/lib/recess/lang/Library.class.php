@@ -1,7 +1,6 @@
 <?php
 require_once($_ENV['dir.lib'] . 'recess/diagnostics/Diagnostics.class.php');
 require_once($_ENV['dir.lib'] . 'recess/cache/Cache.class.php');
-
 /**
  * Used to include class files into the system
  * Used over straight require's as a level of indirection to provide
@@ -207,7 +206,7 @@ class Library {
 	
 	static function load($className) {
 		if(self::$inNamedRunImport) return;
-		
+				
 		if(!isset(self::$loaded[$className])) {
 			throw new LibraryException($className . ' has not been imported.');
 		}

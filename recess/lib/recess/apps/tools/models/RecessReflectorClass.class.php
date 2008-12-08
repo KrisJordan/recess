@@ -11,29 +11,29 @@ Library::import('recess.apps.ide.models.RecessReflectorClassMethods');
  */
 class RecessReflectorClass extends Model {
 	
-	/** !Column PrimaryKey, integer, AutoIncrement */
+	/** !Column PrimaryKey, Integer, AutoIncrement */
 	public $id;
 	
-	/** !Column text */
+	/** !Column String */
 	public $name;
 	
 	/** 
-	 * !Column integer
+	 * !Column Integer
 	 */
 	public $parentId;
 	
 	/** 
-	 * !Column integer
+	 * !Column Integer
 	 */
 	public $packageId;
 	
-	/** !Column text */
+	/** !Column Text */
 	public $docComment;
 	
-	/** !Column text */
+	/** !Column Text */
 	public $file;
 	
-	/** !Column integer */
+	/** !Column Integer */
 	public $lastModified;
 	
 	public function fromClass($class, $dir = '') {

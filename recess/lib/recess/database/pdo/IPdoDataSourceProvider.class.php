@@ -1,4 +1,7 @@
 <?php
+Library::import('recess.database.pdo.RecessTableDescriptor');
+Library::import('recess.database.pdo.RecessColumnDescriptor');
+
 /**
  * Interface for vendor specific operations needed by PdoDataSource.
  * 
@@ -34,6 +37,16 @@ interface IPdoDataSourceProvider {
 	 * @return RecessTableDescriptor
 	 */
 	function getTableDescriptor($table);
+	
+	/**
+	 * Sanity check and semantic sugar from higher level
+	 * representation of table pushed down to the RDBMS
+	 * representation of the table.
+	 *
+	 * @param string $table
+	 * @param RecessTableDescriptor $descriptor
+	 */
+	function cascadeTableDescriptor($table, RecessTableDescriptor $descriptor);
 	
 	/**
 	 * Drop a table from the data source.

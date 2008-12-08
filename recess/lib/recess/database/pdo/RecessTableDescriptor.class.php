@@ -9,6 +9,8 @@ class RecessTableDescriptor {
 	
 	public $name;
 	
+	public $tableExists = false;
+	
 	protected $columns = array();
 	
 	function addColumn($name, $type, $nullable = true, $isPrimaryKey = false, $defaultValue = '', $options = array()) {

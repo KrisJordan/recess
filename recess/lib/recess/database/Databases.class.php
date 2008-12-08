@@ -7,6 +7,12 @@ class Databases {
 	static $sources = array();
 	static $default = null;
 	
+	/**
+	 * Get a named database source
+	 *
+	 * @param string $name
+	 * @return PdoDataSource
+	 */
 	static function getSource($name) {
 		if(isset(self::$sources[$name]))
 			return self::$sources[$name];
@@ -17,6 +23,7 @@ class Databases {
 	static function addSource($name, $source) {
 		self::$sources[$name] = $source;
 	}
+	
 	
 	static function getSources() {
 		return self::$sources;

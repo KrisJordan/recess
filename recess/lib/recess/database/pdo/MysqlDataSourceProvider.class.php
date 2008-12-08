@@ -68,12 +68,17 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 	 * @return RecessTableDescriptor
 	 */
 	function getTableDescriptor($table) {
-		$results = $this->pdo->query('SHOW COLUMNS FROM ' . $table . ';');
-		
-		$columns = array();
-		
 		Library::import('recess.database.pdo.RecessTableDescriptor');
 		$tableDescriptor = new RecessTableDescriptor();
+		$tableDescriptor->name = $table;
+		
+		try {
+			$results = $this->pdo->query('SHOW COLUMNS FROM ' . $table . ';');
+			$tableDescriptor->tableExists = true;
+		} catch (PDOException $e) {
+			$tableDescriptor->tableExists = false;
+			return $tableDescriptor;
+		}
 		
 		foreach($results as $result) {
 			$tableDescriptor->addColumn(
@@ -89,7 +94,7 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 	}
 	
 	function getRecessType($mysqlType) {
-		if($mysqlType == 'TINYINT(1)')
+		if(strtolower($mysqlType) == 'tinyint(1)')
 			return RecessType::BOOLEAN;
 		
 		if( ($parenPos = strpos($mysqlType,'(')) !== false ) {
@@ -219,6 +224,46 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 		$columnSql .= "\n";
 		
 		return $sql . ' (' . $columnSql . ')';
+	}
+	
+	/**
+	 * Sanity check and semantic sugar from higher level
+	 * representation of table pushed down to the RDBMS
+	 * representation of the table.
+	 *
+	 * @param string $table
+	 * @param RecessTableDescriptor $descriptor
+	 */
+	function cascadeTableDescriptor($table, RecessTableDescriptor $descriptor) {
+		$sourceDescriptor = $this->getTableDescriptor($table);
+		
+		if(!$sourceDescriptor->tableExists) {
+			$descriptor->tableExists = false;
+			return $descriptor;
+		}
+		
+		$sourceColumns = $sourceDescriptor->getColumns();
+		
+		$errors = array();
+		
+		foreach($descriptor->getColumns() as $column) {
+			if(isset($sourceColumns[$column->name])) {
+				if($column->isPrimaryKey && !$sourceColumns[$column->name]->isPrimaryKey) {
+					$errors[] = 'Column "' . $column->name . '" is not the primary key in table ' . $table . '.';
+				}
+				if($sourceColumns[$column->name]->type != $column->type) {
+					$errors[] = 'Column "' . $column->name . '" type "' . $column->type . '" does not match database column type "' . $sourceColumns[$column->name]->type . '".';
+				}
+			} else {
+				$errors[] = 'Column "' . $column->name . '" does not exist in table ' . $table . '.';
+			}
+		}
+		
+		if(!empty($errors)) {
+			throw new RecessException(implode(' ', $errors), get_defined_vars());
+		} else {
+			return $sourceDescriptor;
+		}
 	}
 }
 ?>

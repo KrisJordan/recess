@@ -1,6 +1,6 @@
 *.cache
 *.settings
 .project
-.db
+*.db
 recess/temp/compiled/*
 recess/temp/*.*

@@ -126,7 +126,7 @@ abstract class RecessObject {
  * 
  * @author Kris Jordan
  */
-class RecessObjectDescriptor extends stdClass {
+class RecessObjectDescriptor {
 	protected $attachedMethods = array();
 	
 	/**

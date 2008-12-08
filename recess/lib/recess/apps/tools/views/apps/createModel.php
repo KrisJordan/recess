@@ -120,6 +120,7 @@ include_once($viewsDir . 'common/header.php');
 	<input type="button" class="addField top" value="Add a Property" />
 </div>
 <hr />
+<!--  Coming soon :)
 <h2>Step 4) Relationships</h2>
 	<table>
 		<thead>
@@ -180,7 +181,8 @@ include_once($viewsDir . 'common/header.php');
 	</table>
 	<input type="button" class="addRelation" value="Add a Relationship" />
 	<hr />
-<h2>Step 5) Go!</h2>
+ -->
+<h2>Step 4) Go!</h2>
 <input id="generateModel" type="submit" value="Generate Model" />
 </form>
 <table style="visibility:hidden;">

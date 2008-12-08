@@ -39,13 +39,13 @@ abstract class Controller extends RecessObject {
 	}
 	
 	protected static function buildClassDescriptor($class) {
-		$descriptor = new ControllerDescriptor($class);
-		
 		try {
 			$reflection = new RecessReflectionClass($class);
 		} catch(ReflectionException $e) {
 			throw new RecessException('Class "' . $class . '" has not been declared.', get_defined_vars());
 		}
+		
+		$descriptor = new ControllerDescriptor();
 		
 		$annotations = $reflection->getAnnotations();
 		foreach($annotations as $annotation) {

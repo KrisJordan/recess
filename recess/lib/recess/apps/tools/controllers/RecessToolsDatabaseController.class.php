@@ -47,7 +47,7 @@ class RecessToolsDatabaseController extends Controller {
 		
 		$this->sourceName = $sourceName;
 		$this->table = $tableName;
-		$this->columns = $this->source->getTableDefinition($tableName)->getColumns();
+		$this->columns = $this->source->getTableDescriptor($tableName)->getColumns();
 	}
 	
 	/** !Route GET, source/$sourceName/table/$tableName/drop */

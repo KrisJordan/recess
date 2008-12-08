@@ -3,6 +3,9 @@ Library::import('recess.database.pdo.exceptions.DataSourceCouldNotConnectExcepti
 Library::import('recess.database.pdo.exceptions.ProviderDoesNotExistException');
 Library::import('recess.database.pdo.PdoDataSet');
 
+Library::import('recess.database.pdo.RecessTableDescriptor');
+Library::import('recess.database.pdo.RecessColumnDescriptor');
+
 /**
  * A PDO wrapper in the Recess! Framework that provides a single interface for commonly 
  * needed operations (i.e.: list tables, list columns in a table, etc).
@@ -12,8 +15,11 @@ Library::import('recess.database.pdo.PdoDataSet');
 class PdoDataSource extends PDO {
 	const PROVIDER_CLASS_LOCATION = 'recess.database.pdo.';
 	const PROVIDER_CLASS_SUFFIX = 'DataSourceProvider';
+	const CACHE_PREFIX = 'Recess::PdoDS::';
 	
 	protected $provider = null;
+	
+	protected $cachePrefix;
 	
 	/**
 	 * Creates a data source instance to represent a connection to the database.
@@ -40,6 +46,8 @@ class PdoDataSource extends PDO {
 		} catch (PDOException $exception) {
 			throw new DataSourceCouldNotConnectException($exception->getMessage(), get_defined_vars());
 		}
+		
+		$this->cachePrefix = self::CACHE_PREFIX . $dsn . '::*::';
 		
 		$this->provider = $this->instantiateProvider();
 	}
@@ -130,8 +138,14 @@ class PdoDataSource extends PDO {
 	 * List the tables in a data source alphabetically.
 	 * @return array(string) The tables in the data source
 	 */
-	function getTables() { 
-		return $this->provider->getTables();
+	function getTables() {
+		$cacheKey = $this->cachePrefix . 'Tables';
+		$tables = Cache::get($cacheKey);
+		if(!$tables) {
+			$tables = $this->provider->getTables();
+			Cache::set($this->cachePrefix . 'Tables', $tables);
+		}
+		return $tables;
 	}
 	
 	/**
@@ -140,17 +154,29 @@ class PdoDataSource extends PDO {
 	 * @return array(string) Column names sorted alphabetically.
 	 */
 	function getColumns($table) {
-		return $this->provider->getColumns($table);
+		$cacheKey = $this->cachePrefix . $table . '::Columns';
+		$columns = Cache::get($cacheKey);
+		if(!$columns) {
+			$columns = $this->provider->getColumns($table);
+			Cache::set($cacheKey, $columns);
+		}
+		return $columns;
 	}
 	
 	/**
-	 * Retrieve the a table's RecessTableDefinition.
+	 * Retrieve the a table's RecessTableDescriptor.
 	 *
 	 * @param string $table
-	 * @return RecessTableDefinition
+	 * @return RecessTableDescriptor
 	 */
-	function getTableDefinition($table) {
-		return $this->provider->getTableDefinition($table);
+	function getTableDescriptor($table) {
+		$cacheKey = $this->cachePrefix . $table . '::Descriptor';
+		$descriptor = Cache::get($cacheKey);
+		if(!$descriptor) {
+			$descriptor = $this->provider->getTableDescriptor($table);
+			Cache::set($cacheKey, $descriptor);
+		}
+		return $descriptor;
 	}
 	
 	/**
@@ -171,8 +197,8 @@ class PdoDataSource extends PDO {
 		return $this->provider->emptyTable($table);
 	}
 	
-	function createTableSql(RecessTableDefinition $tableDefinition) {
-		return $this->provider->createTableSql($tableDefinition);
+	function createTableSql(RecessTableDescriptor $tableDescriptor) {
+		return $this->provider->createTableSql($tableDescriptor);
 	}
 }
 

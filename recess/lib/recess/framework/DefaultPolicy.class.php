@@ -106,7 +106,6 @@ class DefaultPolicy implements IPolicy {
 		$request->meta->controllerMethodArguments = $routeResult->arguments;
 		$request->meta->useAssociativeArguments = true;
 		$controllerClass = $routeResult->route->class;
-		Library::beginNamedRun($controllerClass);
 		Library::import($controllerClass);
 		$controllerClass = Library::getClassName($controllerClass);
 		$controller = new $controllerClass($routeResult->route->app);

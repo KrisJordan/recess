@@ -28,12 +28,12 @@ interface IPdoDataSourceProvider {
 	
 	
 	/**
-	 * Retrieve the a table's RecessTableDefinition.
+	 * Retrieve the a table's RecessTableDescriptor.
 	 *
 	 * @param string $table Name of table.
-	 * @return RecessTableDefinition
+	 * @return RecessTableDescriptor
 	 */
-	function getTableDefinition($table);
+	function getTableDescriptor($table);
 	
 	/**
 	 * Drop a table from the data source.
@@ -53,9 +53,9 @@ interface IPdoDataSourceProvider {
 	 * Given a Table Definition, return the CREATE TABLE SQL statement
 	 * in the provider's desired syntax.
 	 *
-	 * @param RecessTableDefinition $tableDefinition
+	 * @param RecessTableDescriptor $tableDescriptor
 	 */
-	function createTableSql(RecessTableDefinition $tableDefinition);
+	function createTableSql(RecessTableDescriptor $tableDescriptor);
 }
 
 ?>

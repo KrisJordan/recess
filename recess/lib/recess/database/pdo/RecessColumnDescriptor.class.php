@@ -4,7 +4,7 @@
  * RecessTable represents a basic abstraction of an RDBMS column.
  * @author Kris Jordan
  */
-class RecessColumnDefinition {
+class RecessColumnDescriptor {
 	
 	public $name;
 	

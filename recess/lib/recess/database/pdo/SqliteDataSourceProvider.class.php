@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.database.pdo.IPdoDataSourceProvider');
-Library::import('recess.database.pdo.RecessTableDefinition');
+Library::import('recess.database.pdo.RecessTableDescriptor');
 /**
  * Sqlite 3 Data Source Provider
  * @author Kris Jordan
@@ -58,12 +58,12 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 	}
 	
 	/**
-	 * Retrieve the a table's RecessTableDefinition.
+	 * Retrieve the a table's RecessTableDescriptor.
 	 *
 	 * @param string $table Name of table.
-	 * @return RecessTableDefinition
+	 * @return RecessTableDescriptor
 	 */
-	function getTableDefinition($table) {
+	function getTableDescriptor($table) {
 		$results = $this->pdo->query('PRAGMA table_info("' . $table . '");');
 		
 		$tableSql = $this->pdo->query('SELECT sql FROM sqlite_master WHERE type="table" AND name = "' . addslashes($table) . '"')->fetch();
@@ -71,10 +71,10 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 		
 		$columns = array();
 		
-		$tableDefinition = new RecessTableDefinition();
+		$tableDescriptor = new RecessTableDescriptor();
 		
 		foreach($results as $result) {
-			$tableDefinition->addColumn(
+			$tableDescriptor->addColumn(
 				$result['name'],
 				SqliteDataSourceProvider::getRecessType($result['type']),
 				$result['notnull'] == 0 ? true : false,
@@ -87,7 +87,7 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 				);
 		}
 		
-		return $tableDefinition;
+		return $tableDescriptor;
 	}
 	
 	static function getRecessType($sqliteType) {
@@ -125,9 +125,9 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 	 * Given a Table Definition, return the CREATE TABLE SQL statement
 	 * in the Sqlite's syntax.
 	 *
-	 * @param RecessTableDefinition $tableDefinition
+	 * @param RecessTableDescriptor $tableDescriptor
 	 */
-	function createTableSql(RecessTableDefinition $definition) {
+	function createTableSql(RecessTableDescriptor $definition) {
 		$sql = 'CREATE TABLE ' . $definition->name;
 		
 		$columnSql = null;

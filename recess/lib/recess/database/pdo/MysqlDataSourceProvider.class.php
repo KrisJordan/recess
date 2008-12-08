@@ -1,5 +1,6 @@
 <?php
 Library::import('recess.database.pdo.IPdoDataSourceProvider');
+Library::import('recess.database.pdo.RecessType');
 
 /**
  * MySql Data Source Provider
@@ -61,21 +62,21 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 	}
 	
 	/**
-	 * Retrieve the a table's RecessTableDefinition.
+	 * Retrieve the a table's RecessTableDescriptor.
 	 *
 	 * @param string $table Name of table.
-	 * @return RecessTableDefinition
+	 * @return RecessTableDescriptor
 	 */
-	function getTableDefinition($table) {
+	function getTableDescriptor($table) {
 		$results = $this->pdo->query('SHOW COLUMNS FROM ' . $table . ';');
 		
 		$columns = array();
 		
-		Library::import('recess.database.pdo.RecessTableDefinition');
-		$tableDefinition = new RecessTableDefinition();
+		Library::import('recess.database.pdo.RecessTableDescriptor');
+		$tableDescriptor = new RecessTableDescriptor();
 		
 		foreach($results as $result) {
-			$tableDefinition->addColumn(
+			$tableDescriptor->addColumn(
 				$result['Field'],
 				$this->getRecessType($result['Type']),
 				$result['Null'] == 'NO' ? false : true,
@@ -84,7 +85,7 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 				$result['Extra'] == 'auto_increment' ? array('autoincrement' => true) : array());
 		}
 		
-		return $tableDefinition;
+		return $tableDescriptor;
 	}
 	
 	function getRecessType($mysqlType) {
@@ -194,9 +195,9 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 	 * Given a Table Definition, return the CREATE TABLE SQL statement
 	 * in the MySQL's syntax.
 	 *
-	 * @param RecessTableDefinition $tableDefinition
+	 * @param RecessTableDescriptor $tableDescriptor
 	 */
-	function createTableSql(RecessTableDefinition $definition) {
+	function createTableSql(RecessTableDescriptor $definition) {
 		$sql = 'CREATE TABLE ' . $definition->name;
 		
 		$mappings = MysqlDataSourceProvider::getRecessToMysqlMappings();

@@ -28,7 +28,7 @@ class Library {
 	const CLASSES_X_CLASS_CACHE_KEY = 'Recess::*::Library::$classesByClass';
 	const CLASSES_X_FULL_CACHE_KEY = 'Recess::*::Library::$classesByFull';
 	const PATHS_CACHE_KEY = 'Recess::*::Library::$paths';
-	const NAMED_RUNS_PATH = 'compiled/';
+	const NAMED_RUNS_PATH = '';
 	const PHP_EXTENSION = '.php';
 	
 	const NAME = 0;

@@ -185,6 +185,53 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 		
 		return $sql . ' (' . $columnSql . ')';
 	}
+	
+	function fetchAll(PDOStatement $statement) {
+		try {
+			$columnCount = $statement->columnCount();
+			$manualFetch = false;
+			$booleanColumns = array();
+			for($i = 0 ; $i < $columnCount; $i++) {
+				$meta = $statement->getColumnMeta($i);
+				if($meta['sqlite:decl_type'] == 'BOOLEAN') {
+					$manualFetch = true;
+					$booleanColumns[] = $meta['name'];
+				}
+			}
+		} catch(PDOException $e) {
+			return $statement->fetchAll();
+		}
+
+		if(!$manualFetch) {
+			return $statement->fetchAll();		
+		} else {
+			$results = array();
+			while($result = $statement->fetch()) {
+				foreach($booleanColumns as $column) {
+					$result->$column = $result->$column == 1;
+				}
+				$results[] = $result;
+			}
+			return $results;
+		}
+	}
+	
+	function getStatementForBuilder(SqlBuilder $builder, $action, PdoDataSource $source) {
+		$statement = $source->prepare($builder->$action());
+		$arguments = $builder->getPdoArguments();
+		foreach($arguments as &$argument) {
+			// Begin workaround for PDO's poor numeric binding
+			$queryParameter = $argument->getQueryParameter();
+			if(is_numeric($queryParameter)) { continue; } 
+			// End Workaround
+			$statement->bindValue($argument->getQueryParameter(), $argument->value);
+		}
+		return $statement;
+	}
+	
+	function executeSqlBuilder(SqlBuilder $builder, $action, PdoDataSource $source) {		
+		return $this->getStatementForBuilder($builder, $action, $source)->execute();
+	}
 }
 
 class SqliteType {

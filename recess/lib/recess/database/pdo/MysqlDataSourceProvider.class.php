@@ -265,5 +265,122 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 			return $sourceDescriptor;
 		}
 	}
+	
+	/**
+	 * Fetch all returns columns typed as Recess expects:
+	 *  i.e. Dates become Unix Time Based and TinyInts are converted to Boolean
+	 *
+	 * TODO: Refactor this into the query code so that MySql does the type conversion
+	 * instead of doing it slow and manually in PHP.
+	 * 
+	 * @param PDOStatement $statement
+	 * @return array fetchAll() of statement
+	 */
+	function fetchAll(PDOStatement $statement) {
+		try {
+			$columnCount = $statement->columnCount();
+			$manualFetch = false;
+			$booleanColumns = array();
+			$dateColumns = array();
+			$timeColumns = array();
+			for($i = 0 ; $i < $columnCount; $i++) {
+				$meta = $statement->getColumnMeta($i);
+				if(isset($meta['native_type'])) {
+					switch($meta['native_type']) {
+						case 'TIMESTAMP': case 'DATETIME': case 'DATE':
+							$dateColumns[] = $meta['name'];
+							break;
+						case 'TIME':
+							$timeColumns[] = $meta['name'];
+							break;
+					}
+				} else {
+					if($meta['len'] == 1) {
+						$booleanColumns[] = $meta['name'];
+					}
+				}
+			}
+			
+			if(	!empty($booleanColumns) || 
+				!empty($datetimeColumns) || 
+				!empty($dateColumns) || 
+				!empty($timeColumns)) {
+				$manualFetch = true;
+			}
+		} catch(PDOException $e) {
+			return $statement->fetchAll();
+		}
+		
+		if(!$manualFetch) {
+			return $statement->fetchAll();
+		} else {
+			$results = array();
+			while($result = $statement->fetch()) {
+				foreach($booleanColumns as $column) {
+					$result->$column = $result->$column == 1;
+				}
+				foreach($dateColumns as $column) {
+					$result->$column = strtotime($result->$column);
+				}
+				foreach($timeColumns as $column) {
+					$result->$column = strtotime('1970-01-01 ' . $result->$column);
+				}
+				$results[] = $result;
+			}
+			return $results;
+		}
+	}
+	
+	function getStatementForBuilder(SqlBuilder $builder, $action, PdoDataSource $source) {
+		$criteria = $builder->getCriteria();
+		$builderTable = $builder->getTable();
+		$tableDescriptors = array();
+		
+		foreach($criteria as $criterion) {
+			$table = $builderTable;
+			$column = $criterion->column;
+			if(strpos($column,'.') !== false) {
+				$parts = explode('.', $column);
+				$table = $parts[0];
+				$column = $parts[1];
+			}
+			
+			if(!isset($tableDescriptors[$table])) {
+				$tableDescriptors[$table] = $source->getTableDescriptor($table)->getColumns();
+			}
+			
+			if(isset($tableDescriptors[$table][$column])) {
+				switch($tableDescriptors[$table][$column]->type) {
+					case RecessType::DATETIME: case RecessType::TIMESTAMP:
+						$criterion->value = date('Y-m-d H:i:s', $criterion->value);
+						break;
+					case RecessType::DATE:
+						$criterion->value = date('Y-m-d', $criterion->value);
+						break;
+					case RecessType::TIME:
+						$criterion->value = date('H:i:s', $criterion->value);
+						break;
+					case RecessType::BOOLEAN:
+						$criterion->value = $criterion->value == true ? 1 : 0;
+						break;
+				}
+			}
+		}
+		
+		$statement = $source->prepare($builder->$action());
+		$arguments = $builder->getPdoArguments();
+		foreach($arguments as &$argument) {
+			// Begin workaround for PDO's poor numeric binding
+			$queryParameter = $argument->getQueryParameter();
+			if(is_numeric($queryParameter)) { continue; } 
+			// End Workaround
+			$statement->bindValue($argument->getQueryParameter(), $argument->value);
+		}
+		return $statement;
+	}
+	
+	function executeSqlBuilder(SqlBuilder $builder, $action, PdoDataSource $source) {		
+		return $this->getStatementForBuilder($builder, $action, $source)->execute();
+	}
 }
 ?>

@@ -31,7 +31,7 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	protected function realize() {
 		if(!$this->hasResults) {
 			unset($this->results);
-			$this->results = $this->source->queryForClass($this->sqlBuilder->select(), $this->sqlBuilder->getPdoArguments(), $this->rowClass);
+			$this->results = $this->source->queryForClass($this->sqlBuilder, $this->rowClass);
 			$this->hasResults = true;
 		}
 	}

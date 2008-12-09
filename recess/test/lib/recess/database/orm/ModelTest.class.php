@@ -13,6 +13,9 @@ class Car extends Model {
 	/** !Column PrimaryKey, integer, AutoIncrement */
 	public $pk;
 	
+	/** !Column Boolean */
+	public $isDriveable;
+	
 }
 
 /**
@@ -90,7 +93,7 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('CREATE TABLE groupships (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, group_id INTEGER, person_id INTEGER)');
 		$this->source->exec('CREATE TABLE books (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title TEXT)');
 		$this->source->exec('CREATE TABLE chapters (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, title TEXT)');
-		$this->source->exec('CREATE TABLE cars (pk INTEGER PRIMARY KEY ASC AUTOINCREMENT, person_id INTEGER, make TEXT)');
+		$this->source->exec('CREATE TABLE cars (pk INTEGER PRIMARY KEY ASC AUTOINCREMENT, person_id INTEGER, make TEXT, isDriveable BOOLEAN)');
 		$this->source->exec('CREATE TABLE movies (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, author_id INTEGER, title TEXT)');
 		$this->source->exec('CREATE TABLE generas (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, title INTEGER)');
 		$this->source->exec('CREATE TABLE books_generas_joins (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, book_id INTEGER, genera_id INTEGER)');
@@ -152,8 +155,8 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('INSERT INTO groupships (group_id,person_id) VALUES (2,5)');
 		$this->source->exec('INSERT INTO groupships (group_id,person_id) VALUES (3,5)');
 		$this->source->exec('INSERT INTO groupships (group_id,person_id) VALUES (1,6)');
-		$this->source->exec('INSERT INTO cars (person_id,make) VALUES (1,"VW")');
-		$this->source->exec('INSERT INTO cars (person_id,make) VALUES (2,"Toyota")');
+		$this->source->exec('INSERT INTO cars (person_id,make,isDriveable) VALUES (1,"VW",1)');
+		$this->source->exec('INSERT INTO cars (person_id,make,isDriveable) VALUES (2,"Toyota",1)');
 		$this->source->commit();
 		$this->source->beginTransaction();
 		Databases::setDefaultSource($this->source);
@@ -177,6 +180,19 @@ class ModelTest extends UnitTestCase {
 		$this->assertEqual(count($people),2);
 		$this->assertEqual($people[0]->last_name, 'Sutherland');
 		$this->assertEqual(get_class($people[0]), 'Person');
+	}
+	
+	function testBooleanType() {
+		$car = new Car();
+		$car->isDriveable = true;
+		$car->insert();
+		$car_id = $car->pk;
+		
+		$car = new Car();
+		$car->pk = $car_id;
+		$driveable =  $car->find()->first()->isDriveable;
+		
+		$this->assertEqual($driveable === true, true);
 	}
 	
 	function testFindTailCriteria() {

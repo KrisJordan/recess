@@ -1,6 +1,7 @@
 <?php
 Library::import('recess.database.pdo.RecessTableDescriptor');
 Library::import('recess.database.pdo.RecessColumnDescriptor');
+Library::import('recess.database.pdo.RecessType');
 
 /**
  * Interface for vendor specific operations needed by PdoDataSource.

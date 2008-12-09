@@ -97,12 +97,15 @@ class PdoDataSource extends PDO {
 	 * @param string $className the type to fill from query results.
 	 * @return array($className)
 	 */
-	function queryForClass($query, $arguments, $className) {
-		if($query == '') return array();
-		$statement = $this->prepareStatement($query, $arguments);
+	function queryForClass(SqlBuilder $builder, $className) {		
+		$statement = $this->provider->getStatementForBuilder($builder,'select',$this);
 		$statement->setFetchMode(PDO::FETCH_CLASS, $className, array());
 		$statement->execute();
-		return $statement->fetchAll();
+		return $this->provider->fetchAll($statement);
+	}
+	
+	function executeSqlBuilder(SqlBuilder $builder, $action) {
+		return $this->provider->executeSqlBuilder($builder, $action, $this);
 	}
 	
 	function executeStatement($statement, $arguments) {
@@ -122,7 +125,6 @@ class PdoDataSource extends PDO {
 		} catch(PDOException $e) {
 			throw new RecessException($e->getMessage() . ' SQL: ' . $statement,get_defined_vars());
 		}
-		
 		foreach($arguments as &$argument) {
 			// Begin workaround for PDO's poor numeric binding
 			$queryParameter = $argument->getQueryParameter();
@@ -130,7 +132,6 @@ class PdoDataSource extends PDO {
 			// End Workaround
 			$statement->bindValue($argument->getQueryParameter(), $argument->value);
 		}
-		
 		return $statement;
 	}
 	

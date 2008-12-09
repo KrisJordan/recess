@@ -381,6 +381,14 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		if(isset($this->offset)){ $sql .= ' OFFSET ' . $this->offset; }
 		return $sql;
 	}
+	
+
+	public function getCriteria() {
+		return array_merge($this->conditions, $this->assignments);
+	}
+	public function getTable() {
+		return $this->table;
+	}
 }
 
 class Criterion {

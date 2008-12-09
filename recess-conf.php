@@ -19,8 +19,8 @@ RecessConf::$applications
 RecessConf::$defaultTimeZone = 'America/New_York';
 
 RecessConf::$defaultDatabase
-	= array(	'sqlite:' . $_ENV['dir.bootstrap'] . 'recess/sqlite/default.db'
-				// 'mysql:host=localhost;dbname=recess', 'recess', 'recess'
+	= array(	// 'sqlite:' . $_ENV['dir.bootstrap'] . 'recess/sqlite/default.db'
+				'mysql:host=localhost;dbname=recess', 'recess', 'recess'
 			);
 
 RecessConf::$namedDatabases

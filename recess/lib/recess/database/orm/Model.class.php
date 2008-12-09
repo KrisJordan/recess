@@ -157,7 +157,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 			
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor, false);
 		
-		return $thisClassDescriptor->getSource()->executeStatement($sqlBuilder->delete(), $sqlBuilder->getPdoArguments());	
+		return $thisClassDescriptor->getSource()->executeSqlBuilder($sqlBuilder, 'delete');	
 	}
 	
 	function insert() {
@@ -165,8 +165,8 @@ abstract class Model extends RecessObject implements ISqlConditions {
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor);
 		
-	 	$result = $thisClassDescriptor->getSource()->executeStatement($sqlBuilder->insert(), $sqlBuilder->getPdoArguments());
-	 	
+		$result = $thisClassDescriptor->getSource()->executeSqlBuilder($sqlBuilder, 'insert');
+		
 	 	$primaryKey = $thisClassDescriptor->primaryKey;
 	 	
 	 	$this->$primaryKey = $thisClassDescriptor->getSource()->lastInsertId();
@@ -181,7 +181,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 		$primaryKey = $thisClassDescriptor->primaryKey;
 		$sqlBuilder->equal($thisClassDescriptor->primaryKey, $this->$primaryKey);
 		
-		return $thisClassDescriptor->getSource()->executeStatement($sqlBuilder->update(), $sqlBuilder->getPdoArguments());
+		return $thisClassDescriptor->getSource()->executeSqlBuilder($sqlBuilder, 'update');
 	}
 	
 	function save()   {

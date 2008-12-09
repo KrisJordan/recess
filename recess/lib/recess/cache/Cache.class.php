@@ -8,6 +8,8 @@
  *  */
 abstract class Cache {
 	protected static $reportsTo;
+	
+	protected static $inMemory = array();
 
 	static function reportsTo(ICacheProvider $cache) {
 		if(!$cache instanceof ICacheProvider) {
@@ -24,18 +26,25 @@ abstract class Cache {
 	}
 	
 	static function set($key, $value, $duration = 0) {
+		self::$inMemory[$key] = $value;
 		return self::$reportsTo->set($key, $value, $duration);
 	}
 	
 	static function get($key) {
-		return self::$reportsTo->get($key);
+		if(isset(self::$inMemory[$key])) {
+			return self::$inMemory[$key];
+		} else {
+			return self::$reportsTo->get($key);
+		}
 	}
 	
 	static function delete($key) {
+		unset(self::$inMemory[$key]);
 		return self::$reportsTo->delete($key);
 	}
 	
 	static function clear() {
+		self::$inMemory = array();
 		return self::$reportsTo->clear();
 	}
 }

@@ -1,16 +1,28 @@
 <?php
 /**
  * Cache is a low level service offering volatile key-value pair
- * storage. 
+ * storage. Chain-of-command allows multiple providers to be used.
+ * 
+ * Placing all cache providers in this Cache file to avoid costs
+ * of including individual providers. For the perf concerned be 
+ * encouraged to remove unused cache providers from this file.
  * 
  * @author Kris Jordan
- * @todo Actually write tests for this this (and implement subclasses.)
- *  */
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
+ **/
 abstract class Cache {
 	protected static $reportsTo;
 	
 	protected static $inMemory = array();
 
+	/**
+	 * Push a cache provider onto the providers stack. Most expensive providers
+	 * should be pushed first.
+	 *
+	 * @param ICacheProvider $cache
+	 */
 	static function reportsTo(ICacheProvider $cache) {
 		if(!$cache instanceof ICacheProvider) {
 			$cache = new NoOpCacheProvider();
@@ -25,11 +37,24 @@ abstract class Cache {
 		}
 	}
 	
+	/**
+	 * Set a cache value.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @param int $duration
+	 */
 	static function set($key, $value, $duration = 0) {
 		self::$inMemory[$key] = $value;
-		return self::$reportsTo->set($key, $value, $duration);
+		self::$reportsTo->set($key, $value, $duration);
 	}
 	
+	/**
+	 * Fetch a value from cache.
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
 	static function get($key) {
 		if(isset(self::$inMemory[$key])) {
 			return self::$inMemory[$key];
@@ -38,14 +63,22 @@ abstract class Cache {
 		}
 	}
 	
+	/**
+	 * Remove a key value pair from cache.
+	 *
+	 * @param string $key
+	 */
 	static function delete($key) {
 		unset(self::$inMemory[$key]);
-		return self::$reportsTo->delete($key);
+		self::$reportsTo->delete($key);
 	}
 	
+	/**
+	 * Clear all values from the cache.
+	 */
 	static function clear() {
 		self::$inMemory = array();
-		return self::$reportsTo->clear();
+		self::$reportsTo->clear();
 	}
 }
 
@@ -76,6 +109,10 @@ class NoOpCacheProvider implements ICacheProvider {
 
 Cache::reportsTo(new NoOpCacheProvider());
 
+/**
+ * Alternative PHP Cache provider. 
+ * @see http://us3.php.net/apc
+ */
 class ApcCacheProvider implements ICacheProvider {
 	protected $reportsTo;
 
@@ -120,6 +157,64 @@ class ApcCacheProvider implements ICacheProvider {
 	}
 }
 
+/**
+ * Memcache Provider
+ * @see http://us2.php.net/memcache
+ */
+class MemcacheCacheProvider implements ICacheProvider {
+	protected $reportsTo;
+	protected $memcache;
+	
+	function __construct($host = 'localhost', $port = 11211) {
+		$this->memcache = new Memcache;
+		$this->memcache->pconnect($host, $port);
+	}
+
+	function reportsTo(ICacheProvider $cache) {
+		if(!$cache instanceof ICacheProvider) {
+			$cache = new NoOpCacheProvider();
+		}
+		
+		if(isset($this->reportsTo)) {
+			$temp = $this->reportsTo;
+			$this->reportsTo = $cache;
+			$this->reportsTo->reportsTo($temp);
+		} else {
+			$this->reportsTo = $cache;
+		}
+	}
+	
+	function set($key, $value, $duration = 0) {
+		$this->memcache->set($key, $value, null, $duration);
+		$this->reportsTo->set($key, $value, $duration);
+	}
+	
+	function get($key) {
+		$result = $this->memcache->get($key);
+		if($result === false) {
+			$result = $this->reportsTo->get($key);
+			if($result !== false) {
+				$this->set($key, $result);	
+			}
+		}
+		return $result;
+	}
+	
+	function delete($key) {
+		$this->memcache->delete($key);
+		$this->reportsTo->delete($key);
+	}
+	
+	function clear() {
+		$this->memcache->flush();
+		$this->reportsTo->clear();
+	}
+}
+
+/**
+ * Provider implemented with Sqlite backend. Less preferable than 
+ * APC/Memcache but works well for shared hosts.
+ */
 class SqliteCacheProvider implements ICacheProvider {
 	protected $reportsTo;
 	protected $pdo;

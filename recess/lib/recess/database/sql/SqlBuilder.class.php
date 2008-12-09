@@ -22,6 +22,9 @@ Library::import('recess.database.sql.ISqlSelectOptions');
  * $sqlBuilder->getPdoArguments() returns array( ':column' => 'value' )
  * 
  * @author Kris Jordan
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
  */
 class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		
@@ -30,7 +33,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected $assignments = array();
 	
 	/**
-	 * 
+	 * Build an INSERT SQL string from SqlBuilder's state.
 	 * 
 	 * @return string INSERT string.
 	 */
@@ -57,6 +60,9 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		return $sql;
 	}
 	
+	/**
+	 * Safety check used with insert to ensure only a table and assignments were applied.
+	 */
 	protected function insertSanityCheck() {
 		if(	!empty($this->conditions) )
 			throw new RecessException('Insert does not use conditionals.', get_defined_vars());
@@ -72,9 +78,29 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			throw new RecessException('Insert does not use distinct.', get_defined_vars());
 	}
 	
+	/**
+	 * Set the table of focus on a sql statement.
+	 *
+	 * @param string $table
+	 * @return SqlBuilder 
+	 */
 	public function table($table) { $this->table = $table; return $this; }
+	
+	/**
+	 * Alias for table (insert into)
+	 *
+	 * @param string $table
+	 * @return SqlBuilder
+	 */
 	public function into($table) { return $this->table($table); }
 
+	/**
+	 * Assign a value to a column. Used with inserts and updates.
+	 *
+	 * @param string $column
+	 * @param mixed $value
+	 * @return SqlBuilder
+	 */
 	public function assign($column, $value) { 
 		if(strpos($column, '.') === false) {
 			if(isset($this->table)) {
@@ -93,10 +119,19 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected $conditionsUsed = array();
 	protected $useAssignmentsAsConditions = false;
 	
+	/**
+	 * Build a DELETE SQL string from SqlBuilder's state.
+	 *
+	 * @return string DELETE string
+	 */
 	public function delete() {
 		$this->deleteSanityCheck();
 		return 'DELETE FROM ' . $this->table . $this->whereHelper();
 	}
+	
+	/**
+	 * Safety check used with delete.
+	 */
 	protected function deleteSanityCheck() {
 		if(	!empty($this->joins) )
 			throw new RecessException('Delete does not use joins.', get_defined_vars());
@@ -112,6 +147,11 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			throw new RecessException('Delete does not use assignments. To use assignments as conditions add ->useAssignmentsAsConditions() to your method call chain.', get_defined_vars());
 	}
 	
+	/**
+	 * Build an UPDATE SQL string from SqlBuilder's state.
+	 *
+	 * @return string
+	 */
 	public function update() {
 		$this->updateSanityCheck();
 		$sql = 'UPDATE ' . $this->table . ' SET ';
@@ -128,6 +168,10 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		
 		return $sql;
 	}
+	
+	/**
+	 * Safety check used with update.
+	 */
 	protected function updateSanityCheck() {
 		if(	!empty($this->joins) )
 			throw new RecessException('Update does not use joins.', get_defined_vars());
@@ -141,6 +185,12 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			throw new RecessException('Update does not use distinct.', get_defined_vars());
 	}
 	
+	/**
+	 * Return the collection of PDO named parameters and values to be
+	 * applied to a parameterized PDO statement.
+	 *
+	 * @return array
+	 */
 	public function getPdoArguments() {
 		if($this->useAssignmentsAsConditions)
 			return array_merge($this->conditions, $this->cleansedAssignmentsAsConditions());
@@ -166,19 +216,108 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		return $assignments;
 	}
 	
+	/**
+	 * Alias to specify which table is being used.
+	 *
+	 * @param string $table
+	 * @return SqlBuilder
+	 */
 	public function from($table) { return $this->table($table); }
+	
+	/**
+	 * Handy shortcut which allows assignments to be used as conditions
+	 * in a select statement.
+	 *
+	 * @param boolean $bool
+	 * @return SqlBuilder
+	 */
 	public function useAssignmentsAsConditions($bool) { $this->useAssignmentsAsConditions = $bool; return $this; }
 	
 	/* ISqlConditions */
+	
+	/**
+	 * Equality expression for WHERE clause of update, delete, or select statements.
+	 *
+	 * @param string $column
+	 * @param mixed $value
+	 * @return SqlBuilder
+	 */
 	public function equal($column, $value)       { return $this->addCondition($column, $value, Criterion::EQUAL_TO); }
+	
+	/**
+	 * Inequality than expression for WHERE clause of update, delete, or select statements.
+	 *
+	 * @param string $column
+	 * @param mixed $value
+	 * @return SqlBuilder
+	 */
 	public function notEqual($column, $value)    { return $this->addCondition($column, $value, Criterion::NOT_EQUAL_TO); }
+	
+	/**
+	 * Shortcut alias for SqlBuilder->lessThan($column,$big)->greaterThan($column,$small) 
+	 *
+	 * @param string $column
+	 * @param numeric $small Greater than this number. 
+	 * @param numeric $big Less than this number.
+	 * @return SqlBuilder
+	 */
 	public function between ($column, $small, $big) { $this->greaterThan($column, $small); return $this->lessThan($column, $big); }
+	
+	/**
+	 * Greater than expression for WHERE clause of update, delete, or select statements.
+	 *
+	 * @param string $column
+	 * @param numeric $value
+	 * @return SqlBuilder
+	 */
 	public function greaterThan($column, $value)          { return $this->addCondition($column, $value, Criterion::GREATER_THAN); }
+	
+	/**
+	 * Greater than or equal to expression for WHERE clause of update, delete, or select statements.
+	 *
+	 * @param string $column
+	 * @param numeric $value
+	 * @return SqlBuilder
+	 */
 	public function greaterThanOrEqualTo($column, $value)         { return $this->addCondition($column, $value, Criterion::GREATER_THAN_EQUAL_TO); }
+	
+	/**
+	 * Less than expression for WHERE clause of update, delete, or select statements.
+	 *
+	 * @param string $column
+	 * @param numeric $value
+	 * @return SqlBuilder
+	 */
 	public function lessThan($column, $value)          { return $this->addCondition($column, $value, Criterion::LESS_THAN); }
+
+	/**
+	 * Less than or equal to expression for WHERE clause of update, delete, or select statements.
+	 *
+	 * @param string $column
+	 * @param numeric $value
+	 * @return SqlBuilder
+	 */
 	public function lessThanOrEqualTo($column, $value)         { return $this->addCondition($column, $value, Criterion::LESS_THAN_EQUAL_TO); }
+	
+	/**
+	 * LIKE expression for WHERE clause of update, delete, or select statements, does not include wildcards.
+	 *
+	 * @param string $column
+	 * @param string $value
+	 * @return SqlBuilder
+	 */
 	public function like($column, $value)        { return $this->addCondition($column, $value, Criterion::LIKE); }
 	
+	/**
+	 * Add a condition to the SqlBuilder statement. Additional logic here to prepend
+	 * a table name and also keep track of which columns have already been assigned conditions
+	 * to ensure we do not use two identical named parameters in PDO.
+	 *
+	 * @param string $column
+	 * @param mixed $value
+	 * @param string $operator
+	 * @return SqlBuilder
+	 */
 	protected function addCondition($column, $value, $operator) {
 		if(strpos($column, '.') === false && strpos($column, '(') === false && !in_array($column, array_keys($this->selectAs))) {
 			if(isset($this->table)) {
@@ -211,6 +350,11 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected $orderBy = array();
 	protected $usingAliases = false;
 	
+	/**
+	 * Build a SELECT SQL string from SqlBuilder's state.
+	 *
+	 * @return string
+	 */
 	public function select() {
 		$this->selectSanityCheck();
 
@@ -232,7 +376,10 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		
 		return $sql;
 	}
-
+	
+	/**
+	 * Safety check used when creating a SELECT statement.
+	 */
 	protected function selectSanityCheck() {
 		if( (!empty($this->where) || !empty($this->orderBy)) && !isset($this->table))
 			throw new RecessException('Must have from if using where.', get_defined_vars());
@@ -246,10 +393,37 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	
 	/* ISqlSelectOptions */
 	
+	/**
+	 * LIMIT results to some number of records.
+	 *
+	 * @param integer $size
+	 * @return SqlBuilder
+	 */
 	public function limit($size)           { $this->limit = $size; return $this; }
+	
+	/**
+	 * When used in conjunction with limit($size), offset specifies which row the results will begin at.
+	 *
+	 * @param integer $offset
+	 * @return SqlBuilder
+	 */
 	public function offset($offset)        { $this->offset = $offset; return $this; }
+	
+	/**
+	 * Shortcut alias to ->limit($finish - $start)->offset($start);
+	 *
+	 * @param integer $start
+	 * @param integer $finish
+	 * @return SqlBuilder
+	 */
 	public function range($start, $finish) { $this->offset = $start; $this->limit = $finish - $start; return $this; }
 	
+	/**
+	 * Add an ORDER BY expression to sql string. Example: ->orderBy('name ASC')
+	 *
+	 * @param string $clause
+	 * @return SqlBuilder
+	 */
 	public function orderBy($clause) {
 		if(($spacePos = strpos($clause,' ')) !== false) {
 			$name = substr($clause,0,$spacePos);
@@ -265,6 +439,12 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		return $this; 
 	}
 	
+	/**
+	 * Helper method which returns the current table even when it 
+	 * is aliased due to joins between the same table.
+	 *
+	 * @return string The current table which can be used as a prefix.
+	 */
 	protected function tableAsPrefix() {
 		if($this->usingAliases) {
 			$spacePos = strrpos($this->table, ' ');
@@ -275,13 +455,40 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		return $this->table;
 	}
 	
+	/**
+	 * Left outer join expression for SELECT SQL statement.
+	 *
+	 * @param string $table
+	 * @param string $tablePrimaryKey
+	 * @param string $fromTableForeignKey
+	 * @return SqlBuilder
+	 */
 	public function leftOuterJoin($table, $tablePrimaryKey, $fromTableForeignKey) {
 		return $this->join(Join::LEFT, Join::OUTER, $table, $tablePrimaryKey, $fromTableForeignKey);
 	}
 	
+	/**
+	 * Inner join expression for SELECT SQL statement.
+	 *
+	 * @param string $table
+	 * @param string $tablePrimaryKey
+	 * @param string $fromTableForeignKey
+	 * @return SqlBuilder
+	 */
 	public function innerJoin($table, $tablePrimaryKey, $fromTableForeignKey) {
 		return $this->join('', Join::INNER, $table, $tablePrimaryKey, $fromTableForeignKey);
 	}
+	
+	/**
+	 * Generic join expression to be added to a SELECT SQL statement.
+	 *
+	 * @param string $leftOrRight
+	 * @param string $innerOrOuter
+	 * @param string $table
+	 * @param string $tablePrimaryKey
+	 * @param string $fromTableForeignKey
+	 * @return SqlBuilder
+	 */
 	protected function join($leftOrRight, $innerOrOuter, $table, $tablePrimaryKey, $fromTableForeignKey) {
 		if($this->table == $table) {
 			$oldTable = $this->table;
@@ -304,10 +511,24 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		return $this;
 	}
 	
+	/**
+	 * Add additional field to select statement which is aliased using the AS parameter.
+	 * ->selectAs("ABS(location - 5)", 'distance') translates to => SELECT ABS(location-5) AS distance
+	 *
+	 * @param string $select
+	 * @param string $as
+	 * @return SqlBuilder
+	 */
 	public function selectAs($select, $as) {
 		$this->selectAs[$as] = $select . ' as ' . $as;
+		return $this;
 	}
 	
+	/**
+	 * Add a DISTINCT clause to SELECT SQL.
+	 *
+	 * @return SqlBuilder
+	 */
 	public function distinct() { $this->distinct = ' DISTINCT '; return $this; }
 
 	/* HELPER METHODS */

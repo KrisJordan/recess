@@ -4,9 +4,9 @@ Library::import('recess.apps.ide.models.RecessReflectorClassProperties');
 Library::import('recess.apps.ide.models.RecessReflectorClassMethods');
 
 /**
- * !BelongsTo package, Class: RecessReflectorPackage, ForeignKey: packageId
- * !BelongsTo parent, Class: RecessReflectorClass, ForeignKey: parentId
- * !HasMany children, Class: RecessReflectorClass, ForeignKey: parentId
+ * !BelongsTo package, Class: RecessReflectorPackage,Key: packageId
+ * !BelongsTo parent, Class: RecessReflectorClass,Key: parentId
+ * !HasMany children, Class: RecessReflectorClass, Key: parentId
  * !Table classes
  */
 class RecessReflectorClass extends Model {

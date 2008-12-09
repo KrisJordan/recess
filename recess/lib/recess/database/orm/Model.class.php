@@ -1,5 +1,4 @@
 <?php
-Library::import('recess.lang.Inflector');
 Library::import('recess.lang.RecessObject');
 Library::import('recess.lang.RecessReflectionClass');
 Library::import('recess.lang.Annotation');
@@ -267,7 +266,7 @@ class ModelDescriptor extends RecessObjectDescriptor {
 	public $source;
 	
 	function __construct($class, $loadColumns = true) {
-		$this->table = Inflector::toPlural(Inflector::toUnderscores($class));
+		$this->table = ModelConventions::tableNameFromClass($class);
 		$this->relationships = array();
 		$this->properties = array();
 		$this->source = false;

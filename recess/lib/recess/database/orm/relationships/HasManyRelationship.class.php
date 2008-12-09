@@ -10,8 +10,8 @@ class HasManyRelationship extends Relationship {
 	function init($modelClassName, $relationshipName) {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
-		$this->foreignKey = Inflector::toUnderscores($modelClassName) . '_id';
-		$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($relationshipName));
+		$this->foreignClass = ModelConventions::relatedClassFromHasManyName($relationshipName);
+		$this->foreignKey = ModelConventions::relatedForeignKeyFromHasManyClass($modelClassName);
 		$this->onDelete = Relationship::UNSPECIFIED;
 	}
 	

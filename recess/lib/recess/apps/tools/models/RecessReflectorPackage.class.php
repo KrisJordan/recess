@@ -2,9 +2,9 @@
 Library::import('recess.database.orm.Model');
 
 /**
- * !HasMany classes, Class: RecessReflectorClass, ForeignKey: packageId
- * !HasMany children, Class: RecessReflectorPackage, ForeignKey: parentId
- * !BelongsTo parent, Class: RecessReflectorPackage, ForeignKey: parentId
+ * !HasMany classes, Class: RecessReflectorClass,Key: packageId
+ * !HasMany children, Class: RecessReflectorPackage,Key: parentId
+ * !BelongsTo parent, Class: RecessReflectorPackage,Key: parentId
  * !Table packages
  */
 class RecessReflectorPackage extends Model {

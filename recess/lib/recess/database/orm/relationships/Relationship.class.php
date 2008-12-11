@@ -1,7 +1,7 @@
 <?php
 
 abstract class Relationship {
-	const FOREIGN_KEY = 'foreignkey';
+	const FOREIGN_KEY = 'key';
 	const FOREIGN_CLASS = 'class';
 	const THROUGH = 'through';
 	const ON_DELETE = 'ondelete';

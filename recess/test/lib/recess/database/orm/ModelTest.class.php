@@ -7,6 +7,7 @@ Library::import('recess.database.orm.ModelDataSource');
 
 /**
  * !BelongsTo owner, Class: Person, Key: person_id, OnDelete: Cascade
+ * !Table cars
  */
 class Car extends Model {
 	
@@ -20,17 +21,20 @@ class Car extends Model {
 
 /**
  * !HasMany persons
+ * !Table political_partys
  */
 class PoliticalParty extends Model {}
 
 /**
  * !HasMany persons, Through: Groupship, OnDelete: Delete
+ * !Table groups
  */
 class Group extends Model {}
 
 /**
  * !BelongsTo group
  * !BelongsTo person
+ * !Table groupships
  */
 class Groupship extends Model {}
 
@@ -40,6 +44,7 @@ class Groupship extends Model {}
  * !HasMany cars, OnDelete: Nullify
  * !HasMany groups, Through: Groupship, OnDelete: Nullify
  * !BelongsTo politicalParty
+ * !Table persons
  */
 class Person extends Model {}
 
@@ -47,34 +52,40 @@ class Person extends Model {}
  * !BelongsTo author, Class: Person, OnDelete: Delete
  * !HasMany chapters, OnDelete: Delete
  * !HasMany generas, Through: BooksGenerasJoin, OnDelete: Delete
+ * !Table books
  */
 class Book extends Model { }
 
 /**
  * !BelongsTo book, OnDelete: Cascade
  * !BelongsTo genera
+ * !Table books_generas_joins
  */
 class BooksGenerasJoin extends Model { }
 
 /**
  * !BelongsTo book, OnDelete: Nullify
+ * !Table chapters
  */
 class Chapter extends Model { }
 
 /**
  * !HasMany books, Through: BooksGenerasJoin, OnDelete: Cascade
  * !HasMany movies, Through: MoviesGenerasJoin
+ * !Table generas
  */
 class Genera extends Model { }
 
 /**
  * !BelongsTo movie
  * !BelongsTo genera
+ * !Table movies_generas_joins
  */
 class MoviesGenerasJoin extends Model { }
 
 /**
  * !HasMany generas, Through: MoviesGenerasJoin
+ * !Table movies
  */
 class Movie extends Model { }
 

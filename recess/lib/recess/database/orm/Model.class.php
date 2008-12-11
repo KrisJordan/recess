@@ -63,7 +63,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	}
 	
 	static protected function buildClassDescriptor($class) {
-		$descriptor = new ModelDescriptor($class);
+		$descriptor = new ModelDescriptor($class, false);
 		
 		try {
 			$reflection = new RecessReflectionClass($class);
@@ -255,9 +255,11 @@ class ModelProperty {
 }
 
 class ModelDescriptor extends RecessObjectDescriptor {
+	
 	public $primaryKey = 'id';
 	private $table;
 	
+	public $plural;
 	public $modelClass;
 	public $relationships;
 	
@@ -267,7 +269,7 @@ class ModelDescriptor extends RecessObjectDescriptor {
 	public $source;
 	
 	function __construct($class, $loadColumns = true) {
-		$this->table = Inflector::toPlural(Inflector::toUnderscores($class));
+		$this->table = strtolower($class);
 		$this->relationships = array();
 		$this->properties = array();
 		$this->source = false;

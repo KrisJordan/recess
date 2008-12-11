@@ -6,7 +6,7 @@ Library::import('recess.database.orm.Model');
 Library::import('recess.database.orm.ModelDataSource');
 
 /**
- * !BelongsTo owner, Class: Person, Key: person_id, OnDelete: Cascade
+ * !BelongsTo owner, Class: Person, ForeignKey: person_id, OnDelete: Cascade
  */
 class Car extends Model {
 	
@@ -35,8 +35,8 @@ class Group extends Model {}
 class Groupship extends Model {}
 
 /**
- * !HasMany books, Key: author_id, OnDelete: Cascade
- * !HasMany novels, Key: author_id, Class: Book
+ * !HasMany books, ForeignKey: author_id, OnDelete: Cascade
+ * !HasMany novels, ForeignKey: author_id, Class: Book
  * !HasMany cars, OnDelete: Nullify
  * !HasMany groups, Through: Groupship, OnDelete: Nullify
  * !BelongsTo politicalParty

@@ -10,8 +10,8 @@ class BelongsToRelationship extends Relationship {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
 		$this->onDelete = Relationship::NULLIFY;
-		$this->foreignKey = ModelConventions::relatedForeignKeyFromBelongsToName($relationshipName);
-		$this->foreignClass = ModelConventions::relatedClassFromBelongsToName($relationshipName);
+		$this->foreignKey = Inflector::toUnderscores($relationshipName) . '_id';
+		$this->foreignClass = Inflector::toProperCaps($relationshipName);
 	}
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {

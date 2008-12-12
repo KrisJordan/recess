@@ -76,7 +76,8 @@ class RtNode {
 		if($index < 0) {
 			foreach($route->methods as $method) {
 				if(isset($this->m[$method])) {
-					throw new RecessException('Conflicting routes, the route: "' . $route->path . '" is defined twice.', get_defined_vars());
+					Library::import('recess.framework.routing.DuplicateRouteException');
+					throw new DuplicateRouteException($method . ' ' . str_replace('//','/',$route->path), $route->fileDefined, $route->lineDefined);
 				}
 				$this->m[$method] = new Rt($route);
 			}

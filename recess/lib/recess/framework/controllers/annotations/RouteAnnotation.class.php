@@ -24,14 +24,17 @@ class RouteAnnotation extends ControllerAnnotation {
 		$this->path = $array[1];
 	}
 	
-	function massage($controller, $method, ControllerDescriptor $descriptor) {
+	function massage($controller, $method, ControllerDescriptor $descriptor, ReflectionMethod $reflectedMethod = null) {
 		if(isset($this->path[0]) && $this->path[0] != '/') {
-			$descriptor->routes[] = new Route($controller, $method,$this->methods, $descriptor->routesPrefix . $this->path);
+			$route = new Route($controller, $method,$this->methods, $descriptor->routesPrefix . $this->path);
 			$descriptor->methodUrls[$method] = $descriptor->routesPrefix . $this->path;
 		} else {
-			$descriptor->routes[] = new Route($controller, $method,$this->methods, $this->path);
+			$route = new Route($controller, $method,$this->methods, $this->path);
 			$descriptor->methodUrls[$method] = $this->path;
 		}
+		$route->fileDefined = $reflectedMethod->getFileName();
+		$route->lineDefined = $reflectedMethod->getStartLine();
+		$descriptor->routes[] = $route;
 	}
 }
 ?>

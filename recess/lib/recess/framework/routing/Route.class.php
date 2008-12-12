@@ -14,6 +14,9 @@ class Route {
 	public $methods = array();
 	public $path;
 	
+	public $fileDefined = '';
+	public $lineDefined = 0;
+	
 	public function __construct($class, $function, $methods, $path) {
 		$this->class = $class;
 		$this->function = $function;

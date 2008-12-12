@@ -25,7 +25,12 @@ class Form {
 	}
 	
 	function begin() {
-		echo '<form method="' . $this->method . '" action="' . $this->action . '">';
+		if($this->method == Methods::DELETE || $this->method == Methods::PUT) {
+			echo '<form method="POST" action="' . $this->action . '">';
+			echo '<input type="hidden" name="_METHOD" value="' . $this->method . '" />';
+		} else {
+			echo '<form method="' . $this->method . '" action="' . $this->action . '">';
+		}
 	}
 	
 	function input($name) {

@@ -26,6 +26,8 @@ abstract class Controller extends RecessObject {
 		$this->application = $application;
 	}
 	
+	public function init() { }
+	
 	public static function getViewClass($class) {
 		return self::getClassDescriptor($class)->viewClass;
 	}
@@ -62,7 +64,7 @@ abstract class Controller extends RecessObject {
 			$annotations = $reflectedMethod->getAnnotations();
 			foreach($annotations as $annotation) {
 				if($annotation instanceof ControllerAnnotation) {
-					$annotation->massage(Library::getFullyQualifiedClassName($class), $reflectedMethod->name, $descriptor);
+					$annotation->massage(Library::getFullyQualifiedClassName($class), $reflectedMethod->name, $descriptor, $reflectedMethod);
 				}
 			}
 			
@@ -101,9 +103,8 @@ abstract class Controller extends RecessObject {
 			$url = $descriptor->methodUrls[$methodName];
 			if($url[0] != '/') {
 				$url = $this->application->routingPrefix . $url;
-			}
-			if($url[0] == '/') {
-				$url = substr($url,1);
+			} else {
+				$url = substr($url, 1);
 			}
 			
 			if(!empty($args)) {
@@ -146,6 +147,8 @@ abstract class Controller extends RecessObject {
 	 * @final
 	 */
 	final function serve(Request $request) {
+		$this->init();
+		
 		$this->request = $request;
 		
 		$methodName = $request->meta->controllerMethod;

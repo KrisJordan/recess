@@ -15,6 +15,7 @@ class BlogHomeController extends Controller {
 
 	/** !Route GET, mysql */
 	function someOtherFn() {
+			
 		Library::import('blog.models.AllType');
 		
 		$allTypes = new AllType();

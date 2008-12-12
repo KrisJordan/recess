@@ -352,7 +352,11 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 			if(isset($tableDescriptors[$table][$column])) {
 				switch($tableDescriptors[$table][$column]->type) {
 					case RecessType::DATETIME: case RecessType::TIMESTAMP:
-						$criterion->value = date('Y-m-d H:i:s', $criterion->value);
+						if(is_int($criterion->value)) {
+							$criterion->value = date('Y-m-d H:i:s', $criterion->value);
+						} else {
+							$criterion->value = null;
+						}
 						break;
 					case RecessType::DATE:
 						$criterion->value = date('Y-m-d', $criterion->value);

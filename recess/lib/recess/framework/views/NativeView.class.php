@@ -18,6 +18,9 @@ class NativeView extends AbstractView {
 					if($value instanceof ModelSet) {
 						$response->data[$key] = $value->toArray();
 					}
+					if($value instanceof Form) {
+						unset($response->data[$key]);
+					}
 				}
 				if(isset($response->data['application'])) unset ($response->data['application']);
 				if(isset($response->data['controller'])) unset ($response->data['controller']);
@@ -28,6 +31,7 @@ class NativeView extends AbstractView {
 		
 		extract($response->data);
 		$viewsDir = $response->meta->app->getViewsDir();
+				
 		include_once($response->meta->viewDir . $response->meta->viewName . '.php');
 	}
 }

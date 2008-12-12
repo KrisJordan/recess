@@ -176,11 +176,11 @@ class Library {
 		}
 		
 		$class = self::$classesByFull[$fullName];
-		
-		if(class_exists($class, false)) return true;
+		if(class_exists($class, false) || interface_exists($class, false)) return true;
 		
 		$pathIndex = self::$classesByClass[$class][self::PATH];
 		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+		
 		if($pathIndex == -1) {
 			foreach(self::$paths as $index => $path) {
 				@include_once($path . $file);

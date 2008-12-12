@@ -13,7 +13,7 @@ class RoutesPrefixAnnotation extends ControllerAnnotation {
 		}
 	}
 	
-	function massage($controller, $method, ControllerDescriptor $descriptor) {
+	function massage($controller, $method, ControllerDescriptor $descriptor, ReflectionMethod $reflectedMethod = null) {
 		if($this->prefix == '/')
 			$descriptor->routesPrefix = '';
 		else

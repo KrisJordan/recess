@@ -8,12 +8,32 @@ abstract class Application {
 	
 	public $name = 'Unnamed Application';
 	
-	public $controllersPrefix = ''; // OVERRIDE THIS with appname.controllers.
+	/**
+	 * OVERRIDE THIS with appname.controllers.
+	 *
+	 * @var string
+	 */
+	public $controllersPrefix = '';
 	
-	public $modelsPrefix = ''; // OVERRIDE THIS with appname.models.
+	/**
+	 * OVERRIDE THIS with appname.models.
+	 *
+	 * @var string
+	 */
+	public $modelsPrefix = '';
 	
-	public $viewsDir = ''; // OVERRIDE THIS with appname/views/
+	/**
+	 * OVERRIDE THIS with appname/views/
+	 *
+	 * @var string
+	 */
+	public $viewsDir = '';
 	
+	/**
+	 * OVERRIDE THIS with the routing prefix to your application
+	 *
+	 * @var unknown_type
+	 */
 	public $routingPrefix = '/';
 	
 	function addRoutesToRouter(RtNode $router) {

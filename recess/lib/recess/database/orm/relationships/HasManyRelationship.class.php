@@ -1,6 +1,16 @@
 <?php
 Library::import('recess.database.orm.relationships.Relationship');
 
+/**
+ * A HasMany Recess Relationship is an abstraction of for the Many side of a 
+ * foreign key relationship on the RDBMS.
+ * 
+ * @author Kris Jordan
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
+ */
 class HasManyRelationship extends Relationship {
 	
 	function getType() {

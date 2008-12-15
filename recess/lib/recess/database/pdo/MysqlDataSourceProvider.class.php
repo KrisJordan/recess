@@ -4,7 +4,12 @@ Library::import('recess.database.pdo.RecessType');
 
 /**
  * MySql Data Source Provider
+ * 
  * @author Kris Jordan
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
  */
 class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 	protected static $mysqlToRecessMappings;
@@ -383,6 +388,12 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 		return $statement;
 	}
 	
+	/**
+	 * @param SqlBuilder $builder
+	 * @param string $action
+	 * @param PdoDataSource $source
+	 * @return boolean
+	 */
 	function executeSqlBuilder(SqlBuilder $builder, $action, PdoDataSource $source) {		
 		return $this->getStatementForBuilder($builder, $action, $source)->execute();
 	}

@@ -11,6 +11,10 @@ Library::import('recess.database.pdo.RecessColumnDescriptor');
  * needed operations (i.e.: list tables, list columns in a table, etc).
  * 
  * @author Kris Jordan
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
  */
 class PdoDataSource extends PDO {
 	const PROVIDER_CLASS_LOCATION = 'recess.database.pdo.';
@@ -104,6 +108,13 @@ class PdoDataSource extends PDO {
 		return $this->provider->fetchAll($statement);
 	}
 	
+	/**
+	 * Execute the query from a SqlBuilder instance.
+	 *
+	 * @param SqlBuilder $builder
+	 * @param string $action
+	 * @return boolean
+	 */
 	function executeSqlBuilder(SqlBuilder $builder, $action) {
 		return $this->provider->executeSqlBuilder($builder, $action, $this);
 	}

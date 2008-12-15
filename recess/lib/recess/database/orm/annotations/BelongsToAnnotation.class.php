@@ -1,6 +1,16 @@
 <?php
 Library::import('recess.database.orm.annotations');
 
+/**
+ * An annotation used on Model Classes, the BelongsTo annotation gives a model
+ * a BelongsToRelationship.
+ * 
+ * @author Kris Jordan
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
+ */
 class BelongsToAnnotation extends ModelAnnotation {
 	protected $relationshipName;
 	protected $settings = array();

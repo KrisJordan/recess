@@ -1,5 +1,14 @@
 <?php
-
+/**
+ * A BelongsTo Recess Relationship is an abstraction of for the Many side of a 
+ * foreign key relationship on the RDBMS.
+ * 
+ * @author Kris Jordan
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
+ */
 class BelongsToRelationship extends Relationship {
 	
 	function getType() {
@@ -99,5 +108,4 @@ class BelongsToRelationship extends Relationship {
 		return $relationship;
 	}
 }
-
 ?>

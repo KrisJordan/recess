@@ -40,6 +40,16 @@ class Request {
 			return $parts;	
 		}
 	}
+	
+	public function data($name) {
+		if(isset($this->post[$name])) {
+			return $this->post[$name];
+		} else if (isset($this->put[$name])) {
+			return $this->put[$name];
+		} else if (isset($this->get[$name])) {
+			return $this->get[$name];
+		}
+	}
 }
 
 class Meta extends RecessObject {}

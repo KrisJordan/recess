@@ -31,6 +31,21 @@ Library::import('recess.database.orm.relationships.BelongsToRelationship');
 abstract class Model extends RecessObject implements ISqlConditions {
 	
 	/**
+	 * Constructor can take either a keyed array or a string/int
+	 * to set the primary key with;
+	 *
+	 * @param mixed $data
+	 */
+	public function __construct($data = null) {
+		if(is_numeric($data) || is_string($data)) {
+			$primaryKey = Model::primaryKeyName($this);
+			$this->$primaryKey = $data;
+		} else if (is_array($data)) {
+			$this->copy($data);
+		}
+	}
+	
+	/**
 	 * Get the datasource for a class.
 	 *
 	 * @param mixed $class

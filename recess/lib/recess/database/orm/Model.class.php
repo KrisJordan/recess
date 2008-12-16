@@ -386,7 +386,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @param mixed $rhs Value
 	 * @return PdoDataSet
 	 */
-	function equal($column, $rhs){ return $this->select()->equal($column,$rhs); }
+	function equal($column, $rhs){ return $this->select()->equal($column, $rhs); }
 	
 	/**
 	 * Add inequality criteria between a column and value
@@ -423,7 +423,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @param mixed $rhs Value
 	 * @return PdoDataSet
 	 */
-	function greaterThanOrEqualTo($column, $rhs) { return $this->select()->greaterThanOrEqualTo($lhs,$rhs); }
+	function greaterThanOrEqualTo($column, $rhs) { return $this->select()->greaterThanOrEqualTo($column,$rhs); }
 	
 	/**
 	 * SQL criteria specifying a column's value is less than $rhs
@@ -432,7 +432,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @param mixed $rhs Value
 	 * @return PdoDataSet
 	 */
-	function lessThan($column, $rhs) { return $this->select()->lessThan($lhs,$rhs); }
+	function lessThan($column, $rhs) { return $this->select()->lessThan($column,$rhs); }
 	
 	/**
 	 * SQL criteria specifying a column's value is no greater than $rhs
@@ -441,7 +441,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @param mixed $rhs Value
 	 * @return PdoDataSet
 	 */
-	function lessThanOrEqualTo($column, $rhs) { return $this->select()->lessThanOrEqualTo($lhs,$rhs); }
+	function lessThanOrEqualTo($column, $rhs) { return $this->select()->lessThanOrEqualTo($column,$rhs); }
 	
 	/**
 	 * SQL LIKE criteria, note this does not automatically include wildcards
@@ -450,7 +450,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @param mixed $rhs Value
 	 * @return PdoDataSet
 	 */
-	function like($column, $rhs) { return $this->select()->like($lhs,$rhs); }
+	function like($column, $rhs) { return $this->select()->like($column,$rhs); }
 	
 }
 

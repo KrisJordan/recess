@@ -1,14 +1,19 @@
 <?php
 require_once($_ENV['dir.lib'] . 'recess/diagnostics/Diagnostics.class.php');
 require_once($_ENV['dir.lib'] . 'recess/cache/Cache.class.php');
+
 /**
- * Used to include class files into the system
- * Used over straight require's as a level of indirection to provide
- * opportunity for more interesting include/require behaviors.
- * Uses PHP's __autoload for lazy loading.
+ * Library is an important low level utility in Recess used to make importing class files
+ * less painful. Library is also an important level of indirection between PHP's native
+ * include/require functions. Library is how Recess! dynamically 'compiles' all classes
+ * into a single PHP file.
  * 
  * @author Kris Jordan
- * @todo Document this class well.
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @link http://www.recessframework.org/
+ * 
  * @todo Allow framework to register packages/shortcuts? i.e.: Library::import('recess.framework.models.Model') vs. Library::import('recess','Model')
  */
 class Library {

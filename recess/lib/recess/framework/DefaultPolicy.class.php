@@ -24,9 +24,9 @@ class DefaultPolicy implements IPolicy {
 			$this->reparameterizeForFormat($request);
 		}
 		
-		if($request->method == Methods::OPTIONS) {
-			$response = new 
-		}
+//		if($request->method == Methods::OPTIONS) {
+//			$response = new 
+//		}
 		
 		return $request;
 	}
@@ -94,11 +94,11 @@ class DefaultPolicy implements IPolicy {
 
 	protected function reparameterizeForFormat(Request &$request) {
 		// TODO: Think about how parameter passing via json/xml/post-vars can be streamlined
-		if($request->format == Formats::json) {
-			if(array_key_exists('json', $request->post)){
+		if($request->format == Formats::JSON) {
+			if(array_key_exists(Formats::JSON, $request->post)){
 				$request->post = json_decode($request->post['json']);
 			}
-		} else if ($request->format == Formats::xml) {
+		} else if ($request->format == Formats::XML) {
 			// TODO: XML reparameterization in request transformer
 		}
 		return $request;

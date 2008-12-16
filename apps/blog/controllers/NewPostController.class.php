@@ -1,17 +1,22 @@
 <?php
 Library::import('blog.models.Post');
+Library::import('recess.framework.forms.Form');
 
 /**
  * !View Native, Prefix: posts/
- * !RoutesPrefix posts/
+ * !RoutesPrefix new-posts/
  */
-class PostController extends Controller {
+class NewPostController extends Controller {
 	
 	/** @var Post */
 	protected $post;
 	
+	/** @var Form */
+	protected $_form;
+	
 	function init() {
 		$this->post = new Post();
+		$this->_form = new ModelForm('post', $this->post, $this->request->var('post'));
 	}
 	
 	/** !Route GET */
@@ -27,25 +32,28 @@ class PostController extends Controller {
 	
 	/** !Route GET, new */
 	function newForm() {
-		$this->form = $this->getPostForm(Methods::POST, $this->urlTo('create'));
+		$this->form->for($this, 'insert');
 		return $this->ok('editForm');
 	}
 	
 	/** !Route POST */
-	function create() {
-		$this->post->copy($this->request->post['post']);
-		$this->post->insert();
-		return $this->created($this->urlTo('details',$this->post->id), $this->urlTo('details',$this->post->id));
+	function insert() {
+		try {
+			$this->post->insert();
+			return $this->created($this->urlTo('details',$this->post->id));		
+		} catch(ModelValidationException $exception) {
+			$this->form->for('insert');
+			$this->form->handle($exception);
+			return $this->conflict('editForm');
+		}
 	}
 	
 	/** !Route GET, $id/edit */
 	function editForm($id) {
 		$this->post->id = $id;
-		$this->post = $this->post->find()->first();
-		
-		$this->form = $this->getPostForm(Methods::PUT, $this->urlTo('update', $id), get_object_vars($this->post));
-		
-		if($this->post == false) {
+		if($this->post->exists()) {
+			$this->form->for($this, 'update', $id);
+		} else {
 			return $this->forwardNotFound($this->urlTo('index'), 'Post does not exist.');
 		}
 	}
@@ -53,16 +61,22 @@ class PostController extends Controller {
 	/** !Route PUT, $id */
 	function update($id) {
 		$this->post->id = $id;
-		$this->post->copy($this->request->put['post']);
-		$this->post->update();
-		return $this->forwardOk($this->urlTo('details',$this->post->id));
+		if($this->post->exists()) {
+			$this->post->update();
+			return $this->forwardOk($this->urlTo('details',$this->post->id));
+		} else {
+			return $this->forwardNotFound($this->urlTo('index'), 'Post does not exist.');
+		}
 	}
 	
 	/** !Route DELETE, $id */
 	function delete($id) {
 		$this->post->id = $id;
-		$this->post->delete();
-		return $this->forwardOk($this->urlTo('index'));
+		if($this->post->delete()) {
+			return $this->forwardOk($this->urlTo('index'));
+		} else {
+			return $this->forwardNotFound($this->urlTo('index'), 'Post does not exist.');
+		}
 	}
 	
 	

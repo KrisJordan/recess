@@ -3,9 +3,15 @@ Library::import('recess.framework.forms.TextInput');
 Library::import('recess.framework.forms.HiddenInput');
 
 class Form {
+	protected $name;
+	
 	public $method;
 	public $action;
 	public $flash;
+	
+	function __construct($name) {
+		$this->name = $name;
+	}
 	
 	public $hasErrors = false;
 	public $inputs = array();

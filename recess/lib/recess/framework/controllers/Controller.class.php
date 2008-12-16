@@ -20,7 +20,7 @@ abstract class Controller extends RecessObject {
 	protected $application;
 	
 	/** The formats/content-types which a controller responds to. */
-	protected $formats = array(Formats::xhtml);
+	protected $formats = array(Formats::XHTML);
 	
 	public function __construct($application = null) {
 		$this->application = $application;

@@ -18,7 +18,7 @@ require_once($_ENV['dir.lib'] . 'recess/cache/Cache.class.php');
  */
 class Library {
 	static private $classesByClass = array();	// = array( 'Inflector' => array( 'recess.lang.Inflector', 0 );
-	static private $classesByFull = array();	// = 'recess.lang.Inflector'
+	static private $classesByFull = array();	// 'recess.lang.Inflector'
 	static private $dirtyClasses = false;
 	
 	static private $paths = array();

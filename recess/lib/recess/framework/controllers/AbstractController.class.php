@@ -21,7 +21,7 @@ abstract class AbstractController {
 	protected $routes = array();
 	
 	/** The formats/content-types which a controller responds to. */
-	protected $formats = array(Formats::xhtml);
+	protected $formats = array(Formats::XHTML);
 	
 	public function __construct() {	}
 	

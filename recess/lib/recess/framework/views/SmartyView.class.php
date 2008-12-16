@@ -31,7 +31,7 @@ class SmartyView extends AbstractView {
 		$this->setTemplateDir($response->meta->viewDir);
 		
 		switch($response->request->format) {
-			case Formats::json:
+			case Formats::JSON:
 				foreach($response->data as $key => $value) {
 					if($value instanceof ModelSet) {
 						$response->data[$key] = $value->toArray();

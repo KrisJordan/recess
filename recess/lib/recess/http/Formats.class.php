@@ -1,12 +1,12 @@
 <?php
 
 class Formats {
-	const xhtml = 'xhtml';
-	const json = 'json';
-	const xml = 'xml';
+	const XHTML = 'xhtml';
+	const JSON = 'json';
+	const XML = 'xml';
 	const invalid = 'INVALID';
 	
-	public static $all = array(self::xhtml, self::json, self::xml);
+	public static $all = array(self::XHTML, self::JSON, self::XML);
 }
 
 ?>

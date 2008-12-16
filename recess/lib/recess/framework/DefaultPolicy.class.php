@@ -20,8 +20,12 @@ class DefaultPolicy implements IPolicy {
 
 		$this->getFormatFromResourceString($request);
 
-		if($request->format != Formats::xhtml) {
+		if($request->format != Formats::XHTML) {
 			$this->reparameterizeForFormat($request);
+		}
+		
+		if($request->method == Methods::OPTIONS) {
+			$response = new 
 		}
 		
 		return $request;
@@ -82,7 +86,7 @@ class DefaultPolicy implements IPolicy {
 				$request->format = $substring;
 				$request->setResource(substr($request->resource, 0, strrpos($request->resource, Library::dotSeparator)));
 			} else {
-				$request->format = Formats::xhtml;
+				$request->format = Formats::XHTML;
 			}
 		}
 		return $request;

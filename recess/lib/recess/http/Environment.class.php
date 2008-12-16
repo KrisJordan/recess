@@ -12,7 +12,7 @@ class Environment {
 		
 		$request->method = $_SERVER['REQUEST_METHOD'];
 		
-		$request->format = Formats::xhtml;
+		$request->format = Formats::XHTML;
 		
 		$request->setResource(self::stripQueryString($_SERVER['REQUEST_URI']));
 		

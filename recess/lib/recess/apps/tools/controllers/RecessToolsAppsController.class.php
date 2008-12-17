@@ -46,7 +46,7 @@ class RecessToolsAppsController extends Controller {
 		} else {
 			Library::import('recess.lang.Inflector');
 			$this->form = $this->getNewAppStep2Form($this->request->post);
-			$this->form->routingPrefix = Inflector::toCamelCaps($this->form->programmaticName) . '/';
+			$this->form->routingPrefix->setValue(Inflector::toCamelCaps($this->form->programmaticName->getValue()) . '/');
 			return $this->ok('newAppWizardStep2');
 		}
 	}
@@ -96,7 +96,7 @@ class RecessToolsAppsController extends Controller {
 		$this->messages[] = $this->tryGeneratingFile('Navigation Template', $this->application->codeTemplatesDir . 'navigation.template.php', $appDir . '/views/common/navigation.php', $appReplacements);
 		$this->messages[] = $this->tryGeneratingFile('Footer Template', $this->application->codeTemplatesDir . 'footer.template.php', $appDir . '/views/common/footer.php', $appReplacements);
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/views/home', 'home views');
-		$this->messages[] = $this->tryGeneratingFile('Home Template', $this->application->codeTemplatesDir . 'home.template.php', $appDir . '/views/home/home.php', $appReplacements);
+		$this->messages[] = $this->tryGeneratingFile('Home Template', $this->application->codeTemplatesDir . 'index.template.php', $appDir . '/views/home/index.php', $appReplacements);
 	}
 	
 	private function tryCreatingDirectory($path, $name) {
@@ -141,7 +141,7 @@ class RecessToolsAppsController extends Controller {
 	
 	private function getNewAppForm($fillValues = array()) {
 		Library::import('recess.framework.forms.Form');
-		$form = new Form();
+		$form = new Form('');
 		$form->method = "POST";
 		$form->flash = "";
 		$form->action = $this->urlTo('newApp');
@@ -153,7 +153,7 @@ class RecessToolsAppsController extends Controller {
 	
 	private function getNewAppStep2Form($fillValues = array()) {
 		Library::import('recess.framework.forms.Form');
-		$form = new Form();
+		$form = new Form('');
 		$form->method = "POST";
 		$form->flash = "";
 		$form->action = $this->urlTo('newAppStep2');

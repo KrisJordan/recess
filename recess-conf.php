@@ -4,7 +4,9 @@
  * 
  * Recess! is full-stack, PHP application development framework.
  * For tutorials, documentation, bug reports, feature suggestions
- * head over to: http://www.recessframework.com/
+ * head over to: 
+ * 
+ * http://www.recessframework.com/
  * 
  * Enjoy! -Kris Jordan (http://www.krisjordan.com)
  */
@@ -14,6 +16,7 @@ RecessConf::$mode = RecessConf::DEVELOPMENT; // or RecessConf::PRODUCTION
 RecessConf::$applications 
 	= array(	'recess.apps.tools.RecessToolsApplication',
 				'blog.BlogApplication',
+				'customerBackend.CustomerBackendApplication',
 			);
 
 RecessConf::$defaultTimeZone = 'America/New_York';
@@ -36,7 +39,7 @@ RecessConf::$cacheProviders
 	= array(	
 				// 'Apc',
 				// 'Memcache',
-				// 'Sqlite',
+				'Sqlite',
 			);
 
 RecessConf::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.)

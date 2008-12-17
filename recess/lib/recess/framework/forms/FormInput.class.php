@@ -1,14 +1,11 @@
 <?php
-
-class FormInput {
+abstract class FormInput {
 	protected $name;
-	protected $class;
-	protected $value;
+	public $class;
+	public $value;
 	
-	function __construct($name, $class, $value) {
-		$this->name = $name; 
-		$this->class = $class;
-		$this->value = $value;
+	function __construct($name) {
+		$this->name = $name;
 	}
 	
 	function getValue() {
@@ -21,5 +18,4 @@ class FormInput {
 	
 	abstract function render();
 }
-
 ?>

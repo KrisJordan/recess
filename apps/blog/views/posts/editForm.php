@@ -1,41 +1,31 @@
 <?php include_once($viewsDir . 'common/header.php'); ?>
 
-<?php
-
-$form->begin();
-
-echo '<br />';
-
-echo 'Title: ';
-$form->input('title');
-
-echo '<br />';
-
-echo 'Body: ';
-$form->input('body');
-
-echo '<br />';
-
-echo 'Is Public: ';
-$form->input('isPublic');
-
-echo '<br />';
-
-echo 'Modified: ';
-$form->input('modifiedAt');
-
-echo '<br />';
-
-echo 'Created: ';
-$form->input('createdOn');
-
-echo '<br />';
-
-echo '<input type="submit" />';
-
-$form->end;
-
-?>
+<?php $_form->begin(); ?>
+<fieldset>
+		<legend>Edit Post</legend>
+		<p>
+		<label for="title">Title</label><br />
+		<?php $_form->input('title'); ?>
+		</p>
+		<p>
+		<label for="body">Body</label><br />
+		<?php $_form->input('body'); ?>
+		</p>
+		<p>
+		<label for="title">Is Public</label><br />
+		<?php $_form->isPublic->render(); ?>
+		</p>
+		<p>
+		<label for="title">Modified At</label><br />
+		<?php $_form->input('modifiedAt'); ?>
+		</p>
+		<p>
+		<label for="title">Created On</label><br />
+		<?php $_form->input('createdOn'); ?>
+		</p>
+		<input type="submit" value="Save" />
+	</fieldset>
+<?php $_form->end; ?>
 
 <a href="<?php echo $controller->urlTo('index'); ?>">Show All Posts</a>
 

@@ -4,18 +4,18 @@ class DateTimeInput extends FormInput {
 	public $showDate = true;
 	public $showTime = true;
 	
-	protected static $months = array(1 => 'Jan',
-									 2 => 'Feb', 
-									 3 => 'Mar',
-									 4 => 'Apr',
-									 5 => 'May',
-									 6 => 'June',
-									 7 => 'July', 
-									 8 => 'Aug', 
-									 9 => 'Sept', 
-									 10 => 'Oct', 
-									 11 => 'Nov',
-									 12 => 'Dec');
+	protected static $months = array('Jan',
+									 'Feb', 
+									 'Mar',
+									 'Apr',
+									 'May',
+									 'June',
+									 'July', 
+									 'Aug', 
+									 'Sept', 
+									 'Oct', 
+									 'Nov',
+									 'Dec');
 									 
 	protected static $meridiems = array(
 									 self::AM,
@@ -37,18 +37,20 @@ class DateTimeInput extends FormInput {
 	
 	function setValue($value) {
 		if(is_array($value)) {
-			$month = isset($value[DateInput::MONTH]) ? $value[DateInput::MONTH] : 0;
-			$day = isset($value[DateInput::DAY]) ? $value[DateInput::DAY] : 0;
-			$year = isset($value[DateInput::YEAR]) ? $value[DateInput::YEAR] : 0;
-			$hour = isset($value[DateInput::HOUR]) ? $value[DateInput::HOUR] : 0;
-			$minute = isset($value[DateInput::MINUTE]) ? $value[DateInput::MINUTE] : 0;
-			$meridiem = isset($value[DateInput::meridiem]) ? $value[DateInput::meridiem] : 0;
+			$month = isset($value[self::MONTH]) ? $value[self::MONTH] : 0;
+			$day = isset($value[self::DAY]) ? $value[self::DAY] : 0;
+			$year = isset($value[self::YEAR]) ? $value[self::YEAR] : 0;
+			$hour = isset($value[self::HOUR]) ? $value[self::HOUR] : 0;
+			$minute = isset($value[self::MINUTE]) ? $value[self::MINUTE] : 0;
+			$meridiem = isset($value[self::MERIDIEM]) ? $value[self::MERIDIEM] : 0;
 			
-			if($meridiem == DateInput::PM) {
-				$hour += PM_HOURS;
+			if($meridiem == self::PM) {
+				$hour += self::PM_HOURS;
 			}
 			
-			$this->value = mktime($hour,$minute,0,$month,$day,$year);
+			$this->value = mktime($hour,$minute,1,$month,$day,$year);
+		} else {
+			$this->value = $value;
 		}
 	}
 	
@@ -56,7 +58,7 @@ class DateTimeInput extends FormInput {
 		
 		if($this->showDate) {
 			$this->printMonthInput();
-			$this->printDateInput();
+			$this->printDayInput();
 			$this->printYearInput();
 		}
 		
@@ -72,8 +74,8 @@ class DateTimeInput extends FormInput {
 		$this->printSelect($this->name . '[' . self::MONTH . ']', self::$months, date('n', $this->value));
 	}
 	
-	function printDateInput() {
-		$this->printSelect($this->name . '[' . self::MONTH . ']', range(1,31), date('j', $this->value));
+	function printDayInput() {
+		$this->printSelect($this->name . '[' . self::DAY . ']', range(1,31), date('j', $this->value));
 	}
 	
 	function printYearInput() {
@@ -96,9 +98,10 @@ class DateTimeInput extends FormInput {
 		echo '<select name="', $name, '">';
 		
 		foreach($values as $key => $value) {
+			$key++;
 			echo '<option value="', $key, '"';
 			if($key == $selected) {
-				echo ' selected="selected"';			
+				echo ' selected="selected"';
 			}
 			echo '>', $value, '</option>', "\n";
 		}

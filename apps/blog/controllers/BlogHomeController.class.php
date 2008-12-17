@@ -7,7 +7,7 @@ Library::import('recess.framework.controllers.Controller');
 class BlogHomeController extends Controller {
 	
 	/** !Route GET */
-	function home() {
+	function index() {
 		
 		$this->flash = 'Welcome to your application!';
 		

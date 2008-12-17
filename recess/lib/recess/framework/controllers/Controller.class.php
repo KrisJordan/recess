@@ -58,7 +58,7 @@ abstract class Controller extends RecessObject {
 		
 		$reflectedMethods = $reflection->getMethods(false);
 		$methods = array();
-		$unreachableMethods = array('serve','urlTo','__call','__construct');
+		$unreachableMethods = array('serve','urlTo','__call','__construct','init','application');
 		foreach($reflectedMethods as $reflectedMethod) {
 			if(in_array($reflectedMethod->getName(),$unreachableMethods)) continue;
 			$annotations = $reflectedMethod->getAnnotations();
@@ -146,10 +146,10 @@ abstract class Controller extends RecessObject {
 	 * @param DefaultRequest $request The HTTP request being served.
 	 * @final
 	 */
-	final function serve(Request $request) {
-		$this->init();
-		
+	final function serve(Request $request) {		
 		$this->request = $request;
+		
+		$this->init();
 		
 		$methodName = $request->meta->controllerMethod;
 		$methodArguments = $request->meta->controllerMethodArguments;
@@ -257,6 +257,10 @@ abstract class Controller extends RecessObject {
 		Library::import('recess.http.responses.CreatedResponse');
 		if($contentUri == '') $contentUri = $resourceUri;
 		return new CreatedResponse($this->request, $resourceUri, $contentUri);
+	}
+
+	public function application() {
+		return $this->application;
 	}
 }
 

@@ -1,5 +1,11 @@
 <?php
+Library::import('recess.framework.forms.FormInput');
+Library::import('recess.framework.forms.TextAreaInput');
+Library::import('recess.framework.forms.DateTimeInput');
 Library::import('recess.framework.forms.TextInput');
+Library::import('recess.framework.forms.LabelInput');
+Library::import('recess.framework.forms.DateLabelInput');
+Library::import('recess.framework.forms.BooleanInput');
 Library::import('recess.framework.forms.HiddenInput');
 
 class Form {
@@ -18,16 +24,21 @@ class Form {
 	
 	function __get($name) {
 		if(isset($this->inputs[$name])) {
-			return $this->inputs[$name]->value;
+			return $this->inputs[$name];
 		} else {
 			return '';
 		}
 	}
 	
-	function __set($name, $value) {
-		if(isset($this->inputs[$name])) {
-			$this->inputs[$name]->value = $value;
-		}
+//	function __set($name, $value) {
+//		if(isset($this->inputs[$name])) {
+//			$this->inputs[$name]->value = $value;
+//		}
+//	}
+	
+	function to($method, $action) {
+		$this->method = $method;
+		$this->action = $action;
 	}
 	
 	function begin() {
@@ -46,13 +57,13 @@ class Form {
 	function fill(array $keyValues) {
 		foreach($this->inputs as $key => $value) {
 			if(isset($keyValues[$key])) {
-				$this->inputs[$key]->value = $keyValues[$key];
+				$this->inputs[$key]->setValue($keyValues[$key]);
 			}
 		}
 	}
 	
 	function assertNotEmpty($inputName) {
-		if(isset($this->inputs[$inputName]) && $this->inputs[$inputName]->value != '') {
+		if(isset($this->inputs[$inputName]) && $this->inputs[$inputName]->getValue() != '') {
 			return true;
 		} else {
 			$this->inputs[$inputName]->class = 'highlight';

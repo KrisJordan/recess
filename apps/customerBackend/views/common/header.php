@@ -38,7 +38,7 @@
 	<body>
 	<div class="container">
 		<div class="span-24">
-			<h1>{{appName}}</h1>
+			<h1>Customer Backend</h1>
 		</div>
 		<div class="span-24 last">
 			<?php include_once($viewsDir . 'common/navigation.php'); ?>

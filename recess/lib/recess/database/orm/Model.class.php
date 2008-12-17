@@ -41,7 +41,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 			$primaryKey = Model::primaryKeyName($this);
 			$this->$primaryKey = $data;
 		} else if (is_array($data)) {
-			$this->copy($data);
+			$this->copy($data, false);
 		}
 	}
 	
@@ -387,9 +387,14 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @param iterable $keyValuePair
 	 * @return Model
 	 */
-	function copy($keyValuePair) {
+	function copy($keyValuePair, $excludePrimaryKey = true) {
+		if($excludePrimaryKey) {
+			$pk = Model::primaryKeyName($this);
+		}
 		foreach($keyValuePair as $key => $value) {
-			$this->$key = $value;
+			if($excludePrimaryKey && $key != $pk) {
+				$this->$key = $value;
+			}
 		}
 		return $this;
 	}

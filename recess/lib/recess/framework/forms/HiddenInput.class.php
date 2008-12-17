@@ -1,14 +1,5 @@
 <?php
-
-class HiddenInput {
-	public $name;
-	public $value;
-	
-	function __construct($name, $value) {
-		$this->name = $name;
-		$this->value = $value;
-	}
-	
+class HiddenInput extends FormInput {	
 	function render() {
 		echo '<input type="hidden" name="', $this->name, '"';
 		if($this->value != '') {
@@ -17,5 +8,4 @@ class HiddenInput {
 		echo ' />';
 	}
 }
-
 ?>

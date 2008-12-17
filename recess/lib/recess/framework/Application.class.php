@@ -37,7 +37,7 @@ abstract class Application {
 	public $routingPrefix = '/';
 	
 	function addRoutesToRouter(RtNode $router) {
-		$classes = Library::findClassesIn($this->controllersPrefix);
+		$classes = $this->listControllers();
 		
 		foreach($classes as $class) {
 			if(Library::classExists($this->controllersPrefix . $class)) {
@@ -56,6 +56,16 @@ abstract class Application {
 		}
 		
 		return $router;
+	}
+	
+	const CONTROLLERS_CACHE_KEY = 'Recess::Framework::App::LstCntrlrs::';
+	
+	function listControllers() {
+		$controllers = Cache::get(self::CONTROLLERS_CACHE_KEY . get_class($this));
+		if($controllers === false) {
+			$controllers = Library::findClassesIn($this->controllersPrefix);
+		}
+		return $controllers;
 	}
 	
 	function getController($controller) {

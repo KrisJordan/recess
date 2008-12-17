@@ -115,7 +115,11 @@ abstract class RecessConf {
 		if($router === false) {
 			$router = new RtNode();
 			foreach(self::$applications as $app) {
-				$app->addRoutesToRouter($router);
+				try {
+					$app->addRoutesToRouter($router);
+				} catch (DuplicateRouteException $e) {
+					throw new RecessErrorException("Conflicting routes found: " . $e->getMessage(), 0, 0, $e->file, $e->line, array());
+				}
 			}
 			Cache::set(self::ROUTES_CACHE_KEY, $router);	
 		}

@@ -1,8 +1,15 @@
-<div class="span-19 navigation last">
+<div class="navigation">
 	<ul>
-		<a href="">Navigation</a>
-		<a href="">Could</a>
-		<a href="">Go</a>
-		<a href="">Here</a>
+<?php
+// This is a really sketchy way of building up navigation.
+// Please do not actually use this in a real app. Thx -Kris
+Library::import('recess.lang.Inflector');
+$app = $controller->application();
+$controllers = $app->listControllers();
+foreach($controllers as $controllerClass): 
+	$navController = new $controllerClass($app);
+?>
+		<li><a href="<?php echo $navController->urlTo('index'); ?>"><?php echo Inflector::toEnglish(str_replace('Controller','',$controllerClass)); ?></a></li>
+<?php endforeach; ?>
 	</ul>
 </div>

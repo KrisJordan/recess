@@ -4,7 +4,7 @@ Library::import('recess.framework.controllers.Controller');
 /**
  * !View Native, Prefix: home/
  */
-class {{programmaticName}}HomeController extends Controller {
+class CustomerBackendHomeController extends Controller {
 	
 	/** !Route GET */
 	function index() {

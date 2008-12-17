@@ -1,6 +1,6 @@
 <?php
 Library::import('blog.models.Post');
-Library::import('recess.framework.forms.Form');
+Library::import('recess.framework.forms.ModelForm');
 
 /**
  * !View Native, Prefix: posts/
@@ -16,7 +16,7 @@ class NewPostController extends Controller {
 	
 	function init() {
 		$this->post = new Post();
-		$this->_form = new ModelForm('post', $this->post, $this->request->var('post'));
+		$this->_form = new ModelForm('post', $this->request->data('post'), $this->post);
 	}
 	
 	/** !Route GET */
@@ -32,7 +32,7 @@ class NewPostController extends Controller {
 	
 	/** !Route GET, new */
 	function newForm() {
-		$this->form->for($this, 'insert');
+		$this->_form->to(Methods::POST, $this->urlTo('insert'));
 		return $this->ok('editForm');
 	}
 	
@@ -40,7 +40,7 @@ class NewPostController extends Controller {
 	function insert() {
 		try {
 			$this->post->insert();
-			return $this->created($this->urlTo('details',$this->post->id));		
+			return $this->created($this->urlTo('details', $this->post->id));		
 		} catch(ModelValidationException $exception) {
 			$this->form->for('insert');
 			$this->form->handle($exception);
@@ -52,7 +52,7 @@ class NewPostController extends Controller {
 	function editForm($id) {
 		$this->post->id = $id;
 		if($this->post->exists()) {
-			$this->form->for($this, 'update', $id);
+			$this->_form->to(Methods::PUT, $this->urlTo('update', $id));
 		} else {
 			return $this->forwardNotFound($this->urlTo('index'), 'Post does not exist.');
 		}
@@ -60,10 +60,10 @@ class NewPostController extends Controller {
 	
 	/** !Route PUT, $id */
 	function update($id) {
-		$this->post->id = $id;
-		if($this->post->exists()) {
-			$this->post->update();
-			return $this->forwardOk($this->urlTo('details',$this->post->id));
+		$oldPost = new Post($id);
+		if($oldPost->exists()) {
+			$oldPost->copy($this->post)->save();
+			return $this->forwardOk($this->urlTo('details', $id));
 		} else {
 			return $this->forwardNotFound($this->urlTo('index'), 'Post does not exist.');
 		}
@@ -77,22 +77,6 @@ class NewPostController extends Controller {
 		} else {
 			return $this->forwardNotFound($this->urlTo('index'), 'Post does not exist.');
 		}
-	}
-	
-	
-	function getPostForm($method, $action, $fillValues = array()) {
-		Library::import('recess.framework.forms.Form');
-		$form = new Form();
-		$form->method = $method;
-		$form->action = $action;
-		$form->flash = "";
-		$form->inputs['title'] = new TextInput('post[title]', '', '','');
-		$form->inputs['body'] = new TextInput('post[body]', '', '','');
-		$form->inputs['isPublic'] = new TextInput('post[isPublic]', '', '','');
-		$form->inputs['modifiedAt'] = new TextInput('post[modifiedAt]', '', '','');
-		$form->inputs['createdOn'] = new TextInput('post[createdOn]', '', '','');
-		$form->fill($fillValues);
-		return $form;
 	}
 }
 ?>

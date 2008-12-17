@@ -1,25 +1,26 @@
 <?php include_once($viewsDir . 'common/header.php'); ?>
 
-<ul>
+<h3><a href="<?php echo $controller->urlTo('newForm'); ?>">Create New Post</a></h3>
+
 <?php foreach($posts as $post): ?>
-	<li><strong><?php echo get_class($post), ' #', $post->id; ?> - 
-		<a href="<?php echo $controller->urlTo('editForm', $post->id); ?>">edit</a></strong>
-		<ul>
-			<li>Title: <?php echo $post->title; ?></li>
-			<li>Body: <?php echo $post->body; ?></li>
-			<li>Is Public: <?php echo $post->isPublic ? 'true' : 'false'; ?></li>
-			<li>Modified At: <?php echo date(DATE_RFC822, $post->modifiedAt); ?></li>
-			<li>Created On: <?php echo date(DATE_RFC822, $post->createdOn); ?></li>
-			<li>
-				<form method="POST" action="<?php echo $controller->urlTo('delete', $post->id); ?>">
-					<input type="hidden" name="_METHOD" value="DELETE" />
-					<input type="submit" name="delete" value="Delete" />
-				</form>
-			</li>
-		</ul>
-	</li>
+
+<form method="POST" action="<?php echo $controller->urlTo('delete', $post->id); ?>">
+	<fieldset>
+		<h3><?php echo get_class($post), ' #', $post->id; ?></h3>
+		<p>
+		<strong>Title</strong>: <?php echo $post->title; ?><br />
+		<strong>Body</strong>: <?php echo $post->body; ?><br />
+		<strong>Is Public</strong>: <?php echo $post->isPublic ? 'yes' : 'no'; ?><br />
+		<strong>Modified At</strong>: <?php echo date(DATE_RFC822, $post->modifiedAt); ?><br />
+		<strong>Created On</strong>: <?php echo date(DATE_RFC822, $post->createdOn); ?><br />
+		</p>
+		
+		<a href="<?php echo $controller->urlTo('editForm', $post->id); ?>">Edit</a></strong>  - 
+		<input type="hidden" name="_METHOD" value="DELETE" />
+		<input type="submit" name="delete" value="Delete" />
+	</fieldset>
+</form>
+<hr />
 <?php endforeach; ?>
-</ul>
-<a href="<?php echo $controller->urlTo('newForm'); ?>">Create New Post</a>
 
 <?php include_once($viewsDir . 'common/footer.php'); ?>

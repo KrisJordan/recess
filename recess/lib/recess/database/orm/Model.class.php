@@ -372,8 +372,8 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 */
 	function exists() {
 		$result = $this->select()->first();
-		if($result != null) {
-			$this->copy($result);
+		if($result !== false) {
+			$this->copy($result, false);
 			return true;
 		} else {
 			return false;
@@ -392,9 +392,10 @@ abstract class Model extends RecessObject implements ISqlConditions {
 			$pk = Model::primaryKeyName($this);
 		}
 		foreach($keyValuePair as $key => $value) {
-			if($excludePrimaryKey && $key != $pk) {
-				$this->$key = $value;
+			if($excludePrimaryKey && $key == $pk) {
+				continue;
 			}
+			$this->$key = $value;
 		}
 		return $this;
 	}
@@ -471,6 +472,15 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @return PdoDataSet
 	 */
 	function like($column, $rhs) { return $this->select()->like($column,$rhs); }
+	
+	/**
+	 * SQL NOT LIKE criteria, note this does not automatically include wildcards
+	 *
+	 * @param string $column Column
+	 * @param mixed $rhs Value
+	 * @return PdoDataSet
+	 */
+	function notLike($column, $rhs) { return $this->select()->notLike($column,$rhs); }
 	
 }
 

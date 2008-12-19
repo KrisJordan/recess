@@ -106,11 +106,13 @@ include_once($viewsDir . 'common/footer.php');
 function printSubclasses($children) {
 	if(!$children->isEmpty()) { ?>
 	<h2>Subclasses</h2>
+	<ul>
 	<?php
 	}
 	foreach($children as $child) {
 		?><li><a href="<?php echo $child->package()->name . '.' . $child->name ?>"><?php echo $child->name; ?></a><?php
 	}
+	echo '</ul>';
 }
 ?>
 
@@ -150,7 +152,7 @@ function printColumns($columns) {
 	<?php
 	foreach($columns as $column) {
 		echo '<li>' . $column . '</li>';
-	}
+	}?></ul><?php
 }?>
 
 <?php

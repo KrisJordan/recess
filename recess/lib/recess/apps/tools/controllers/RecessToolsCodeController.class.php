@@ -1,5 +1,6 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
+Library::import('recess.http.responses.ErrorResponse');
 Library::import('recess.http.responses.NotFoundResponse');
 Library::import('recess.http.responses.OkResponse');
 
@@ -14,27 +15,34 @@ Library::import('recess.apps.tools.models.RecessReflectorMethod');
  */
 class RecessToolsCodeController extends Controller {
 	
+	protected function checkTables() {
+		try{ // This is so hacked it's embarrasing. Sorry folks.
+			Model::createTableFor('RecessReflectorClass');
+		} catch(Exception $e) {}
+		try{
+			Model::createTableFor('RecessReflectorPackage');
+		} catch(Exception $e) {}
+		
+	}
+	
+	protected function checkIndex() {
+		$this->recursiveIndex($_ENV['dir.apps']);
+		$this->recursiveIndex($_ENV['dir.lib']);
+	}
+	
 	/** !Route GET */
 	public function home() {
-		
+		$this->checkTables();
+		$this->classes = Make::a('RecessReflectorClass')->all()->orderBy('name');
+		$this->packages = Make::a('RecessReflectorPackage')->all()->orderBy('name');		
 	}
 	
 	/** !Route GET, index */
 	public function index() {
-		$this->recursiveIndex($_ENV['dir.apps']);
-		$this->recursiveIndex($_ENV['dir.lib']);
-		exit;
+		$this->checkTables();
+		$this->checkIndex();
+		return $this->forwardOk($this->urlTo('home'));
 	}
-	
-	/** !Route GET, byClass */
-	public function byClass() {
-		
-	}
-	
-	/** !Route GET, byPackage */
-	public function byPackage() {
-		
-	}	
 	
 	private function recursiveIndex($base, $dir = '') {
 		$dirInfo = scandir($base . $dir);
@@ -73,11 +81,13 @@ class RecessToolsCodeController extends Controller {
 	
 	/** !Route GET, class/$class */
 	public function classInfo($class) {
+		$this->checkTables();
 		$result = $this->indexClass($class, '');
 		
 		if($result === false) {
 			return new NotFoundResponse($this->request);
 		}
+		
 		$this->reflector = $result;
 		
 		$className = Library::getClassName($class);
@@ -106,6 +116,7 @@ class RecessToolsCodeController extends Controller {
 	/** !Route GET, class/$fullyQualifiedModel/create */
 	function createTable ($fullyQualifiedModel) {
 		if(!Library::classExists($fullyQualifiedModel)) {
+			echo 'here';exit;
 			return new NotFoundResponse($this->request);
 		}
 

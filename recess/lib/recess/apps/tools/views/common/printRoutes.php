@@ -1,16 +1,19 @@
 <?php
-function printRoutes($routes, $codeController) {
+function printRoutes($routes, $codeController, $omit = '') {
 	echo '<table>';
 	echo '<thead><td>HTTP</td><td>Route</td><td>Controller</td><td>Method</td></thead>';
 	echo '<tbody>';
 	$fullPath = $_ENV['url.base'];
 	if(strrpos($fullPath, '/') == strlen($fullPath) - 1) $fullPath = substr($fullPath,0,-1);
-	printRoutesRecursive($codeController, $routes, $fullPath);
+	printRoutesRecursive($codeController, $routes, $fullPath, $omit);
 	echo '</tbody>';
 	echo '</table>';
 }
 
-function printRoutesRecursive($codeController, $routingNode, $fullPath) {
+function printRoutesRecursive($codeController, $routingNode, $fullPath, $omit = '') {
+	if($omit != '' && strpos($fullPath, $omit) === 0) {
+		return;
+	}
 	static $i = 0;
 	if($routingNode == null) return;
 	$staticPaths = $routingNode->getStaticPaths();
@@ -37,10 +40,10 @@ function printRoutesRecursive($codeController, $routingNode, $fullPath) {
 		ksort($staticPaths);
 		ksort($parametricPaths);
 		foreach($staticPaths as $path => $node) {
-			printRoutesRecursive($codeController, $node, $fullPath . '/' . $path);
+			printRoutesRecursive($codeController, $node, $fullPath . '/' . $path, $omit);
 		}
 		foreach($parametricPaths as $path => $node) {
-			printRoutesRecursive($codeController, $node, $fullPath . '/$' . $path);
+			printRoutesRecursive($codeController, $node, $fullPath . '/$' . $path, $omit);
 		}
 	}
 }

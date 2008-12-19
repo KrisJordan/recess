@@ -2,6 +2,12 @@
 
 <h3><a href="<?php echo $controller->urlTo('newForm'); ?>">Create New Post</a></h3>
 
+<?php if(isset($flash)): ?>
+<div class="error">
+<?php echo $flash; ?>
+</div>
+<?php endif; ?>
+
 <?php foreach($posts as $post): ?>
 
 <form method="POST" action="<?php echo $controller->urlTo('delete', $post->id); ?>">

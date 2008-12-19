@@ -1,6 +1,7 @@
 <?php
 Library::import('recess.database.sql.SqlBuilder');
 Library::import('recess.database.sql.ISqlSelectOptions');
+Library::import('recess.database.sql.ISqlConditions');
 
 /**
  * PdoDataSet is used as a proxy to query results that is realized once the results are
@@ -177,25 +178,28 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	}
 	
 	function isEmpty() {
-		return !isset($this[0]);
+		return !(isset($this[0]) && $this[0] != null);
+		// return !isset($this[0]);
 	}
 	
 	/**
 	 * Return the first item in the PdoDataSet or Null if none exist
 	 *
-	 * @return object or null
+	 * @return object or false
 	 */
 	function first() {
 		if(!$this->hasResults) {
 			$results = $this->range(0,1);
-			if(isset($results[0]))
+			if(!$results->isEmpty()) {
 				return $results[0];
+			}
 		} else {
-			if(isset($this[0]))
+			if(!$this->isEmpty()) {
 				return $this[0];
+			}
 		}
 		
-		return null;
+		return false;
 	}
 	
 	/**
@@ -288,6 +292,12 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	 */	
 	function like($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->like($lhs,$rhs); return $copy; }
 
+	/**
+	 * @see SqlBuilder::like
+	 * @return PdoDataSet
+	 */
+	function notLike($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->notLike($lhs,$rhs); return $copy; }
+	
 	/**
 	 * @see SqlBuilder::where
 	 * @return PdoDataSet

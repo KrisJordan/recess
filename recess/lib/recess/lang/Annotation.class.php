@@ -14,9 +14,8 @@ abstract class Annotation {
 	abstract function init($array);
 	
 	static function parse($docstring) {
-		//preg_match_all('/(?:\s|\*)*\!(\S\S*)\s\s*(.*)\s*/', $docstring, $result, PREG_PATTERN_ORDER);
 		preg_match_all('%(?:\s|\*)*!(\S\S*)\s\s*(?:(.*)(?>\*/)|(.*))%', $docstring, $result, PREG_PATTERN_ORDER);
-		//print_r($result);
+
 		$annotations = $result[1];
 		if(isset($result[2][0]) && $result[2][0] != '') {
 			$values = $result[2];

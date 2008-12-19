@@ -1,4 +1,5 @@
 <?php
+Library::import('recess.framework.forms.FormInput');
 class TextAreaInput extends FormInput {
 	function render() {
 		echo '<textarea name="', $this->name, '"', ' id="' . $this->name . '"';

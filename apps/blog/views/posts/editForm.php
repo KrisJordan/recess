@@ -3,6 +3,7 @@
 <?php $_form->begin(); ?>
 <fieldset>
 		<legend>Edit Post</legend>
+		<?php $_form->input('id'); ?>
 		<p>
 		<label for="title">Title</label><br />
 		<?php $_form->input('title'); ?>
@@ -13,7 +14,7 @@
 		</p>
 		<p>
 		<label for="title">Is Public</label><br />
-		<?php $_form->isPublic->render(); ?>
+		<?php $_form->input('isPublic'); ?>
 		</p>
 		<p>
 		<label for="title">Modified At</label><br />

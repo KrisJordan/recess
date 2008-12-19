@@ -310,6 +310,15 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function like($column, $value)        { return $this->addCondition($column, $value, Criterion::LIKE); }
 	
 	/**
+	 * NOT LIKE expression for WHERE clause of update, delete, or select statements, does not include wildcards.
+	 *
+	 * @param string $column
+	 * @param string $value
+	 * @return SqlBuilder
+	 */
+	public function notLike($column, $value)        { return $this->addCondition($column, $value, Criterion::NOT_LIKE); }
+	
+	/**
 	 * Add a condition to the SqlBuilder statement. Additional logic here to prepend
 	 * a table name and also keep track of which columns have already been assigned conditions
 	 * to ensure we do not use two identical named parameters in PDO.
@@ -629,6 +638,7 @@ class Criterion {
 	const NOT_EQUAL_TO = '!=';
 	
 	const LIKE = 'LIKE';
+	const NOT_LIKE = 'NOT LIKE';
 	
 	const COLON = ':';
 	

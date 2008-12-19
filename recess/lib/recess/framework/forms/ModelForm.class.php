@@ -57,7 +57,11 @@ class ModelForm extends Form {
 						echo $property->type;
 				}
 				
-				if($inputValue != '') {
+				if($property->isPrimaryKey) {
+					$this->inputs[$propertyName] = new HiddenInput($propertyName);
+				}
+				
+				if(isset($this->inputs[$propertyName]) && isset($values[$propertyName])) {
 					$this->inputs[$propertyName]->setValue($values[$propertyName]);
 					$model->$propertyName = $this->inputs[$propertyName]->getValue();
 				}

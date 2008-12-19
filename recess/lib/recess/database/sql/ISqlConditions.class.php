@@ -18,6 +18,7 @@ interface ISqlConditions {
 	function lessThan($column, $value);
 	function lessThanOrEqualTo($column, $value);
 	function like($column, $value);
+	function notLike($column, $value);
 	
 }
 ?>

@@ -5,7 +5,7 @@ include_once($viewsDir . 'common/header.php');
 ?>
 
 <h1>Table: <strong><?php echo $table;?></strong></h1>
-<h2>Source: <a href="<?php echo $controller->urlTo('showSource',$sourceName); ?>"><?php echo $sourceName;?></a></h2>
+<h2>Source: <?php echo $sourceName;?></h2>
 <h2>Columns:</h2>
 
 <table>

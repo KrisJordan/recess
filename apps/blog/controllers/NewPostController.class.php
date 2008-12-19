@@ -22,6 +22,9 @@ class NewPostController extends Controller {
 	/** !Route GET */
 	function index() {
 		$this->posts = $this->post->all();
+		if(isset($this->request->get['flash'])) {
+			$this->flash = $this->request->get['flash'];
+		}
 	}
 	
 	/** !Route GET, $id */

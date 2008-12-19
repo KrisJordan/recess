@@ -7,7 +7,7 @@ Library::import('recess.apps.ide.models.RecessReflectorClassMethods');
  * !BelongsTo package, Class: RecessReflectorPackage, Key: packageId
  * !BelongsTo parent, Class: RecessReflectorClass, Key: parentId
  * !HasMany children, Class: RecessReflectorClass, Key: parentId
- * !Table classes
+ * !Table recess_tools_classes
  */
 class RecessReflectorClass extends Model {
 	
@@ -33,9 +33,6 @@ class RecessReflectorClass extends Model {
 	/** !Column Text */
 	public $file;
 	
-	/** !Column Integer */
-	public $lastModified;
-	
 	public function fromClass($class, $dir = '') {
 		
 		$classInfo = new RecessReflectionClass($class);
@@ -43,8 +40,6 @@ class RecessReflectorClass extends Model {
 		$this->docComment = $classInfo->getDocComment();
 		
 		$this->file = $classInfo->getFileName();
-		
-		$this->lastModified = filemtime($this->file);
 		
 		$package = Library::getPackage($class);
 
@@ -56,11 +51,11 @@ class RecessReflectorClass extends Model {
 			
 		if($package != '') {
 			$packageReflector = new RecessReflectorPackage();
+			
 			$packageReflector->name = $package;
-			$packageInstance = $packageReflector->find()->first();
 			
 			if($packageReflector->exists()) {
-				$this->setPackage($packageReflector->find()->first());
+				$this->setPackage($packageReflector);
 			} else {
 				$packageReflector->insert();
 				$this->setPackage($packageReflector);

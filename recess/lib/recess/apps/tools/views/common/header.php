@@ -8,7 +8,8 @@ $qotms = array(
 			'Because it\'s no fun finding booty without a treasure map.',
 			'Because it\'s no fun fighting evil without a sling shot.',
 			'Because it\'s no fun being chased by girls without a cooties shot.',
-			'Because it\'s no fun playing slip \'n slide without a hose.'
+			'Because it\'s no fun playing slip \'n slide without a hose.',
+			'Because it\'s no fun walking in the dark without a night light.',
 );
 ?>
 

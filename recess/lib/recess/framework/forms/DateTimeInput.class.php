@@ -1,4 +1,5 @@
 <?php
+Library::import('recess.framework.forms.FormInput');
 class DateTimeInput extends FormInput {
 	
 	public $showDate = true;
@@ -35,14 +36,22 @@ class DateTimeInput extends FormInput {
 		return $this->value;
 	}
 	
+	function getValueOrZero($array, $key) {
+		if(isset($array[$key]) && $array[$key] != '')
+			return $array[$key];
+		else
+			return 0;
+	}
+	
 	function setValue($value) {
 		if(is_array($value)) {
-			$month = isset($value[self::MONTH]) ? $value[self::MONTH] : 0;
-			$day = isset($value[self::DAY]) ? $value[self::DAY] : 0;
-			$year = isset($value[self::YEAR]) ? $value[self::YEAR] : 0;
-			$hour = isset($value[self::HOUR]) ? $value[self::HOUR] : 0;
-			$minute = isset($value[self::MINUTE]) ? $value[self::MINUTE] : 0;
-			$meridiem = isset($value[self::MERIDIEM]) ? $value[self::MERIDIEM] : 0;
+			if(isset($value[self::MONTH]))
+			$month = $this->getValueOrZero($value, self::MONTH);
+			$day = $this->getValueOrZero($value, self::DAY);
+			$year = $this->getValueOrZero($value, self::YEAR);
+			$hour = $this->getValueOrZero($value, self::HOUR);
+			$minute = $this->getValueOrZero($value, self::MINUTE);
+			$meridiem = $this->getValueOrZero($value, self::MERIDIEM);
 			
 			if($meridiem == self::PM) {
 				$hour += self::PM_HOURS;

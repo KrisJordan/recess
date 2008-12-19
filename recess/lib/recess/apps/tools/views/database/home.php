@@ -4,12 +4,20 @@ $selectedNav = 'database';
 include_once($viewsDir . 'common/header.php');
 ?>
 <h1>Data Sources</h1>
-
-<?php
-foreach($sources as $name => $source) {
-	echo '<h2><a href="', $controller->urlTo('showSource', $name), '">', $name, '</a></h2>';
-}
-?>
 <hr />
+<?php foreach($sources as $name => $source): ?>
+	<h2 class="bottom"><?php echo $name; ?> (<?php echo $sourceInfo[$name]['driver']; ?>)</h2>
+	<div style="margin: 0 0 0 2em">
+	<p>DSN: <?php echo $sourceInfo[$name]['dsn']; ?>
+	<h3 class="bottom">Tables:</h3>
+	<ul style="font-size: 1.8em">
+	<?php foreach($sourceInfo[$name]['tables'] as $table): ?>
+		<li><a href="<?php echo $controller->urlTo('showTable',$name,$table); ?>"><?php echo $table; ?></a></li>
+	<?php endforeach; ?>
+	</ul>
+	</p>
+	</div>
+	<hr />
+<?php endforeach; ?>
 <h3><a href="<?php echo $controller->urlTo('newSource'); ?>">Add another Data Source</a></h3>
 <?php include_once($viewsDir . 'common/footer.php'); ?>

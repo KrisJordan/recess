@@ -11,6 +11,6 @@ $routes = RecessConf::getRoutes();
 Library::import('recess.apps.tools.controllers.RecessToolsCodeController');
 $codeController = new RecessToolsCodeController($response->request->meta->app);
 
-printRoutes($routes, $codeController);
+printRoutes($routes, $codeController, '/recess');
 ?>
 <?php include_once($viewsDir . 'common/footer.php'); ?>

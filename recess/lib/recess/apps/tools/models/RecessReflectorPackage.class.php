@@ -5,7 +5,7 @@ Library::import('recess.database.orm.Model');
  * !HasMany classes, Class: RecessReflectorClass, Key: packageId
  * !HasMany children, Class: RecessReflectorPackage, Key: parentId
  * !BelongsTo parent, Class: RecessReflectorPackage, Key: parentId
- * !Table packages
+ * !Table recess_tools_packages
  */
 class RecessReflectorPackage extends Model {
 	
@@ -18,9 +18,6 @@ class RecessReflectorPackage extends Model {
 	/** !Column Integer */
 	public $parentId;
 	
-	/** !Column Integer */
-	public $modified;
-	
 	function childrenAlphabetically() {
 		return $this->children()->orderBy('name ASC');
 	}
@@ -31,10 +28,8 @@ class RecessReflectorPackage extends Model {
 		}
 	}
 	
-	function insert() {
-		echo 'Inserting package: ' . $this->name . '<br />';
+	function insert() {		
 		parent::insert();
-		
 		$dotPosition = strrpos($this->name, Library::dotSeparator);
 		
 		if($dotPosition !== false) { 
@@ -45,6 +40,7 @@ class RecessReflectorPackage extends Model {
 			if(!$parent->exists()) {
 				$parent->insert();
 			}
+			
 			$this->setParent($parent);
 		}
 	}

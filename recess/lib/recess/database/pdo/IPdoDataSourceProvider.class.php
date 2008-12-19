@@ -33,8 +33,7 @@ interface IPdoDataSourceProvider {
 	 * @return array(string) Column names sorted alphabetically.
 	 */
 	function getColumns($table);
-	
-	
+
 	/**
 	 * Retrieve the a table's RecessTableDescriptor.
 	 *

@@ -13,27 +13,17 @@ class RecessToolsDatabaseController extends Controller {
 	public function home() {
 		$this->default = Databases::getDefaultSource();
 		$this->sources = Databases::getSources();
-	}
-	
-	/** !Route GET, source/$sourceName */
-	public function showSource($sourceName) {
-		$source = Databases::getSource($sourceName);
 		
-		if($source == null) {
-			return $this->redirect($this->urlTo('home'));
-		} else {
-			$this->source = $source;
+		$this->sourceInfo = array();
+		foreach($this->sources as $name => $source) {
+			if($name != 'Default') {
+				$this->sourceInfo[$name]['dsn'] = RecessConf::$namedDatabases[$name];
+			} else {
+				$this->sourceInfo[$name]['dsn'] = RecessConf::$defaultDatabase[0];
+			}
+			$this->sourceInfo[$name]['tables'] = $source->getTables();
+			$this->sourceInfo[$name]['driver'] = $source->getAttribute(PDO::ATTR_DRIVER_NAME);
 		}
-		
-		if($sourceName != 'Default') {
-			$this->dsn = RecessConf::$namedDatabases[$sourceName];
-		} else {
-			$this->dsn = RecessConf::$defaultDatabase[0];
-		}
-		
-		$this->name = $sourceName;
-		$this->tables = $this->source->getTables();
-		$this->driver = $this->source->getAttribute(PDO::ATTR_DRIVER_NAME);
 	}
 	
 	/** !Route GET, source/$sourceName/table/$tableName */
@@ -60,7 +50,7 @@ class RecessToolsDatabaseController extends Controller {
 	public function dropTablePost($sourceName, $tableName) {
 		$source = Databases::getSource($sourceName);
 		$source->dropTable($tableName);
-		return $this->forwardOk($this->urlTo('showSource', $sourceName));
+		return $this->forwardOk($this->urlTo('home'));
 	}
 	
 	/** !Route GET, source/$sourceName/table/$tableName/empty */

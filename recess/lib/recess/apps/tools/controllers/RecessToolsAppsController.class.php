@@ -112,7 +112,7 @@ class RecessToolsAppsController extends Controller {
 		return $message;
 	}
 	
-	private function tryGeneratingFile($name, $template, $outputFile, $values) {
+	private function tryGeneratingFile($name, $template, $outputFile, $values, $allowSlashes = false) {
 		$templateContents = file_get_contents($template);
 		$search = array_keys($values);
 		foreach($search as $key => $value) {
@@ -120,7 +120,10 @@ class RecessToolsAppsController extends Controller {
 		}
 		$replace = array_values($values);
 		foreach($replace as $key => $value) {
-			$replace[$key] = addslashes($value);
+			if(!$allowSlashes) { 
+				$value = addSlashes($value);
+			}
+			$replace[$key] = $value;
 		}
 		$output = preg_replace($search,$replace,$templateContents);
 		
@@ -261,7 +264,7 @@ class RecessToolsAppsController extends Controller {
 		}
 		
 		$this->modelName = $modelName;
-		
+		$this->appName = get_class($app);
 		$this->tableGenAttempted = $createTable;
 		$this->tableWasCreated = false;
 		$this->tableSql = '';
@@ -277,6 +280,90 @@ class RecessToolsAppsController extends Controller {
 		}
 		
 		return $this->ok('createModelComplete');
+	}
+	
+	/** !Route GET, $app/model/$model/scaffolding */
+	public function generateScaffolding($app, $model) {
+		$app = new $app;
+		if(strpos($app->controllersPrefix,'recess.apps.') !== false) {
+			$base = $_ENV['dir.lib'];
+		} else {
+			$base = $_ENV['dir.apps'];
+		}
+		Library::import('recess.lang.Inflector');
+		$controllersDir = $base . str_replace(Library::dotSeparator,Library::pathSeparator,$app->controllersPrefix);
+		$viewsDir = $app->viewsDir;
+		
+		Library::import($app->modelsPrefix . $model);
+		$replacements = 
+			array(	'modelName' => $model, 
+					'modelNameLower' => Inflector::toCamelCaps($model),
+					'fullyQualifiedModel' => $app->modelsPrefix . $model, 
+					'primaryKey' => Model::primaryKeyName($model),
+					'viewsPrefix' => Inflector::toCamelCaps($model),
+					'routesPrefix' => Inflector::toCamelCaps($model),);
+		
+		$this->messages[] = $this->tryGeneratingFile('RESTful ' . $model . ' Controller', $this->application->codeTemplatesDir . 'scaffolding/controllers/ResourceController.template.php', $controllersDir . $model . 'Controller.class.php', $replacements);
+		
+		$indexFieldTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/indexField.template.php');
+		$indexDateFieldTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/indexDateField.template.php');
+		$editFormInputTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/editFormInput.template.php');
+		
+		$indexFields = '';
+		$formFields = '';
+		foreach(Model::getProperties($model) as $property) {
+			if($property->isPrimaryKey) continue;
+			$values = array(
+							'fieldName' => $property->name,
+							'primaryKey' => Model::primaryKeyName($model),
+							'modelName' => $model,
+							'modelNameLower' => Inflector::toCamelCaps($model),
+							'fieldNameEnglish' => Inflector::toEnglish($property->name) );
+			switch($property->type) {
+				case RecessType::DATE:
+				case RecessType::DATETIME:
+				case RecessType::TIME:
+				case RecessType::TIMESTAMP:
+					$template = $indexDateFieldTemplate;
+					break;
+				default:
+					$template = $indexFieldTemplate;
+					break;
+			}
+			$formFields .= $this->fillTemplate($editFormInputTemplate, $values);
+			$indexFields .= $this->fillTemplate($template, $values);
+		}
+		
+		$replacements['fields'] = $indexFields;
+		$replacements['editFields'] = $formFields;
+		
+		$viewsDir = $app->viewsDir . $replacements['viewsPrefix'] . '/';
+		$this->messages[] = $this->tryCreatingDirectory($viewsDir, $model . ' views dir');
+		$this->messages[] = $this->tryGeneratingFile('index view', $this->application->codeTemplatesDir . 'scaffolding/views/index.template.php', $viewsDir . 'index.php', $replacements);
+		$this->messages[] = $this->tryGeneratingFile('editForm view', $this->application->codeTemplatesDir . 'scaffolding/views/editForm.template.php', $viewsDir . 'editForm.php', $replacements, true);
+		$this->messages[] = $this->tryGeneratingFile('static details', $this->application->codeTemplatesDir . 'scaffolding/views/details.template.php', $viewsDir . 'details.php', $replacements);
+		$this->appName = get_class($app);
+		$this->modelName = $model;
+	}
+	
+	protected function getTemplate($templateFile) {
+		try {
+			return file_get_contents($templateFile);
+		} catch (Exception $e) {
+			return '';
+		}
+	}
+	
+	protected function fillTemplate($template, $values) {
+		$search = array_keys($values);
+		foreach($search as $key => $value) {
+			$search[$key] = '/\{\{' . $value . '\}\}/';
+		}
+		$replace = array_values($values);
+		foreach($replace as $key => $value) {
+			$replace[$key] = addslashes($value);
+		}
+		return preg_replace($search,$replace,$template);
 	}
 	
 	/** !Route GET, model/gen/analyzeModelName/$modelName */
@@ -304,8 +391,17 @@ class RecessToolsAppsController extends Controller {
 		$this->columns = $this->source->getTableDescriptor($tableName)->getColumns();
 	}
 	
-	/** !Route GET, controller/gen */
-	public function createController() {
+	/** !Route GET, $app/controller/gen */
+	public function createController($app) {
+		
+		$application = $this->getApplication($app);
+		if(!$application instanceof Application) {
+			return $application; // App not found
+		}
+		
+		$this->app = $application;
+		
+		return $this->ok('genController');
 	}
 	
 	private function getApplication($appClass) {

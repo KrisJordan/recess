@@ -1,5 +1,4 @@
 <?php
-
 Library::import('recess.http.ForwardingResponse');
 /**
  * Entry into Recess! Framework occurs in the coordinator. It is responsible
@@ -53,6 +52,14 @@ final class Recess {
 			$forwardRequest->method = Methods::GET;
 			if(isset($response->context)) {
 				$forwardRequest->get = $response->context;
+			}
+			
+			$forwardRequest->cookies = $response->request->cookies;
+			$cookies = $response->getCookies();
+			if(is_array($cookies)) {
+				foreach($response->getCookies() as $cookie) {	
+					$forwardRequest->cookies[$cookie->name] = $cookie->value;
+				}
 			}
 			Recess::main($forwardRequest, $policy, $apps, $routes, $plugins);
 		}

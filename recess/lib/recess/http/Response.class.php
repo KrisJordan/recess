@@ -29,5 +29,12 @@ class Response {
 	protected function addHeader($header) {
 		$this->headers[] = $header;
 	}
+	
+	public function clearCookies() {
+		if(is_array($this->request->cookies))
+		foreach(array_keys($this->request->cookies) as $cookieKey) {
+			$this->addCookie(new Cookie($cookieKey,''));
+		}
+	}
 }
 ?>

@@ -45,7 +45,6 @@ class DateTimeInput extends FormInput {
 	
 	function setValue($value) {
 		if(is_array($value)) {
-			if(isset($value[self::MONTH]))
 			$month = $this->getValueOrZero($value, self::MONTH);
 			$day = $this->getValueOrZero($value, self::DAY);
 			$year = $this->getValueOrZero($value, self::YEAR);

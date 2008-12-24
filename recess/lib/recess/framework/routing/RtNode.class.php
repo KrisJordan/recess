@@ -201,7 +201,6 @@ class RtNode {
 	}
 	
 	public function matches($path) {
-		// TODO: Add regexp support
 		return $path != '';
 	}
 	
@@ -222,7 +221,11 @@ class RtNode {
 	 * @param string Path to be split and reversed.
 	 */
 	private function getRevesedPathParts($path) {
-		return array_reverse(array_filter(explode('/', $path)));
+		return array_reverse(array_filter(explode('/', $path),array('RtNode','filterPath')));
+	}
+	
+	public static function filterPath($input) {
+		return trim($input) != '';
 	}
 }
 ?>

@@ -372,6 +372,18 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 					case RecessType::BOOLEAN:
 						$criterion->value = $criterion->value == true ? 1 : 0;
 						break;
+					case RecessType::INTEGER:
+						if(!is_numeric($criterion->value)) {
+							$criterion->value = null;
+						} else {
+							$criterion->value = (int)$criterion->value;
+						}
+						break;
+					case RecessType::FLOAT:
+						if(!is_numeric($criterion->value)) {
+							$criterion->value = null;
+						}
+						break;
 				}
 			}
 		}

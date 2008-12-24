@@ -50,8 +50,18 @@ class Form {
 		}
 	}
 	
-	function input($name) {
+	function input($name, $class = '') {
+		if($class != '') {
+			$this->inputs[$name]->class = $class;
+		}
 		$this->inputs[$name]->render();
+	}
+	
+	function changeInput($name, $newInput) {
+		$current = $this->inputs[$name];
+		$newInput .= 'Input';
+		$this->inputs[$name] = new $newInput($name);
+		$this->inputs[$name]->setValue($current->getValue());
 	}
 	
 	function fill(array $keyValues) {

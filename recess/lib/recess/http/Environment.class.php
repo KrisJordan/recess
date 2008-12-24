@@ -30,7 +30,7 @@ class Environment {
 		
 		$request->password = @$_SERVER['PHP_AUTH_PW'];
 		
-		$request->cookie = $_COOKIE;
+		$request->cookies = $_COOKIE;
 		
 		// TODO: isAjax?, from django
 		// def is_ajax(self):

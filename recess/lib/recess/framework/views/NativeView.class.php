@@ -21,6 +21,9 @@ class NativeView extends AbstractView {
 					if($value instanceof Form) {
 						unset($response->data[$key]);
 					}
+					if(substr($key,0,1) == '_') {
+						unset($response->data[$key]);
+					}
 				}
 				if(isset($response->data['application'])) unset ($response->data['application']);
 				if(isset($response->data['controller'])) unset ($response->data['controller']);

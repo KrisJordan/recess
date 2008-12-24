@@ -188,13 +188,15 @@ class Library {
 		
 		if($pathIndex == -1) {
 			foreach(self::$paths as $index => $path) {
-				@include_once($path . $file);
-				if(class_exists($class, false) || interface_exists($class, false)) {
-					if(isset(self::$namedRun)) { self::namedRunMissed($class); }
-					self::$dirtyClasses = true;
-					self::$classesByClass[$class][self::PATH] = $index;
-					self::$loaded[$class] = true;
-					return true;
+				if(file_exists($path . $file)) {
+					include_once($path . $file);
+					if(class_exists($class, false) || interface_exists($class, false)) {
+						if(isset(self::$namedRun)) { self::namedRunMissed($class); }
+						self::$dirtyClasses = true;
+						self::$classesByClass[$class][self::PATH] = $index;
+						self::$loaded[$class] = true;
+						return true;
+					}
 				}
 			}
 			return false;
@@ -286,7 +288,7 @@ function __autoload($class) {
 		Library::load($class);
 	} catch (Exception $exception) {
 		Diagnostics::handleException($exception);
-		die();
+		die('Could not autoload ' . $class);
 	}
 }
 

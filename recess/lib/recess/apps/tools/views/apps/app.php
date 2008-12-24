@@ -34,7 +34,7 @@ printClassesInNamespace($app->modelsPrefix, $codeController);
 ?>
 </div>
 <div class="span-6">
-<h2 class="bottom">Controllers (<a href="<?php echo $controller->urlTo('createController'); ?>">new</a>)</h2>
+<h2 class="bottom">Controllers (<a href="<?php echo $controller->urlTo('createController', get_class($app)); ?>">new</a>)</h2>
 <p>Location: <a href="<?php echo $codeController->urlTo('packageInfo', substr($app->controllersPrefix,0,-1)); ?>"><?php echo $app->controllersPrefix; ?></a></p>
 <?php
 printClassesInNamespace($app->controllersPrefix, $codeController);

@@ -1,9 +1,11 @@
 <?php
-Library::import('recess.http.Methods');
-Library::import('recess.http.Request');
-Library::import('recess.http.Formats');
-Library::import('recess.http.responses.BadRequestResponse');
-Library::import('recess.lang.Inflector');
+Library::import('recess.lang.RecessObject');
+Library::import('recess.lang.RecessReflectionClass');
+Library::import('recess.lang.Annotation', true);
+Library::import('recess.framework.interfaces.IController');
+Library::import('recess.framework.controllers.annotations.ViewAnnotation', true);
+Library::import('recess.framework.controllers.annotations.RouteAnnotation', true);
+Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation', true);
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,
@@ -13,110 +15,70 @@ Library::import('recess.lang.Inflector');
  * 
  * @author Kris Jordan
  */
-abstract class AbstractController {
-	/**
-	 * The routes which map to a controller's methods
-	 * @todo Refactor this out and use reflection in getRoutes() with Recess! Annotations
-	 */
-	protected $routes = array();
+abstract class AbstractController extends RecessObject implements IController {
 	
-	/** The formats/content-types which a controller responds to. */
-	protected $formats = array(Formats::XHTML);
+	public abstract function init();
 	
-	public function __construct() {	}
-	
-	/**
-	 * Routes map URIs to a Controller's method.
-	 * @todo Refactor this to use Recess! Annotations. In fact, factor this out of controller.
-	 * @return array(Routes)
-	 */
-	public function getRoutes() {
-		Library::import('recess.lang.RecessReflectionClass');
-		$reflectionClass = new RecessReflectionClass($this);
-		$methods = $reflectionClass->getMethods();
-		foreach($methods as $method) {
-			$annotations = $method->getAnnotations();
-			foreach($annotations as $annotation) {
-				if($annotation instanceof RouteAnnotation) {
-					$this->routes[] = new Route($this,$method->name,$annotation->methods,$annotation->path);
-				}
-			}
-		}
-		return $this->routes;
+	public static function getViewClass($class) {
+		return self::getClassDescriptor($class)->viewClass;
 	}
 	
-	/**
-	 * The entry point from the Recess into a Controller. The Controller is responsible
-	 * for the Inversion-of-Control dispatch to one of its own methods.
-	 * @todo Should the meat of this logic be refactored out for a clean base class?
-	 * @param Request $request The preprocessed recess.http.Request
-	 * @return Response
-	 */
-	public function serve(Request $request) {
-		// TODO: Beautify this code, break it up into steps.
-		$response = null;
-		
-		if(!in_array($request->format, $this->formats)) {
-			return new BadRequestResponse($request);
-		}
-		
-		// First preference: use meta information gleaned in routing in preprocessor
-		$class = new ReflectionClass(get_class($this));
-		if(isset($request->meta['function'])) {
-			$functionName = $request->meta['function'];
-		} else {
-			// Fallback: use second part of resource to see if there is a matching method
-			//  using the format (http_method)(SecondResourcePart)
-			//  ie: GET /cars/all -> getAll
-			//      PUT /cars/byId/1 -> putById
-			if(isset($request->resourceParts[1])) {
-				$functionName = strtolower($request->method) . Inflector::toProperCaps($request->resourceParts[1]);
-			}
-		}
-		
-		if(isset($functionName)) {
-			if($class->hasMethod($functionName)) {
-				$function = $class->getMethod($functionName);
-				$functionParameters = $function->getParameters();
-				$parameterCount = count($functionParameters);
-				
-				if($parameterCount < 1) {
-					// TODO: Decide whether this should be the expected behavior.
-					//  Seems we ALWAYS want to pass the Request object.
-					$response = $function->invoke($this);
-				} else if($parameterCount == 1) {
-					$response = $function->invoke($this, $request);
-				} else {
-					// Parameters are requested inbound
-					if(isset($request->meta['function_args']) && is_array($request->meta['function_args'])) {
-						// Map function_args to expected parameters
-						$callArguments = array($request);
-						foreach($functionParameters as $parameter) {
-							if($parameter->getPosition() == 0) continue;
-							if(!isset($request->meta['function_args'][$parameter->getName()])) {
-								if(!$parameter->isOptional()) {
-									throw new RecessException('Controller method "' . $functionName . '" expects ' . $parameterCount . ' arguments, given ' . count($request->meta['function_args']) . ' and missing required parameter: ' . $parameter->name);
-								}
-							} else {
-								$callArguments[] = $request->meta['function_args'][$parameter->getName()];
-							}							
-						}
-						$response = $function->invokeArgs($this, $callArguments);
-					} else {
-						throw new RecessException('Controller method expects routed functions.', get_defined_vars());
-					}
-				}
-				
-				if($response instanceof Response) {
-					return $response;
-				} else {
-					return new BadRequestResponse($request);
-				}
-			}
-		}
-		
-		return new BadRequestResponse($request);
+	public static function getViewPrefix($class) {
+		return self::getClassDescriptor($class)->viewPrefix;
 	}
+	
+	public static function getRoutes($class) {
+		return self::getClassDescriptor($class)->routes;
+	}
+
+	protected function ok($viewName = null) {
+		Library::import('recess.http.responses.OkResponse');
+		$response = new OkResponse($this->request);
+		if(isset($viewName)) $response->meta->viewName = $viewName;
+		return $response;
+	}
+	
+	protected function conflict($viewName) {
+		Library::import('recess.http.responses.ConflictResponse');
+		$response = new ConflictResponse($this->request);
+		$response->meta->viewName = $viewName;
+		return $response;
+	}
+	
+	protected function redirect($redirectUri) {
+		Library::import('recess.http.responses.TemporaryRedirectResponse');
+		$response = new TemporaryRedirectResponse($this->request, $redirectUri);
+		return $response;
+	}
+	
+	protected function forwardOk($forwardedUri) {
+		Library::import('recess.http.responses.ForwardingOkResponse');
+		return new ForwardingOkResponse($this->request, $forwardedUri);
+	}
+	
+	protected function forwardNotFound($forwardUri, $flash = '') {
+		Library::import('recess.http.responses.ForwardingNotFoundResponse');
+		return new ForwardingNotFoundResponse($this->request, $forwardUri, array('flash' => $flash));
+	}
+	
+	protected function created($resourceUri, $contentUri = '') {
+		Library::import('recess.http.responses.CreatedResponse');
+		if($contentUri == '') $contentUri = $resourceUri;
+		return new CreatedResponse($this->request, $resourceUri, $contentUri);
+	}
+	
+	protected function unauthorized($forwardUri, $realm = '') { 
+		Library::import('recess.http.responses.ForwardingUnauthorizedResponse');
+		return new ForwardingUnauthorizedResponse($this->request, $forwardUri, $realm);
+	}
+}
+
+class ControllerDescriptor extends RecessObjectDescriptor {
+	public $routes = array();
+	public $methodUrls = array();
+	public $routesPrefix = '';
+	public $viewClass = 'recess.framework.views.NativeView';
+	public $viewPrefix = '';
 }
 
 ?>

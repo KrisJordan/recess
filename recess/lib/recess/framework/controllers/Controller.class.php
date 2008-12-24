@@ -1,6 +1,6 @@
 <?php
-Library::import('recess.lang.RecessObject');
-Library::import('recess.lang.RecessReflectionClass');
+Library::import('recess.framework.controllers.AbstractController');
+
 Library::import('recess.lang.Annotation', true);
 Library::import('recess.framework.controllers.annotations.ViewAnnotation', true);
 Library::import('recess.framework.controllers.annotations.RouteAnnotation', true);
@@ -14,9 +14,13 @@ Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation
  * 
  * @author Kris Jordan
  */
-abstract class Controller extends RecessObject {
+abstract class Controller extends AbstractController {
+	/** @var Request */
 	protected $request;
+	
 	protected $headers;
+	
+	/** @var Application */
 	protected $application;
 	
 	/** The formats/content-types which a controller responds to. */
@@ -27,18 +31,6 @@ abstract class Controller extends RecessObject {
 	}
 	
 	public function init() { }
-	
-	public static function getViewClass($class) {
-		return self::getClassDescriptor($class)->viewClass;
-	}
-	
-	public static function getViewPrefix($class) {
-		return self::getClassDescriptor($class)->viewPrefix;
-	}
-	
-	public static function getRoutes($class) {
-		return self::getClassDescriptor($class)->routes;
-	}
 	
 	protected static function buildClassDescriptor($class) {
 		try {
@@ -149,7 +141,12 @@ abstract class Controller extends RecessObject {
 	final function serve(Request $request) {		
 		$this->request = $request;
 		
-		$this->init();
+		$shortWiredResponse = $this->init();
+		if($shortWiredResponse instanceof Response) {
+				$shortWiredResponse->meta->viewClass = 'recess.framework.views.NativeView';
+				$shortWiredResponse->meta->viewPrefix = '';
+				return $shortWiredResponse;
+		}
 		
 		$methodName = $request->meta->controllerMethod;
 		$methodArguments = $request->meta->controllerMethodArguments;
@@ -223,63 +220,8 @@ abstract class Controller extends RecessObject {
 		return $callArgs;
 	}
 
-	protected function ok($viewName = null) {
-		Library::import('recess.http.responses.OkResponse');
-		$response = new OkResponse($this->request);
-		if(isset($viewName)) $response->meta->viewName = $viewName;
-		return $response;
-	}
-	
-	protected function conflict($viewName) {
-		Library::import('recess.http.responses.ConflictResponse');
-		$response = new ConflictResponse($this->request);
-		$response->meta->viewName = $viewName;
-		return $response;
-	}
-	
-	protected function redirect($redirectUri) {
-		Library::import('recess.http.responses.TemporaryRedirectResponse');
-		$response = new TemporaryRedirectResponse($this->request, $redirectUri);
-		return $response;
-	}
-	
-	protected function forwardOk($forwardedUri) {
-		Library::import('recess.http.responses.ForwardingOkResponse');
-		return new ForwardingOkResponse($this->request, $forwardedUri);
-	}
-	
-	protected function forwardNotFound($forwardUri, $flash = '') {
-		Library::import('recess.http.responses.ForwardingNotFoundResponse');
-		return new ForwardingNotFoundResponse($this->request, $forwardUri, array('flash' => $flash));
-	}
-	
-	protected function created($resourceUri, $contentUri = '') {
-		Library::import('recess.http.responses.CreatedResponse');
-		if($contentUri == '') $contentUri = $resourceUri;
-		return new CreatedResponse($this->request, $resourceUri, $contentUri);
-	}
-
 	public function application() {
 		return $this->application;
-	}
-}
-
-class ControllerDescriptor extends RecessObjectDescriptor {
-	public $routes = array();
-	public $methodUrls = array();
-	public $routesPrefix = '';
-	public $viewClass = 'recess.framework.views.NativeView';
-	public $viewPrefix = '';
-	
-	public static function __set_state($array) {
-		$descriptor = new ControllerDescriptor();
-		$descriptor->routes = $array['routes'];
-		$descriptor->methodUrls = $array['methodUrls'];
-		$descriptor->routesPrefix = $array['routesPrefix'];
-		$descriptor->viewClass = $array['viewClass'];
-		$descriptor->viewPrefix = $array['viewPrefix'];
-		$descriptor->attachedMethods = $array['attachedMethods'];
-		return $descriptor;
 	}
 }
 

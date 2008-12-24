@@ -4,9 +4,9 @@ Library::import('recess.framework.forms.Form');
 class ModelForm extends Form {
 	protected $model = null;
 	
-	function input($name) {
+	function input($name, $class = '') {
 		$this->inputs[$name]->setValue($this->model->$name);
-		parent::input($name);
+		parent::input($name, $class);
 	}
 	
 	function __construct($name, $values, Model $model = null) {		

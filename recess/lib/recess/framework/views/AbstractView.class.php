@@ -42,7 +42,11 @@ abstract class AbstractView extends RecessObject {
 		}
 		
 		foreach($response->getCookies() as $cookie) {
-			setcookie($cookie->name, $cookie->value, $cookie->expire, $cookie->path, $cookie->domain, $cookie->secure, $cookie->httponly);
+			if($cookie->value == '') {
+				setcookie($cookie->name, '', time() - 10000, $cookie->path, $cookie->domain, $cookie->secure, $cookie->httponly);
+			} else {
+				setcookie($cookie->name, $cookie->value, $cookie->expire, $cookie->path, $cookie->domain, $cookie->secure, $cookie->httponly);
+			}
 		}
 		
 		flush();

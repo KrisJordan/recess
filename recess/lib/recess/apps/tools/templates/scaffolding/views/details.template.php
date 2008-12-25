@@ -11,4 +11,6 @@
 	</fieldset>
 </form>
 <hr />
+<a href="<?php echo $controller->urlTo('index'); ?>">Back to list of {{modelName}}s</a>
+<hr />
 <?php include_once($viewsDir . 'common/footer.php'); ?>

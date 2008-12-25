@@ -1,0 +1,75 @@
+h1. "Recess! PHP Framework":http://www.recessframework.org/
+
+Welcome to the Recess Framework Preview! Let's get going...
+
+h2. Requirements
+
+# Apache
+## mod_rewrite suggested
+# PHP 5.1 or greater (tested on 5.2.6)
+
+h2. Installation Process
+
+# Unzip contents into your web documents path (i.e. public_html)
+# On a development machine make these directories writeable by PHP:
+## apps/
+## recess/temp/
+## recess/sqlite/
+# Open recess-conf.php and set RecessConf::$defaultDatabase
+## If using MySQL: Uncomment the 'mysql:...' line and fill in DBNAME/USER/PASS
+## If using Sqlite: Uncomment the 'sqlite:...' line and name the database
+# Do you have mod_rewrite?
+## Yes: Open your browser to the location you unzipped
+## No: Open your browser to the location you unzipped followed by index.php
+# If you see "Welcome to Recess!" we're ready to rock.
+# This URL will be referenced {$installUrl}
+
+h2. Recess Tools Mini-tutorial
+
+# Browse to http://{$installUrl}/recess/ (i.e. http://localhost/recess)
+# Do you see Recess Tools? Good.
+# Click 'Database'
+## Make sure your default database shows up.
+# Click 'Apps' and let's start a new app
+## Click 'Start a New Application'
+## Human name: My First Recess App
+## Programmatic name: FirstApp [NEXT]
+## Url prefix: firstApp/ [NEXT]
+## Follow instructions to activate your first app.
+## In a new tab browse to http://{$installUrl}/firstApp/
+## Do you see a Hello page? Great.
+# Back in Recess Tools click 'Apps'
+# Click on 'My First Recess App' - this is your app dashboard.
+# Click on 'new' beside of Models
+## Name the model Post
+## Select 'Table does not exist.'
+## Add 2 properties: 
+### title => String
+### body => Text
+## Click 'Generate Model'
+## Click 'Generate Scaffolding'
+## In your other tab browse to http://{$installUrl}/firstApp/post
+## Try creating a new post.
+# In your editor open the apps dir in your Recess install location.
+## Poke around in here to get a sense of what Tools just generated.
+# From here have fun, keep tinkering, and stay tuned to RecessFramework.org
+
+h2. On the Horizon
+
+Following the preview the priorities of Recess are:
+
+* Tutorials and Documentation (!!!)
+* Forms and Validation (Fairly naive in this preview release.)
+* Friendlier Production-mode Error Pages
+* More REST: Content-negotiation, HEAD, OPTIONS, etc.
+* More powerful Models
+
+Stay tuned, as questions and get involved at RecessFramework.org...
+...and enjoy yourselves!
+
+Best-
+
+Kris Jordan
+
+http://www.krisjordan.com/
+http://www.twitter.com/KrisJordan

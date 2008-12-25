@@ -23,12 +23,12 @@ RecessConf::$defaultTimeZone = 'America/New_York';
 
 RecessConf::$defaultDatabase
 	= array(	//'sqlite:' . $_ENV['dir.bootstrap'] . 'recess/sqlite/default.db'
-				'mysql:host=localhost;dbname=recess', 'recess', 'recess'
+				//'mysql:host=localhost;dbname=DBNAME', 'USER', 'PASS'
 			);
 
 RecessConf::$namedDatabases
-	= array( 	// 'name' => array('sqlite:' . $_ENV['dir.bootstrap'] . 'recess/sqlite/default.db')
-				// 'name' => array('mysql:host=localhost;dbname=recess', 'username', 'password')
+	= array( 	// 'nameFoo' => array('sqlite:' . $_ENV['dir.bootstrap'] . 'recess/sqlite/default.db')
+				// 'nameBar' => array('mysql:host=localhost;dbname=recess', 'username', 'password')
 			);
 
 // Paths to the recess and apps directories

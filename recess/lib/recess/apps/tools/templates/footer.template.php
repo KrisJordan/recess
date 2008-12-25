@@ -1,6 +1,6 @@
 			</div>
 			<div class="span-24 footer">
-			  <p class="quiet bottom"><a href="http://<?php echo $_ENV['url.base'] . 'blog/'; ?>">Blog</a> is &copy; <?php echo date('Y'); ?>
+			  <p class="quiet bottom"><a href="http://<?php echo $_ENV['url.base'] . '{{routesPrefix}}'; ?>">{{appName}}</a> is &copy; <?php echo date('Y'); ?>
 			  {Insert Kick-ass App Developer Name Here}. All rights reserved.
 			  </p>
 			</div>

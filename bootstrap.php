@@ -97,6 +97,10 @@ abstract class RecessConf {
 		
 		Library::import('recess.database.Databases');
 		Library::import('recess.database.orm.ModelDataSource');
+		
+		if(empty(RecessConf::$defaultDatabase)) {
+			die('Congratulations, Recess is almost setup!<br /><strong>Next step</strong>: Setup <strong>recess-conf.php</strong> to point to your database. Checkout the <strong>README.textile</strong> file for detailed instructions.');
+		}
 		Databases::setDefaultSource(new ModelDataSource(RecessConf::$defaultDatabase));//,RecessConf::$defaultDatabase[1],RecessConf::$defaultDatabase[2]));
 		
 		if(!empty(RecessConf::$namedDatabases)) {

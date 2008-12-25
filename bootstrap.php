@@ -53,6 +53,10 @@ abstract class RecessConf {
 	public static $policy;
 	
 	static function init() {
+		if(self::$mode == self::PRODUCTION) {
+			self::$useTurboSpeed = true;
+		}
+		
 		$_ENV['dir.recess'] = self::$recessDir;
 		$_ENV['dir.apps'] = self::$appsDir;
 		$_ENV['dir.test'] = self::$recessDir . 'test/';

@@ -20,7 +20,7 @@ class HasManyRelationship extends Relationship {
 	function init($modelClassName, $relationshipName) {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
-		$this->foreignKey = Inflector::toUnderscores($modelClassName) . '_id';
+		$this->foreignKey = Inflector::toCamelCaps($modelClassName) . 'Id';
 		$this->foreignClass = Inflector::toSingular(Inflector::toProperCaps($relationshipName));
 		$this->onDelete = Relationship::UNSPECIFIED;
 	}

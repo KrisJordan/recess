@@ -19,7 +19,7 @@ class BelongsToRelationship extends Relationship {
 		$this->localClass = $modelClassName;
 		$this->name = $relationshipName;
 		$this->onDelete = Relationship::NULLIFY;
-		$this->foreignKey = Inflector::toUnderscores($relationshipName) . '_id';
+		$this->foreignKey = Inflector::toCamelCaps($relationshipName) . 'Id';
 		$this->foreignClass = Inflector::toProperCaps($relationshipName);
 	}
 	

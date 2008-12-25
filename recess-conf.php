@@ -15,14 +15,13 @@ RecessConf::$mode = RecessConf::DEVELOPMENT; // or RecessConf::PRODUCTION
 
 RecessConf::$applications 
 	= array(	'recess.apps.tools.RecessToolsApplication',
-				'blog.BlogApplication',
-				'customerBackend.CustomerBackendApplication',
+				'welcome.WelcomeApplication',
 			);
 
 RecessConf::$defaultTimeZone = 'America/New_York';
 
 RecessConf::$defaultDatabase
-	= array(	// 'sqlite:' . $_ENV['dir.bootstrap'] . 'recess/sqlite/default.db'
+	= array(	//'sqlite:' . $_ENV['dir.bootstrap'] . 'recess/sqlite/default.db'
 				'mysql:host=localhost;dbname=recess', 'recess', 'recess'
 			);
 
@@ -35,6 +34,8 @@ RecessConf::$namedDatabases
 RecessConf::$recessDir = $_ENV['dir.bootstrap'] . 'recess/';
 RecessConf::$appsDir = $_ENV['dir.bootstrap'] . 'apps/';
 
+// Cache providers are only enabled during DEPLOYMENT mode.
+//  Always use at least the Sqlite cache.
 RecessConf::$cacheProviders 
 	= array(	
 				// 'Apc',
@@ -42,5 +43,4 @@ RecessConf::$cacheProviders
 				'Sqlite',
 			);
 
-RecessConf::$useTurboSpeed = false; // I wanna go FAST! (Note: Experimental feature.)
 ?>

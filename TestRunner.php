@@ -1,5 +1,5 @@
 <?php
-// Pre-release test runner. This will become a plug-in.
+// Pre-release test runner. This will become a mini-app in Recess Tools
 
 require_once('recess/lib/simpletest/autorun.php');
 require_once('recess/lib/simpletest/mock_objects.php');

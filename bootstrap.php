@@ -2,7 +2,7 @@
 /**
  * Recess! Framework is bootstrapped by passing control to Recess::main().
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 $_ENV['dir.bootstrap'] = str_replace('\\','/',realpath(dirname(__FILE__))) . '/';
 $_ENV['url.base'] = str_replace('bootstrap.php', '', $_SERVER['PHP_SELF']);

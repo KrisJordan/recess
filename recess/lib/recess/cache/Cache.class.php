@@ -7,9 +7,9 @@
  * of including individual providers. For the perf concerned be 
  * encouraged to remove unused cache providers from this file.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @package Recess! Framework
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license MIT
  * @link http://www.recessframework.org/
  **/
 abstract class Cache {
@@ -84,7 +84,7 @@ abstract class Cache {
 
 /**
  * Common interface for caching subsystems.
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 interface ICacheProvider {
 	/**

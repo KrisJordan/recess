@@ -3,7 +3,11 @@
  * Recess! Framework base class for anonymous classes
  * with attachable methods.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license MIT
+ * @link http://www.recessframework.org/
  */
 abstract class RecessObject {
 	
@@ -124,7 +128,7 @@ abstract class RecessObject {
  * state about a RecessObject. This additional state includes
  * attached methods or named public properties.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 class RecessObjectDescriptor {
 	protected $attachedMethods = array();
@@ -167,7 +171,7 @@ class RecessObjectDescriptor {
  * to an instance of an object and the mapped function on
  * the object.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 class RecessObjectAttachedMethod {
 	public $object;

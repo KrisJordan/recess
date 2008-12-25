@@ -1,10 +1,16 @@
 <?php
-
 Library::import('recess.http.Request');
 Library::import('recess.http.Formats');
 Library::import('recess.http.QueryString');
 Library::import('recess.http.Methods');
 
+/**
+ * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license MIT
+ * @link http://www.recessframework.org/
+ */
 class Environment {
 
 	public static function getRawRequest() {

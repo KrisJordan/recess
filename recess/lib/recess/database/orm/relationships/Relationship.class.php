@@ -2,10 +2,10 @@
 /**
  * A Recess Relationship is an abstraction of a foreign key relationship on the RDBMS.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008 Kris Jordan
  * @package Recess! Framework
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license MIT
  * @link http://www.recessframework.org/
  */
 abstract class Relationship {

@@ -40,10 +40,10 @@ class DefaultPolicy implements IPolicy {
 				$controller = $this->getControllerFromRouteResult($request, $routeResult);
 			} else {
 				// TODO: Shortwire a result here for a method not supported HTTP response.
-				throw new RecessException('METHOD not supported.', get_defined_vars());
+				throw new RecessResponseException('METHOD not supported, supported METHODs are: ' . implode(',', $routeResult->acceptableMethods), ResponseCodes::HTTP_METHOD_NOT_ALLOWED, get_defined_vars());
 			}
 		} else {
-			throw new RecessException('Resource does not exist.', get_defined_vars());
+			throw new RecessResponseException('Resource does not exist.', ResponseCodes::HTTP_NOT_FOUND, get_defined_vars());
 		}
 		
 		$this->controller = $controller;

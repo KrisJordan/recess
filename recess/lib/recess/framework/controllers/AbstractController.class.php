@@ -13,7 +13,7 @@ Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation
  * returning a Response which contains relevant state for a view to render
  * the Response.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 abstract class AbstractController extends RecessObject implements IController {
 	

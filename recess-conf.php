@@ -6,12 +6,13 @@
  * For tutorials, documentation, bug reports, feature suggestions
  * head over to: 
  * 
- * http://www.recessframework.com/
+ * http://www.recessframework.org/
  * 
  * Enjoy! -Kris Jordan (http://www.krisjordan.com)
  */
 
-RecessConf::$mode = RecessConf::DEVELOPMENT; // or RecessConf::PRODUCTION
+// RecessConf::DEVELOPMENT or RecessConf::PRODUCTION
+RecessConf::$mode = RecessConf::DEVELOPMENT; 
 
 RecessConf::$applications 
 	= array(	'recess.apps.tools.RecessToolsApplication',

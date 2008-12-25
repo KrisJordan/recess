@@ -5,7 +5,7 @@ Library::import('recess.http.ForwardingResponse');
  * for the flow of control from preprocessing of request data, the serving of a request
  * in a controller, and rendering a response to the request through a view.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @final 
  */
 final class Recess {

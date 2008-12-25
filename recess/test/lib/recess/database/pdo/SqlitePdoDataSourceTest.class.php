@@ -4,7 +4,7 @@ Library::import('recess.database.pdo.PdoDataSource');
 
 /**
  * Unit Tests for recess/sources/db/pdo/PdoDataSource using SQLite provider
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @see recess/sources/db/pdo/PdoDataSource.class.php
  */
 class SqlitePdoDataSourceTest extends UnitTestCase  {

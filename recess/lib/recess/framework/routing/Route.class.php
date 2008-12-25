@@ -2,7 +2,7 @@
 /**
  * Routes map a routing path to a application, class, and method.
  * 
- * @author Kris Jordan <kris@krisjordan.com>
+ * @author Kris Jordan <krisjordan@gmail.com> <kris@krisjordan.com>
  * @copyright Copyright (c) 2008, Kris Jordan 
  * @package recess.routing
  */

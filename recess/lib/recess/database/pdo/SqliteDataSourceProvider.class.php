@@ -3,7 +3,7 @@ Library::import('recess.database.pdo.IPdoDataSourceProvider');
 
 /**
  * Sqlite 3 Data Source Provider
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 	const SQLITE_TABLE_PREFIX = 'sqlite_';

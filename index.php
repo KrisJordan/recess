@@ -7,7 +7,7 @@
  * 
  * Once .htaccess is working go ahead and delete this file.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 
 define('INDEX_PHP','index.php');

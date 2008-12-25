@@ -15,6 +15,12 @@ Library::import('recess.apps.tools.models.RecessReflectorMethod');
  */
 class RecessToolsCodeController extends Controller {
 	
+	public function init() {
+		if(RecessConf::$mode == RecessConf::PRODUCTION) {
+			throw new RecessResponseException('Tools are available only during development.', ResponseCodes::HTTP_NOT_FOUND, array());
+		}
+	}
+	
 	protected function checkTables() {
 		try{ // This is so hacked it's embarrasing. Sorry folks.
 			Model::createTableFor('RecessReflectorClass');

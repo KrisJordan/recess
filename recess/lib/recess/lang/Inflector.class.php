@@ -4,7 +4,11 @@
  * between their singular and plural forms, as well as programmatic forms
  * (i.e. camelCapsFormat, ProperCapsFormat, under_scores_format)
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license MIT
+ * @link http://www.recessframework.org/
  */
 class Inflector {
 	

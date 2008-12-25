@@ -8,10 +8,10 @@ require_once($_ENV['dir.lib'] . 'recess/cache/Cache.class.php');
  * include/require functions. Library is how Recess! dynamically 'compiles' all classes
  * into a single PHP file.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008 Kris Jordan
  * @package Recess! Framework
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license MIT
  * @link http://www.recessframework.org/
  * 
  * @todo Allow framework to register packages/shortcuts? i.e.: Library::import('recess.framework.models.Model') vs. Library::import('recess','Model')

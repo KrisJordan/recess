@@ -7,7 +7,7 @@ class JustOne {}
 
 /**
  * This class is jibberish!
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * !AttrA sectors
  * !AttrB employeesByAge, Class: Employee, OrderBy: age
  * !AttrB employeesByName, Class: Employee, OrderBy: name
@@ -16,7 +16,7 @@ class JibbityJab {}
 
 /**
  * There are no annotations in this class.
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  */
 class NoAnnotations {}
 

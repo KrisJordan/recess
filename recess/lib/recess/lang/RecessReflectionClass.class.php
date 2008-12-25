@@ -14,10 +14,12 @@ Library::import('recess.lang.RecessObject');
  * method is passed the value array following the annotation's name.
  * 
  * @todo Harden the regular expressions.
- * @todo Remove colon after annotation name.
- * @todo Cache annotations on a per-class basis.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license MIT
+ * @link http://www.recessframework.org/
  */
 class RecessReflectionClass extends ReflectionClass {
 	function getProperties() {

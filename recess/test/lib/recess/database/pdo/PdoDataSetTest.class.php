@@ -1,7 +1,7 @@
 <?php
 /**
  * Unit Tests for recess.database.pdo.PdoDataSet
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @see recess/sources/db/SelectedSet.class.php
  */
 class PdoDataSetTest extends UnitTestCase {

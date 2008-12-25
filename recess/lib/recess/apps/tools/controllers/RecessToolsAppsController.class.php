@@ -8,6 +8,12 @@ Library::import('recess.database.pdo.RecessType');
  */
 class RecessToolsAppsController extends Controller {
 	
+	public function init() {
+		if(RecessConf::$mode == RecessConf::PRODUCTION) {
+			throw new RecessResponseException('Recess Tools are available only during development. Please disable the application in a production environment.', ResponseCodes::HTTP_NOT_FOUND, array());
+		}
+	}
+	
 	/** !Route GET */
 	public function home() {
 		$this->apps = RecessConf::$applications;

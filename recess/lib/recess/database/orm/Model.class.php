@@ -22,10 +22,10 @@ Library::import('recess.database.orm.relationships.BelongsToRelationship');
 /**
  * Model is the basic unit of organization in Recess' simple ORM.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008 Kris Jordan
  * @package Recess! Framework
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license MIT
  * @link http://www.recessframework.org/
  */
 abstract class Model extends RecessObject implements ISqlConditions {

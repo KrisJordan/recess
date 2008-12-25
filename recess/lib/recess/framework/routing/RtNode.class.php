@@ -27,7 +27,7 @@ Library::import('recess.framework.routing.Rt');
  * 
  * @todo Add regular expression support to the parametric parts (/pages/:id(regexp-goes-here?)/)
  * 
- * @author Kris Jordan <kris@krisjordan.com>
+ * @author Kris Jordan <krisjordan@gmail.com> <kris@krisjordan.com>
  * @copyright Copyright (c) 2008, Kris Jordan 
  * @package recess.routing
  */

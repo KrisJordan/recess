@@ -6,7 +6,7 @@ Library::import('recess.lang.RecessObject');
  * Renders a Response in a desired format by sending relevant
  * HTTP headers usually followed by a rendered body.
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @abstract 
  */
 abstract class AbstractView extends RecessObject {

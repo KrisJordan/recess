@@ -21,10 +21,10 @@ Library::import('recess.database.sql.ISqlSelectOptions');
  * 		returns "INSERT INTO table_name (column) VALUES (:column)"
  * $sqlBuilder->getPdoArguments() returns array( ':column' => 'value' )
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008 Kris Jordan
  * @package Recess! Framework
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license MIT
  * @link http://www.recessframework.org/
  */
 class SqlBuilder implements ISqlConditions, ISqlSelectOptions {

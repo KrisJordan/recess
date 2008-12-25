@@ -2,11 +2,13 @@
 /**
  * ResponseCodes provides named constants for
  * HTTP protocol status codes. Written for the
- * Recess Framework (http://www.recessframework.com/)
+ * Recess Framework (http://www.recessframework.org/)
  * 
- * @author Kris Jordan
- * @license MIT 
- * @package recess.http
+ * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008 Kris Jordan
+ * @package Recess! Framework
+ * @license MIT
+ * @link http://www.recessframework.org/
  */
 class ResponseCodes {
 	// [Informational 1xx]

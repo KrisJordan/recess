@@ -10,10 +10,10 @@ Library::import('recess.database.pdo.RecessColumnDescriptor');
  * A PDO wrapper in the Recess! Framework that provides a single interface for commonly 
  * needed operations (i.e.: list tables, list columns in a table, etc).
  * 
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008 Kris Jordan
  * @package Recess! Framework
- * @license http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license MIT
  * @link http://www.recessframework.org/
  */
 class PdoDataSource extends PDO {

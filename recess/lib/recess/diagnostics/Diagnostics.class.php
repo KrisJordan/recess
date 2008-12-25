@@ -17,11 +17,24 @@ class Diagnostics {
 			$exception = new RecessTraceException($exception->getMessage(), $trace);
 		}
 		
-		if(!headers_sent()) {
-			header('HTTP/1.1 ' . ResponseCodes::getMessageForCode(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR));
+		if($exception instanceof RecessResponseException) {
+			header('HTTP/1.1 ' . ResponseCodes::getMessageForCode($exception->responseCode));
+		} else {
+			if(!headers_sent()) {
+				header('HTTP/1.1 ' . ResponseCodes::getMessageForCode(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR));
+			}
 		}
 		
-		include('output/exception_report.php');
+		if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
+			include('output/exception_report.php');
+		} else {
+			if($exception instanceof RecessResponseException) {
+				echo ResponseCodes::getMessageForCode($exception->responseCode);
+			} else {
+				echo ResponseCodes::getMessageForCode(ResponseCodes::HTTP_INTERNAL_SERVER_ERROR);
+			}
+			echo '<br />', $exception->getMessage();
+		}
 	}
 	
 	public static function handleError($errorNumber, $errorString, $errorFile, $errorLine, $errorContext) {
@@ -43,6 +56,15 @@ class RecessException extends Exception {
 	}
 }
 
+class RecessResponseException extends RecessException {
+	public $responseCode = 500;
+	
+	public function __construct($message, $responseCode, $context) {
+		parent::__construct($message, $context);
+		$this->responseCode = $responseCode;
+	}
+}
+
 class RecessErrorException extends ErrorException {
 	public $context = array();
 	
@@ -58,6 +80,7 @@ class RecessErrorException extends ErrorException {
 
 class RecessTraceException extends RecessErrorException {
 	public $trace;
+	
 	public function __construct($message, $trace = array()) {
 		parent::__construct($message, 0, 0, isset($trace[0]['file']) ? $trace[0]['file'] : '', isset($trace[0]['line']) ? $trace[0]['line'] : 0, array());
 		$this->trace = $trace;
@@ -71,8 +94,5 @@ class RecessTraceException extends RecessErrorException {
 		}
 	}
 }
-
-function recho($message) { echo $message; }
-function rexit() { exit; }
 
 ?>

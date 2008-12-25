@@ -1,7 +1,7 @@
 <?php
 /**
  * Unit Tests for recess.database.SelectedSet
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @see recess/sources/db/SelectedSet.class.php
  */
 class SelectedSetTest extends UnitTestCase {

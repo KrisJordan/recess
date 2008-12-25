@@ -3,7 +3,7 @@ Library::import('recess.database.sql.SqlBuilder');
 Library::import('recess.database.sql.Criterion');
 /**
  * Unit Tests for recess.database.sql.SqlBuilder
- * @author Kris Jordan
+ * @author Kris Jordan <krisjordan@gmail.com>
  * @see lib/recess/sources/db/sql/SqlBuilder.class.php
  */
 class SqlBuilderTest extends UnitTestCase  {

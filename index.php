@@ -12,10 +12,12 @@
 
 define('INDEX_PHP','index.php');
 $pos = strpos($_SERVER['PHP_SELF'], INDEX_PHP);
-$base = substr($_SERVER['PHP_SELF'],0,$pos + strlen(INDEX_PHP));
+$base = substr($_SERVER['PHP_SELF'], 0, $pos + strlen(INDEX_PHP));
 $_ENV['url.content'] = str_replace(INDEX_PHP,'',$base) . 'content/';
 $_SERVER['PHP_SELF'] = $base . '/bootstrap.php';
-$_SERVER['REQUEST_URI'] = str_replace(INDEX_PHP, '', $_SERVER['REQUEST_URI']);
+
+$pos = strpos($_SERVER['REQUEST_URI'], INDEX_PHP);
+$_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'],$pos + strlen(INDEX_PHP));
 
 require_once('bootstrap.php');
 ?>

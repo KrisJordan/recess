@@ -9,6 +9,13 @@ class ModelForm extends Form {
 		parent::input($name, $class);
 	}
 	
+	function changeInput($name, $newInput) {
+		$current = $this->inputs[$name];
+		$newInput .= 'Input';
+		$this->inputs[$name] = new $newInput($this->name . '[' . $name . ']');
+		$this->inputs[$name]->setValue($current->getValue());
+	}
+	
 	function __construct($name, $values, Model $model = null) {		
 		$this->name = $name;
 		$this->model = $model;

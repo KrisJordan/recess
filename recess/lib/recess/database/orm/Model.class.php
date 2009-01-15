@@ -214,11 +214,18 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	protected function getModelSet() {
 		$thisClassDescriptor = self::getClassDescriptor($this);
 		$result = $thisClassDescriptor->getSource()->selectModelSet($thisClassDescriptor->getTable());
-		foreach($this as $column => $value) {
-			if(isset($this->$column) && in_array($column,$thisClassDescriptor->columns)) {
-				$result = $result->assign($column, $value);
+		$pkName = self::primaryKeyName($this);
+		
+		if(isset($this->$pkName)) {
+			$result = $result->equal($pkName,$this->$pkName);
+		} else {
+			foreach($this as $column => $value) {
+				if(isset($this->$column) && in_array($column,$thisClassDescriptor->columns)) {
+					$result = $result->assign($column, $value);
+				}
 			}
 		}
+		
 		$result->rowClass = get_class($this);
 		return $result;
 	}
@@ -246,8 +253,9 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * @return ModelSet
 	 */
 	function all() { 
-		return $this->getModelSet()->useAssignmentsAsConditions(false);
+		return $this->getModelSet();
 	}
+	
 	
 	/**
 	 * Return a SqlBuilder object which has set the table and optionally

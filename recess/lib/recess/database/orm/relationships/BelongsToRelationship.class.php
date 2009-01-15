@@ -64,17 +64,24 @@ class BelongsToRelationship extends Relationship {
 					->innerJoin(Model::tableFor($this->localClass), 
 								Model::primaryKeyFor($this->foreignClass), 
 								Model::tableFor($this->localClass) . '.' . $this->foreignKey);
-								
+						
 		$select->rowClass = $this->foreignClass;
 		return $select;
 	}
 	
 	function selectModel(Model $model) {
-		$select = $this->augmentSelect($model->select());
+		$foreignKey = $this->foreignKey;
+		
+		if(isset($model->$foreignKey)) {
+			$select = $this->augmentSelect($model->all());
+			$select = $select->equal(Model::tableFor($this->localClass) . '.' . $this->foreignKey, $model->$foreignKey);
+		} else {
+			$select = $this->augmentSelect($model->select());
+		}
 		
 		if(isset($select[0])) {
 			return $select[0];
-		} else { 
+		} else {
 			return null;
 		}
 	}

@@ -22,9 +22,9 @@ Library::import('recess.lang.RecessObject');
  * @link http://www.recessframework.org/
  */
 class RecessReflectionClass extends ReflectionClass {
-	function getProperties($filter = '') {
+	function getProperties($filter = null) {
 		Library::import('recess.lang.RecessReflectionProperty');
-		$rawProperties = parent::getProperties($filter);
+		$rawProperties = parent::getProperties();
 		$properties = array();
 		foreach($rawProperties as $rawProperty) {
 			$properties[] = new RecessReflectionProperty($this->name, $rawProperty->name);

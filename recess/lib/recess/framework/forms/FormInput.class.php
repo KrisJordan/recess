@@ -16,6 +16,10 @@ abstract class FormInput {
 		$this->value = $value;
 	}
 	
+	function getName() {
+		return $this->name;
+	}
+	
 	abstract function render();
 }
 ?>

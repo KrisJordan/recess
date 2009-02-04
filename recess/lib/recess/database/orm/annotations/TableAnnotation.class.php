@@ -15,11 +15,17 @@ class TableAnnotation extends ModelAnnotation {
 	public $table;
 	
 	function init($array) {
-		$this->table = $array[0];	
+		if(isset($array[0]) && count($array) == 1) {
+			$this->table = $array[0];
+		} else {
+			throw new RecessException('!Table annotation takes 1 parameter: table name. Ex: !Table my_table', get_defined_vars());
+		}
 	}
 	
 	function massage(ModelDescriptor &$descriptor) {
-		$descriptor->setTable($this->table);
+		if(isset($this->table)) {
+			$descriptor->setTable($this->table);
+		}
 	}
 }
 ?>

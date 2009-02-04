@@ -15,7 +15,11 @@ class DatabaseAnnotation extends ModelAnnotation {
 	public $source;
 	
 	function init($array) {
-		$this->source = $array[0];	
+		if(isset($array[0]) && count($array) == 1) {
+			$this->source = $array[0];
+		} else {
+			throw new RecessException('!Database annotation takes 1 parameter: name. Ex: !Database Default', get_defined_vars());
+		}
 	}
 	
 	function massage(ModelDescriptor &$descriptor) {

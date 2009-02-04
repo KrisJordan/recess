@@ -38,7 +38,7 @@ class ModelDataSource extends PdoDataSource {
 		return $tableDescriptor;
 	}
 	
-	function createTableSql(ModelDescriptor $descriptor) {
+	function createTableSql($descriptor) {
 		return parent::createTableSql($this->modelToTableDescriptor($descriptor));
 	}
 	

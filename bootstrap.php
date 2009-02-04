@@ -6,6 +6,7 @@
  */
 $_ENV['dir.bootstrap'] = str_replace('\\','/',realpath(dirname(__FILE__))) . '/';
 $_ENV['url.base'] = str_replace('bootstrap.php', '', $_SERVER['PHP_SELF']);
+if(strpos($_SERVER['REQUEST_URI'],'/bootstrap.php')===0) exit;
 
 $bootstrapped = true;
 require_once('./recess-conf.php');

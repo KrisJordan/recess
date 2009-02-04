@@ -226,7 +226,7 @@ class PdoDataSource extends PDO {
 		return $this->provider->emptyTable($table);
 	}
 	
-	function createTableSql(RecessTableDescriptor $tableDescriptor) {
+	function createTableSql($tableDescriptor) {
 		return $this->provider->createTableSql($tableDescriptor);
 	}
 }

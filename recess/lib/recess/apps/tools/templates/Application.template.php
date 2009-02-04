@@ -11,8 +11,6 @@ class {{programmaticName}}Application extends Application {
 		$this->modelsPrefix = '{{camelProgrammaticName}}.models.';
 		
 		$this->controllersPrefix = '{{camelProgrammaticName}}.controllers.';
-
-		$this->modelsPrefix = '{{camelProgrammaticName}}.models.';
 		
 		$this->routingPrefix = '{{routesPrefix}}';
 		

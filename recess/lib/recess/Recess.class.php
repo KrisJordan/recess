@@ -55,6 +55,9 @@ final class Recess {
 			}
 			
 			$forwardRequest->cookies = $response->request->cookies;
+			$forwardRequest->username = $response->request->username;
+			$forwardRequest->password = $response->request->password;
+			
 			$cookies = $response->getCookies();
 			if(is_array($cookies)) {
 				foreach($response->getCookies() as $cookie) {	

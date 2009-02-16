@@ -1,11 +1,12 @@
 <?php
 Library::import('recess.http.Request');
 Library::import('recess.http.Formats');
-Library::import('recess.http.QueryString');
 Library::import('recess.http.Methods');
 
 /**
  * @author Kris Jordan <krisjordan@gmail.com>
+ * @contributor Luiz Alberto Zaiats
+ * 
  * @copyright 2008 Kris Jordan
  * @package Recess! Framework
  * @license MIT
@@ -67,7 +68,12 @@ class Environment {
 	
 	private static function getPutParameters() {
 		$putdata = file_get_contents('php://input');
-		return QueryString::parse($putdata);
+		if(function_exists('mb_parse_str')) {
+	    	mb_parse_str($putdata, $outputdata);
+		} else {
+			parse_str($putdata, $outputdata);
+		}
+	    return $outputdata;
 	}
 }
 

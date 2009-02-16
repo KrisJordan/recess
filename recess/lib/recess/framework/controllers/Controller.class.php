@@ -13,6 +13,7 @@ Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation
  * the Response.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
+ * @contributor Joshua Paine
  */
 abstract class Controller extends AbstractController {
 	/** @var Request */
@@ -86,9 +87,28 @@ abstract class Controller extends AbstractController {
 		return $descriptor;
 	}
 	
+	/**
+	 * urlTo is a helper method that returns the url to a controller method.
+	 * Examples:
+	 * 	$controller->urlTo('someMethod'); => /route/to/someMethod/
+	 *  $controller->urlTo('someMethodOneParameter', 'param1');  =>  /route/to/someMethodOneParam/param1
+	 *  $controller->urlTo('OtherController::otherMethod'); => Returns the route to another controller's method
+	 *  
+	 * Thanks to Joshua Paine for improving the API of urlTo!
+	 * 
+	 * @param $methodName
+	 * @return string The url linking to controller method.
+	 */
 	public function urlTo($methodName) {
 		$args = func_get_args();
 		array_shift($args);
+		
+		// First check to see if this is a urlTo on another Controller Class
+		if(strpos($methodName,'::') !== false) {
+		    list($controllerName, $methodName) = explode('::', $methodName, 2);
+		    $controller = new $controllerName($this->application);
+		    return $controller->urlTo($methodName);
+		}
 		
 		$descriptor = Controller::getClassDescriptor($this);
 		if(isset($descriptor->methodUrls[$methodName])) {

@@ -50,7 +50,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		foreach($this->assignments as $assignment) {
 			if($first) { $first = false; }
 			else { $columns .= ', '; $values .= ', '; }
-			$columns .= str_replace($table_prefix, '', $assignment->column);
+			$columns .= '`' . str_replace($table_prefix, '', $assignment->column) . '`';
 			$values .= $assignment->getQueryParameter();
 		}
 		$columns = ' (' . $columns . ')';
@@ -162,7 +162,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		foreach($this->assignments as $assignment) {
 			if($first) { $first = false; }
 			else { $sql .= ', '; }
-			$sql .= str_replace($table_prefix, '', $assignment->column) . ' = ' . $assignment->getQueryParameter();
+			$sql .= '`' . str_replace($table_prefix, '', $assignment->column) . '` = ' . $assignment->getQueryParameter();;
 		}
 		
 		$sql .= $this->whereHelper();
@@ -571,6 +571,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected function joinHelper() {
 		$sql = '';
 		if(!empty($this->joins)) {
+			$this->joins = array_reverse($this->joins, true);
 			foreach($this->joins as $join) {
 				$joinStatement = '';
 				

@@ -82,13 +82,13 @@ class SqlBuilderTest extends UnitTestCase  {
 	
 	function testInsert() {
 		$this->builder->into('authors')->assign('first_name','Kris');
-		$expected = 'INSERT INTO authors (first_name) VALUES (:assgn_authors_first_name)';
+		$expected = 'INSERT INTO authors (`first_name`) VALUES (:assgn_authors_first_name)';
 		$this->assertEqual($this->builder->insert(),$expected);
 	}
 	
 	function testUpdate() {
 		$this->builder->table('authors')->equal('id',1)->assign('first_name','John');
-		$expected = 'UPDATE authors SET first_name = :assgn_authors_first_name WHERE authors.id  =  1';
+		$expected = 'UPDATE authors SET `first_name` = :assgn_authors_first_name WHERE authors.id  =  1';
 		$this->assertEqual($this->builder->update(),$expected);
 	}
 	

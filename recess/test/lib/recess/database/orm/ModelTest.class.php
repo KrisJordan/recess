@@ -99,7 +99,7 @@ class ModelTest extends UnitTestCase {
 	function setUp() {
 		$this->source = new ModelDataSource('sqlite::memory:');
 		$this->source->beginTransaction();
-		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY AUTOINCREMENT, firstName TEXT, lastName TEXT, age TEXT, politicalPartyId INTEGER)');
+		$this->source->exec('CREATE TABLE persons (id INTEGER PRIMARY KEY AUTOINCREMENT, firstName TEXT, lastName TEXT, age TEXT, politicalPartyId INTEGER, phone TEXT)');
 		$this->source->exec('CREATE TABLE groups (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, description TEXT)');
 		$this->source->exec('CREATE TABLE groupships (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, groupId INTEGER, personId INTEGER)');
 		$this->source->exec('CREATE TABLE books (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, authorId INTEGER, title TEXT)');
@@ -110,12 +110,12 @@ class ModelTest extends UnitTestCase {
 		$this->source->exec('CREATE TABLE books_generas_joins (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, bookId INTEGER, generaId INTEGER)');
 		$this->source->exec('CREATE TABLE political_partys (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, party TEXT)');
 		$this->source->exec('CREATE TABLE movies_generas_joins (id INTEGER PRIMARY KEY ASC AUTOINCREMENT, movieId INTEGER, generaId INTEGER)');
-		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId) VALUES ("Kris", "Jordan", 23, 1)');
-		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId) VALUES ("Joel", "Sutherland", 23, 1)');
-		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId) VALUES ("Clay", "Schossow", 22, 2)');
-		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId) VALUES ("Barack", "Obama", 47, 1)');
-		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId) VALUES ("Josh", "Lockhart", 22, 1)');
-		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId) VALUES ("John", "McCain", 72, 3)');
+		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Kris", "Jordan", 23, 1, "321-456-7890")');
+		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Joel", "Sutherland", 23, 1, "919-485-5387")');
+		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Clay", "Schossow", 22, 2, "917-228-5749")');
+		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Barack", "Obama", 47, 1, "203-507-4577")');
+		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Josh", "Lockhart", 22, 1, "")');
+		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("John", "McCain", 72, 3, "")');
 		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Democrat")');
 		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Independent")');
 		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Republican")');
@@ -557,6 +557,12 @@ class ModelTest extends UnitTestCase {
 		$people = Make::a('Person')->all();
 		$kris = $people->equal('firstName','Kris');
 		$this->assertNotEqual(count($people),count($kris));
+	}
+	
+	function testTicket68FirstAfterEqual() {
+		$person = Make::a('Person')->equal('phone', '321-456-7890')->first();
+		$this->assertEqual($person->id, 1);
+		$this->assertEqual($person->phone, '321-456-7890');
 	}
 	
 	function tearDown() {

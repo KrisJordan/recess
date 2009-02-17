@@ -388,17 +388,16 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 			}
 		}
 		
-		$statement = $source->prepare($builder->$action());
+		$sql = $builder->$action();
+		$statement = $source->prepare($sql);
 		$arguments = $builder->getPdoArguments();
 		foreach($arguments as &$argument) {
 			// Begin workaround for PDO's poor numeric binding
 			$queryParameter = $argument->getQueryParameter();
 			if(is_numeric($queryParameter)) { continue; } 
 			// End Workaround
-			
 			// Ignore parameters that aren't used in this $action (i.e. assignments in select)
 			if(strpos($sql, $argument->getQueryParameter()) === false) { continue; } 
-			
 			$statement->bindValue($argument->getQueryParameter(), $argument->value);
 		}
 		return $statement;

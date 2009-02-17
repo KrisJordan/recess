@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<table name="people">
+		<column>id</column>
+		<column>first_name</column>
+		<column>last_name</column>
+		<column>age</column>
+		<row>
+			<value>1</value>
+			<value>Kris</value>
+			<value>Jordan</value>
+			<value>23</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>Joel</value>
+			<value>Sutherland</value>
+			<value>23</value>
+		</row>
+		<row>
+			<value>3</value>
+			<value>Clay</value>
+			<value>Schossow</value>
+			<value>22</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>Barack</value>
+			<value>Obama</value>
+			<value>47</value>
+		</row>
+	</table>
+	<table name="books">
+		<column>id</column>
+		<column>author_id</column>
+		<column>title</column>
+		<row>
+			<value>1</value>
+			<value>4</value>
+			<value>The Audacity of Hope</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>3</value>
+			<value>How to Be a Sketch Ball</value>
+		</row>
+		<row>
+			<value>3</value>
+			<value>2</value>
+			<value>Steve Nash: A Modern Day Here</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>1</value>
+			<value>How Michael Scott Touched My Life, and Could Touch Yours Too</value>
+		</row>
+	</table>
+	<table name="genera">
+		<column>id</column>
+		<column>title</column>
+		<row>
+			<value>1</value>
+			<value>Sports Healing</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>Political Healing</value>
+		</row>
+		<row>
+			<value>3</value>
+			<value>Social Healing</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>Comedy Healing</value>
+		</row>
+	</table>
+	<table name="books_genera">
+		<column>id</column>
+		<column>book_id</column>
+		<column>genera_id</column>
+		<row>
+			<value>1</value>
+			<value>1</value>
+			<value>3</value>
+		</row>
+		<row>
+			<value>2</value>
+			<value>2</value>
+			<value>3</value>
+		</row>
+		<row>
+			<value>3</value>
+			<value>2</value>
+			<value>4</value>
+		</row>
+		<row>
+			<value>4</value>
+			<value>3</value>
+			<value>1</value>
+		</row>
+		<row>
+			<value>5</value>
+			<value>4</value>
+			<value>4</value>
+		</row>
+	</table>
+</dataset>

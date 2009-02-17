@@ -43,7 +43,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function insert() {
 		$this->insertSanityCheck();
 
-		$sql = 'INSERT INTO ' . $this->table;
+		$sql = 'INSERT INTO ' . self::escapeWithTicks($this->table);
 		
 		$columns = '';
 		$values = '';
@@ -52,7 +52,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		foreach($this->assignments as $assignment) {
 			if($first) { $first = false; }
 			else { $columns .= ', '; $values .= ', '; }
-			$columns .= '`' . str_replace($table_prefix, '', $assignment->column) . '`';
+			$columns .= self::escapeWithTicks(str_replace($table_prefix, '', $assignment->column));
 			$values .= $assignment->getQueryParameter();
 		}
 		$columns = ' (' . $columns . ')';
@@ -129,7 +129,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	 */
 	public function delete() {
 		$this->deleteSanityCheck();
-		return 'DELETE FROM ' . $this->table . $this->whereHelper();
+		return 'DELETE FROM ' . self::escapeWithTicks($this->table) . $this->whereHelper();
 	}
 	
 	/**
@@ -157,14 +157,14 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	 */
 	public function update() {
 		$this->updateSanityCheck();
-		$sql = 'UPDATE ' . $this->table . ' SET ';
+		$sql = 'UPDATE ' . self::escapeWithTicks($this->table) . ' SET ';
 		
 		$first = true;
 		$table_prefix = $this->tableAsPrefix() . '.';
 		foreach($this->assignments as $assignment) {
 			if($first) { $first = false; }
 			else { $sql .= ', '; }
-			$sql .= '`' . str_replace($table_prefix, '', $assignment->column) . '` = ' . $assignment->getQueryParameter();;
+			$sql .= self::escapeWithTicks(str_replace($table_prefix, '', $assignment->column)) . ' = ' . $assignment->getQueryParameter();;
 		}
 		
 		$sql .= $this->whereHelper();
@@ -370,13 +370,13 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function select() {
 		$this->selectSanityCheck();
 
-		$sql = 'SELECT ' . $this->distinct . $this->select;
+		$sql = 'SELECT ' . $this->distinct . self::escapeWithTicks($this->select);
 
 		foreach($this->selectAs as $selectAs) {
 			$sql .= ', ' . $selectAs;
 		}
 		
-		$sql .= ' FROM ' . $this->table;
+		$sql .= ' FROM ' . self::escapeWithTicks($this->table);
 		
 		$sql .= $this->joinHelper();
 		
@@ -551,7 +551,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		if(!empty($this->conditions)) {
 			foreach($this->conditions as $clause) {
 				if(!$first) { $sql .= ' AND '; } else { $first = false; } // TODO: Figure out how we'll do ORing
-				$sql .= $clause->column . ' ' . $clause->operator . ' ' . $clause->getQueryParameter();
+				$sql .= self::escapeWithTicks($clause->column) . $clause->operator . $clause->getQueryParameter();
 			}
 		}
 		
@@ -559,7 +559,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			$assignments = $this->cleansedAssignmentsAsConditions();
 			foreach($assignments as $clause) {
 				if(!$first) { $sql .= ' AND '; } else { $first = false; } // TODO: Figure out how we'll do ORing
-				$sql .= $clause->column . ' = ' . $clause->getQueryParameter();
+				$sql .= self::escapeWithTicks($clause->column) . ' = ' . $clause->getQueryParameter();
 			}
 		}
 		
@@ -573,8 +573,8 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected function joinHelper() {
 		$sql = '';
 		if(!empty($this->joins)) {
-			$this->joins = array_reverse($this->joins, true);
-			foreach($this->joins as $join) {
+			$joins = array_reverse($this->joins, true);
+			foreach($joins as $join) {
 				$joinStatement = '';
 				
 				if(isset($join->natural)) {
@@ -587,13 +587,29 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 					$joinStatement .= $join->innerOuterOrCross . ' ';
 				}
 				
-				$onStatement = ' ON ' . $join->tablePrimaryKey . ' = ' . $join->fromTableForeignKey;
-				$joinStatement .= 'JOIN ' . $join->table . $onStatement;
+				$onStatement = ' ON ' . self::escapeWithTicks($join->tablePrimaryKey) . ' = ' . self::escapeWithTicks($join->fromTableForeignKey);
+				$joinStatement .= 'JOIN ' . self::escapeWithTicks($join->table) . $onStatement;
 				
 				$sql .= $joinStatement;
 			}
 		}
 		return $sql;
+	}
+	
+	protected static function escapeWithTicks($string) {
+		if($string == '*') {
+			return $string;
+		}
+		if(strpos($string,Library::dotSeparator) !== false) {
+			$parts = explode('.', $string);
+			if(isset($parts[1]) && $parts[1] == '*') {
+				return '`' . $parts[0] . '`.*';
+			} else {
+				return '`' . implode('`.`', $parts) . '`';
+			}
+		} else {
+			return '`' . $string . '`';
+		}
 	}
 	
 	protected function orderByHelper() {
@@ -631,17 +647,17 @@ class Criterion {
 	public $value;
 	public $operator;
 	
-	const GREATER_THAN = '>';
-	const GREATER_THAN_EQUAL_TO = '>=';
+	const GREATER_THAN = ' > ';
+	const GREATER_THAN_EQUAL_TO = ' >= ';
 	
-	const LESS_THAN = '<';
-	const LESS_THAN_EQUAL_TO = '<=';
+	const LESS_THAN = ' < ';
+	const LESS_THAN_EQUAL_TO = ' <= ';
 	
 	const EQUAL_TO = ' = ';
-	const NOT_EQUAL_TO = '!=';
+	const NOT_EQUAL_TO = ' != ';
 	
-	const LIKE = 'LIKE';
-	const NOT_LIKE = 'NOT LIKE';
+	const LIKE = ' LIKE ';
+	const NOT_LIKE = ' NOT LIKE ';
 	
 	const COLON = ':';
 	

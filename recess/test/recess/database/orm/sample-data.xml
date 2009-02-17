@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<table name="persons">
+		<column>id</column>
+		<column>firstName</column>
+		<column>lastName</column>
+		<column>age</column>
+		<column>politicalPartyId</column>
+		<column>phone</column>
+		<row><value>1</value><value>Kris</value><value>Jordan</value><value>23</value><value>1</value><value>321-456-7890</value></row>
+		<row><value>2</value><value>Joel</value><value>Sutherland</value><value>23</value><value>1</value><value>919-945-2391</value></row>
+		<row><value>3</value><value>Clay</value><value>Schossow</value><value>22</value><value>2</value><value>917-239-1239</value></row>
+		<row><value>4</value><value>Barack</value><value>Obama</value><value>47</value><value>1</value><value>203-549-2349</value></row>
+		<row><value>5</value><value>Josh</value><value>Lockhart</value><value>22</value><value>1</value><value></value></row>
+		<row><value>6</value><value>John</value><value>McCain</value><value>72</value><value>1</value><value></value></row>
+	</table>
+	<table name="political_partys">
+		<column>id</column>
+		<column>party</column>
+		<row><value>1</value><value>Democrat</value></row>
+		<row><value>2</value><value>Independent</value></row>
+		<row><value>3</value><value>Republican</value></row>
+	</table>
+	<table name="chapters">
+		<column>id</column>
+		<column>bookId</column>
+		<column>title</column>
+		<row><value>1</value><value>1</value><value>Republicans and Democrats</value></row>
+		<row><value>2</value><value>1</value><value>Values</value></row>
+		<row><value>3</value><value>1</value><value>Our Constitution</value></row>
+		<row><value>4</value><value>1</value><value>Politics</value></row>
+		<row><value>5</value><value>1</value><value>Opportunity</value></row>
+		<row><value>6</value><value>1</value><value>Faith</value></row>
+		<row><value>7</value><value>1</value><value>Race</value></row>
+		<row><value>8</value><value>1</value><value>The World Beyond our Borders</value></row>
+		<row><value>9</value><value>1</value><value>Family</value></row>
+	</table>
+	<table name="books">
+		<column>id</column>
+		<column>authorId</column>
+		<column>title</column>
+		<row><value>1</value><value>4</value><value>The Audacity of Hope: Thoughts on Reclaiming the American Dream</value></row>
+		<row><value>2</value><value>3</value><value>How to Be a Sketch Ball</value></row>
+		<row><value>3</value><value>2</value><value>Steve Nash: A Modern Day Here</value></row>
+		<row><value>4</value><value>1</value><value>How Michael Scott Touched My Life, and Could Touch Yours Too</value></row>
+		<row><value>5</value><value>4</value><value>Dreams from My Father: A Story of Race and Inheritance</value></row>
+		<row><value>6</value><value>4</value><value>Barack Obama: What He Believes In - From His Own Works</value></row>
+		<row><value>7</value><value>3</value><value>Hoop Dreams, The Clay Schossow Story</value></row>
+	
+	</table>
+	<table name="movies">
+		<column>id</column><column>authorId</column><column>title</column>
+		<row><value>1</value><value>3</value><value>Hoop Dreams, The Clay Schossow Story, The Movie</value></row>
+		<row><value>2</value><value>3</value><value>Clay Schossow: Unleashed</value></row>
+		<row><value>3</value><value>3</value><value>LeBron James and Other Assorted Dreams of Clay Schossow</value></row>
+	</table>
+	<table name="generas">
+		<column>id</column>
+		<column>title</column>
+		<row><value>1</value><value>Sports Healing</value></row>
+		<row><value>2</value><value>Political Healing</value></row>
+		<row><value>3</value><value>Social Healing</value></row>
+		<row><value>4</value><value>Comedy Healing</value></row>
+	</table>
+	<table name="books_generas_joins">
+		<column>id</column>
+		<column>bookId</column>
+		<column>generaId</column>
+		<row><value>1</value><value>1</value><value>3</value></row>
+		<row><value>2</value><value>2</value><value>3</value></row>
+		<row><value>3</value><value>2</value><value>4</value></row>
+		<row><value>4</value><value>3</value><value>1</value></row>
+		<row><value>5</value><value>4</value><value>4</value></row>
+		<row><value>6</value><value>5</value><value>3</value></row>
+		<row><value>7</value><value>6</value><value>3</value></row>
+		<row><value>8</value><value>7</value><value>1</value></row>
+	</table>
+	<table name="groups">
+		<column>id</column>
+		<column>name</column>
+		<column>description</column>
+		<row><value>1</value><value>NRA</value><value></value></row>
+		<row><value>2</value><value>Tree Huggers</value><value></value></row>
+		<row><value>3</value><value>Hackers</value><value></value></row>
+	</table>
+	<table name="groupships">
+		<column>id</column>
+		<column>groupId</column>
+		<column>personId</column>
+		<row><value>1</value><value>2</value><value>1</value></row>
+		<row><value>2</value><value>3</value><value>1</value></row>
+		<row><value>3</value><value>3</value><value>2</value></row>
+		<row><value>4</value><value>2</value><value>2</value></row>
+		<row><value>5</value><value>1</value><value>3</value></row>
+		<row><value>6</value><value>2</value><value>4</value></row>
+		<row><value>7</value><value>2</value><value>5</value></row>
+		<row><value>8</value><value>3</value><value>5</value></row>
+		<row><value>9</value><value>1</value><value>6</value></row>
+	</table>
+	<table name="cars">
+		<column>pk</column>
+		<column>personId</column>
+		<column>make</column>
+		<column>isDriveable</column>
+		<row><value>1</value><value>1</value><value>VW</value><value>1</value></row>
+		<row><value>2</value><value>2</value><value>Toyota</value><value>1</value></row>
+	</table>
+	<table name="movies_generas_joins">
+		<column>id</column><column>movieId</column><column>generaId</column>
+		<row><value>1</value><value>1</value><value>1</value></row>
+		<row><value>2</value><value>1</value><value>4</value></row>
+		<row><value>3</value><value>2</value><value>4</value></row>
+		<row><value>4</value><value>3</value><value>1</value></row>
+	</table>
+</dataset>
+		

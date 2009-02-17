@@ -538,7 +538,12 @@ class ModelDescriptor extends RecessObjectDescriptor {
 	function setTable($table, $loadColumns = true) {
 		$this->table = $table;
 		if($loadColumns) {
-			$this->columns = $this->getSource()->getColumns($this->table);
+			$source = $this->getSource();
+			if(isset($source)) {
+				$this->columns = $this->getSource()->getColumns($this->table);
+			} else {
+				throw new RecessException('Data Source "' . $this->getSourceName() . '" is not set.', array());
+			}
 		} else {
 			$this->columns = array();
 		}

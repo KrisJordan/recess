@@ -90,7 +90,7 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	 * Once results are needed this method executes the accumulated query
 	 * on the data source.
 	 */
-	protected function realize() {
+	protected function realize() {  
 		if(!$this->hasResults) {
 			unset($this->results);
 			$this->results = $this->source->queryForClass($this->sqlBuilder, $this->rowClass);
@@ -117,7 +117,9 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 		return $this->results;
 	}
 	
-	public function count() { return iterator_count($this); }
+	public function count() {
+		return iterator_count($this); 
+	}
 	
 	
 	/*

@@ -130,7 +130,7 @@ function printContext($context) {
 
 	<head>
 		<title>Recess! diagnostics! 500 :(</title>
-		<script type="text/javascript" src="<?php echo $_ENV['url.content']; ?>js/jquery/jquery-1.2.6.js"></script> 
+		<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js"></script> 
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$('.callstackdetails').hide();

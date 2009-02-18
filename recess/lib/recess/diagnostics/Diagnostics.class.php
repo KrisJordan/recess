@@ -1,7 +1,13 @@
 <?php
-
 Library::import('recess.http.ResponseCodes');
 
+/**
+ * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008-2009 Kris Jordan
+ * @package recess
+ * @license MIT
+ * @link http://www.recessframework.org/
+ */
 class Diagnostics {
 	
 	public static function handleException(Exception $exception) {

@@ -52,7 +52,7 @@ abstract class Annotation {
 			
 			$annotationClass = $annotation . 'Annotation';
 			
-			if(in_array($annotationClass,get_declared_classes())) { // TODO: Less expensive way of handling this than calling get_declared_classes?
+			if(class_exists($annotationClass, false)) {
 				$annotation = new $annotationClass;
 				$annotation->init($array);
 			} else {

@@ -461,7 +461,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		if($this->usingAliases) {
 			$spacePos = strrpos($this->table, ' ');
 			if($spacePos !== false) {
-				return substr($this->table, $spacePos);
+				return substr($this->table, $spacePos + 1);
 			}
 		}
 		return $this->table;
@@ -512,7 +512,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 				$number = 2;
 			}
 			$tableAlias = $this->table . '__' . $number;
-			$this->table = $this->table . ' AS ' . $tableAlias;
+			$this->table = self::escapeWithTicks($this->table) . ' AS ' . self::escapeWithTicks($tableAlias);
 			$this->usingAliases = true;
 			
 			$tablePrimaryKey = str_replace($oldTable,$tableAlias,$tablePrimaryKey);			
@@ -575,15 +575,15 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		if(!empty($this->joins)) {
 			$joins = array_reverse($this->joins, true);
 			foreach($joins as $join) {
-				$joinStatement = '';
+				$joinStatement = ' ';
 				
-				if(isset($join->natural)) {
+				if(isset($join->natural) && $join->natural != '') {
 					$joinStatement .= $join->natural . ' ';
 				}
-				if(isset($join->leftRightOrFull)) {
+				if(isset($join->leftRightOrFull) && $join->leftRightOrFull != '') {
 					$joinStatement .= $join->leftRightOrFull . ' ';
 				}
-				if(isset($join->innerOuterOrCross)) {
+				if(isset($join->innerOuterOrCross) && $join->innerOuterOrCross != '') {
 					$joinStatement .= $join->innerOuterOrCross . ' ';
 				}
 				
@@ -597,11 +597,11 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	}
 	
 	protected static function escapeWithTicks($string) {
-		if($string == '*') {
+		if($string == '*' || strpos($string, '`') !== false) {
 			return $string;
 		}
-		if(strpos($string,Library::dotSeparator) !== false) {
-			$parts = explode('.', $string);
+		if(strpos($string,Library::dotSeparator) !== false) { // Todo: Replace with Regexp
+			$parts = explode(Library::dotSeparator, $string);
 			if(isset($parts[1]) && $parts[1] == '*') {
 				return '`' . $parts[0] . '`.*';
 			} else {
@@ -703,8 +703,8 @@ class Join {
 	const OUTER = 'OUTER';
 	const CROSS = 'CROSS';
 	
-	public $natural = '';
-	public $leftRightOrFull = '';
+	public $natural;
+	public $leftRightOrFull;
 	public $innerOuterOrCross = 'OUTER';
 	
 	public $table;

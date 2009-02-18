@@ -111,6 +111,11 @@ class SelectSqlBuilderTest extends PHPUnit_Framework_TestCase  {
 		$this->assertNotEquals($this->builder->select(), $anotherBuilder->select());
 	}
 	
+	function testSameTableJoin() {
+		$this->builder->from('recess_tools_packages')->equal('id', 8)->innerJoin('recess_tools_packages', 'recess_tools_packages.parentId', 'recess_tools_packages.id');
+		$this->assertEquals('SELECT `recess_tools_packages__2`.* FROM `recess_tools_packages` AS `recess_tools_packages__2` INNER JOIN `recess_tools_packages` ON `recess_tools_packages__2`.`parentId` = `recess_tools_packages`.`id` WHERE `recess_tools_packages`.`id` = 8', $this->builder->select());
+	}
+	
 	function tearDown() {
 		unset($this->builder);
 	}

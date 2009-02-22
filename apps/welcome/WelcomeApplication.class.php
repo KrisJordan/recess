@@ -11,8 +11,6 @@ class WelcomeApplication extends Application {
 		$this->modelsPrefix = 'welcome.models.';
 		
 		$this->controllersPrefix = 'welcome.controllers.';
-
-		$this->modelsPrefix = 'welcome.models.';
 		
 		$this->routingPrefix = '/';
 		

@@ -4,7 +4,7 @@
 		<link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/blueprint/screen.css" type="text/css" media="screen, projection" />
 		<link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/blueprint/print.css" type="text/css" media="print" /> 
 		<!--[if IE]>
-		  <link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection" />
+		  <link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/blueprint/ie.css" type="text/css" media="screen, projection" />
 		<![endif]-->
 		<!-- Syntax Highlighter -->  
 		<link type="text/css" rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/SyntaxHighlighter.css"></link>

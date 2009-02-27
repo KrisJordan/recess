@@ -45,10 +45,41 @@ abstract class AbstractController extends RecessObject implements IController {
 		return $response;
 	}
 	
-	protected function redirect($redirectUri) {
+	protected function redirect($redirectUri,$scheme=null) {
 		Library::import('recess.http.responses.TemporaryRedirectResponse');
-		$response = new TemporaryRedirectResponse($this->request, $redirectUri);
+		$response = new TemporaryRedirectResponse($this->request, $this->buildUrl($redirectUri,$scheme));
 		return $response;
+	}
+	
+	protected function found($redirectUri,$scheme=null) {
+		Library::import('recess.http.responses.FoundResponse');
+		$response = new FoundResponse($this->request, $this->buildUrl($redirectUri,$scheme));
+		return $response;
+	}
+	
+	protected function moved($redirectUri,$scheme=null) {
+		Library::import('recess.http.responses.MovedPermanentlyResponse');
+		$response = new MovedPermanentlyResponse($this->request, $this->buildUrl($redirectUri,$scheme));
+		return $response;
+	}
+
+	protected function buildUrl($uri,$scheme=null) {
+		$parts = parse_url($uri);
+		if(!is_null($scheme)) {
+			$parts['scheme'] = $scheme;
+			if(!empty($parts['host'])) $parts['host'] = $_SERVER['SERVER_NAME'];
+		}
+		$url = '';
+		if(!empty($parts['scheme'])) {
+			$url .= $parts['scheme'].'://';
+			if(!empty($parts['user'])) $url .= $parts['user'] . (empty($parts['pass']) ? '' : $parts['pass']) .'@';
+			$url .= $parts['host'];
+			if(!empty($parts['port'])) $url .= ':'.$parts['port'];
+		}
+		$url .= empty($parts['path']) ? '/' : $parts['path'];
+		if(!empty($parts['query'])) $url .= '?'.$parts['query'];
+		if(!empty($parts['fragment'])) $url .= '#'.$parts['fragment'];
+		return $url;
 	}
 	
 	protected function forwardOk($forwardedUri) {

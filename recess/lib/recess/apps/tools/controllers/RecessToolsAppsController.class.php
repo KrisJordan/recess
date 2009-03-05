@@ -60,14 +60,8 @@ class RecessToolsAppsController extends Controller {
 	/** !Route POST, new/step2 */
 	function newAppStep2 () {
 		$form = $this->getNewAppStep2Form($this->request->post);
-		$form->assertNotEmpty('routingPrefix');
-		if($form->hasErrors()) {
-			$this->form = $form;
-			return $this->conflict('newAppWizardStep2');
-		} else {
-			$this->generateApp();
-			return $this->ok('newAppWizardComplete');
-		}
+		$this->generateApp();
+		return $this->ok('newAppWizardComplete');
 	}
 	
 	private function generateApp() {

@@ -39,7 +39,6 @@ class DefaultPolicy implements IPolicy {
 			if($routeResult->methodIsSupported) {
 				$controller = $this->getControllerFromRouteResult($request, $routeResult);
 			} else {
-				// TODO: Shortwire a result here for a method not supported HTTP response.
 				throw new RecessResponseException('METHOD not supported, supported METHODs are: ' . implode(',', $routeResult->acceptableMethods), ResponseCodes::HTTP_METHOD_NOT_ALLOWED, get_defined_vars());
 			}
 		} else {
@@ -93,11 +92,9 @@ class DefaultPolicy implements IPolicy {
 	}
 
 	protected function reparameterizeForFormat(Request &$request) {
-		// TODO: Think about how parameter passing via json/xml/post-vars can be streamlined
 		if($request->format == Formats::JSON) {
-			if(array_key_exists(Formats::JSON, $request->post)){
-				$request->post = json_decode($request->post['json']);
-			}
+			$method = strtolower($request->method);
+			$request->$method = json_decode($request->input, true);
 		} else if ($request->format == Formats::XML) {
 			// TODO: XML reparameterization in request transformer
 		}
@@ -113,6 +110,7 @@ class DefaultPolicy implements IPolicy {
 		Library::import($controllerClass);
 		$controllerClass = Library::getClassName($controllerClass);
 		$controller = new $controllerClass($routeResult->route->app);
+		$request->meta->controller = $controller;
 		return $controller;
 	}
 

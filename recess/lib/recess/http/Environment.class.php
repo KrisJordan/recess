@@ -7,7 +7,7 @@ Library::import('recess.http.Methods');
  * @author Kris Jordan <krisjordan@gmail.com>
  * @contributor Luiz Alberto Zaiats
  * 
- * @copyright 2008 Kris Jordan
+ * @copyright 2008, 2009 Kris Jordan
  * @package Recess! Framework
  * @license MIT
  * @link http://www.recessframework.org/
@@ -27,8 +27,17 @@ class Environment {
 		
 		$request->post = $_POST;
 		
-		if($request->method == Methods::PUT) {
-			$request->put = self::getPutParameters();
+		if(	$request->method == Methods::POST ||
+			$request->method == Methods::PUT )
+		{
+			$request->input = file_get_contents('php://input');
+
+			if($request->method == Methods::POST) {
+				$request->post = $_POST;
+			} else {
+				$request->put = self::getPutParameters($request->input);
+			}
+
 		}
 		
 		$request->headers = self::getHttpRequestHeaders();
@@ -66,14 +75,14 @@ class Environment {
 		return $httpHeaders;
 	}
 	
-	private static function getPutParameters() {
-		$putdata = file_get_contents('php://input');
+	private static function getPutParameters($input) {
+		$putdata = $input;
 		if(function_exists('mb_parse_str')) {
 	    	mb_parse_str($putdata, $outputdata);
 		} else {
 			parse_str($putdata, $outputdata);
 		}
-	    return $outputdata;
+    	return $outputdata;
 	}
 }
 

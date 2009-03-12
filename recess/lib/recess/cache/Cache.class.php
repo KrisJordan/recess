@@ -8,7 +8,7 @@
  * encouraged to remove unused cache providers from this file.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @package Recess! Framework
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  **/

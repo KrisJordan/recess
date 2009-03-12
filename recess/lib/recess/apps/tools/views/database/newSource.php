@@ -4,7 +4,7 @@ $selectedNav = 'database';
 include_once($viewsDir . 'common/header.php');
 ?>
 <h1>Adding a New Named Data Source</h1>
-<p>Recess! allows for multiple named data sources. Currently only MySQL and Sqlite are supported.</p>
+<p>Recess allows for multiple named data sources. Currently only MySQL and Sqlite are supported.</p>
 
 <ol>
 	<li><span class="highlight">Open <?php echo $_ENV['dir.bootstrap']; ?>recess-conf.php</span></li>

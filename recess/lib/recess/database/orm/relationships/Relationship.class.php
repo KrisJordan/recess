@@ -3,8 +3,8 @@
  * A Recess Relationship is an abstraction of a foreign key relationship on the RDBMS.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */

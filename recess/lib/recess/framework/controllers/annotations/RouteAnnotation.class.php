@@ -1,60 +1,57 @@
 <?php
-Library::import('recess.framework.controllers.annotations.ControllerAnnotation');
+Library::import('recess.lang.Annotation');
 Library::import('recess.framework.routing.Route');
 
-class RouteAnnotation extends ControllerAnnotation {
-	protected $methods = array();
-	protected $path;
-	protected $hasError = false;
+class RouteAnnotation extends Annotation {
 	
-	function init($array) {
-		// Expectation GET, /some/path/info
-		if(count($array) == 1) {
-			if(is_string($array[0])) {
-				$fallBack = split(' ',trim($array[0]));
-				if(count($fallBack) > 1) {
-					$this->hasError = true;
-				}
-			}
-			$array[1] = ' ';
-		}
-		
-		if(count($array) != 2) {
-			throw new RecessException('RouteAnnotation takes 2 parameters: METHOD[s], route.', get_defined_vars());
-		}
-		
-		if(!is_array($array[0])) {
-			$this->methods = array($array[0]);
-		} else {
-			$this->methods = $array[0];
-		}
-		
-		$this->path = $array[1];
+	const EMPTY_PATH = ' ';
+	
+	protected $httpMethods = array();
+	protected $path = self::EMPTY_PATH;
+	
+	public function usage() {
+		return '!Route ( GET | POST | PUT | DELETE)[, route/path/here]';
+	}
+
+	public function isFor() {
+		return Annotation::FOR_METHOD;
+	}
+
+	protected function validate($class) {
+		$this->minimumParameterCount(1);
+		$this->maximumParameterCount(2);
+		$this->validOnInstancesOf($class, Controller::CLASSNAME);
+		$this->acceptedIndexedValues(0, array(Methods::GET, Methods::POST, Methods::PUT, Methods::DELETE));
 	}
 	
-	function massage($controller, $method, ControllerDescriptor $descriptor, ReflectionMethod $reflectedMethod = null) {
-		if(isset($this->path[0]) && $this->path[0] != '/') {
-			$route = new Route($controller, $method,$this->methods, $descriptor->routesPrefix . $this->path);
-			$descriptor->methodUrls[$method] = $descriptor->routesPrefix . $this->path;
+	protected function expand($class, $reflection, $descriptor) {
+		if(is_array($this->values[0])) {
+			$this->httpMethods = $this->values[0];
 		} else {
-			$route = new Route($controller, $method,$this->methods, $this->path);
-			$descriptor->methodUrls[$method] = $this->path;
+			$this->httpMethods = array($this->values[0]);
 		}
-		$route->fileDefined = $reflectedMethod->getFileName();
-		$route->lineDefined = $reflectedMethod->getStartLine();
-		$descriptor->routes[] = $route;
 		
-		if($this->hasError == true) {
-			if(is_array($this->methods) && !empty($this->methods)) {
-				$parts = split(' ', $this->methods[0]);
-				if(sizeof($parts) > 1) {
-					$method = $parts[0];
-					$path = $parts[1];
-					throw new RecessErrorException('Invalid !Route annotation. Please separate HTTP Method and Path with a comma. Ex: /** !Route ' . $method . ', ' . $path . ' */', 0, 0, $reflectedMethod->getFileName(), $reflectedMethod->getStartLine(), array());
-				}
-			}
-			throw new RecessErrorException('Invalid !Route annotation. Please separate HTTP Method and Path with a comma. Ex: /** !Route GET, /path/info */', 0, 0, $reflectedMethod->getFileName(), $reflectedMethod->getStartLine(), array());	
+		if(isset($this->values[1])) {
+			$this->path = $this->values[1];
 		}
+		
+		$controller = Library::getFullyQualifiedClassName($class);
+		$controllerMethod	= $reflection->getName();
+		
+		if(strpos($this->path, Library::pathSeparator)===0) {
+			// Absolute Route
+			$route = new Route($controller, $controllerMethod, $this->httpMethods, $this->path);
+			$descriptor->methodUrls[$controllerMethod] = $this->path;
+		} else {
+			// Relative Route
+			$route = new Route($controller, $controllerMethod, $this->httpMethods, $descriptor->routesPrefix . $this->path);
+			$descriptor->methodUrls[$controllerMethod] = $descriptor->routesPrefix . $this->path;
+		}
+		
+		$route->fileDefined = $reflection->getFileName();
+		$route->lineDefined = $reflection->getStartLine();
+		
+		$descriptor->routes[] = $route;
 	}
 }
 ?>

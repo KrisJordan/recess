@@ -186,7 +186,7 @@ class RecessToolsAppsController extends Controller {
 	
 	/** !Route POST, app/$app/model/gen */
 	public function generateModel($app) { 
-		// TODO: Clean up this pile of crap
+		// TODO: Clean this up.
 		$values = $this->request->post;
 		
 		$modelName = $values['modelName'];

@@ -38,7 +38,6 @@ abstract class Application {
 	
 	function addRoutesToRouter(RtNode $router) {
 		$classes = $this->listControllers();
-		
 		foreach($classes as $class) {
 			if(Library::classExists($this->controllersPrefix . $class)) {
 				$instance = new $class($this);
@@ -53,8 +52,7 @@ abstract class Application {
 					$router->addRoute($this, $route, $this->routingPrefix);
 				}
 			}
-		}
-		
+		}		
 		return $router;
 	}
 	

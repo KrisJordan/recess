@@ -1,10 +1,10 @@
 <?php
-Library::import('recess.lang.RecessObject');
+Library::import('recess.lang.Object');
 
 /**
  * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008, 2009 Kris Jordan
- * @package Recess! Framework
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
@@ -64,6 +64,6 @@ class Request {
 	}
 }
 
-class Meta extends RecessObject {}
+class Meta extends Object {}
 
 ?>

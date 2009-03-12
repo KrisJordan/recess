@@ -8,7 +8,7 @@
 		<![endif]-->
 		<!-- Syntax Highlighter -->  
 		<link type="text/css" rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/SyntaxHighlighter.css"></link>
-		<title><?php if(isset($title)) echo $title; else echo 'Recess!'; ?></title>
+		<title><?php if(isset($title)) echo $title; else echo 'Recess'; ?></title>
 		
 		<style type="text/css">
 			.error,.notice,.success{ margin: 0 0 1em 0; padding: 0.8em; border: 2px solid #000; }

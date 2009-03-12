@@ -40,12 +40,12 @@ $qotms = array(
 			}
 		}
 		?>
-		<title><?php if(isset($title)) echo $title; else echo 'Recess! Tools!'; ?></title>
+		<title><?php if(isset($title)) echo $title; else echo 'Recess Tools!'; ?></title>
 	</head>
 	<body>
 	<div class="container">
 			<div class="span-11 header">
-				<h1>Recess! Tools</h1>
+				<h1>Recess Tools</h1>
 			</div>
 			<div class="span-13 last">
 				<p class="qotm quiet"><?php echo $qotms[rand(0,count($qotms)-1)]; ?></p>

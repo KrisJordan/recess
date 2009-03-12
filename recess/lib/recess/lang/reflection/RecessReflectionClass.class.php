@@ -1,8 +1,8 @@
 <?php
-Library::import('recess.lang.RecessObject');
+Library::import('recess.lang.Object');
 
 /**
- * Recess! Framework reflection for class which introduces annotations.
+ * Recess PHP Framework reflection for class which introduces annotations.
  * Annotations follow the following syntax:
  * 
  * !AnnotationName value, key: value, value, (sub array value, key: value, (sub sub array value))
@@ -16,14 +16,14 @@ Library::import('recess.lang.RecessObject');
  * @todo Harden the regular expressions.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
 class RecessReflectionClass extends ReflectionClass {
 	function getProperties($filter = null) {
-		Library::import('recess.lang.RecessReflectionProperty');
+		Library::import('recess.lang.reflection.RecessReflectionProperty');
 		$rawProperties = parent::getProperties();
 		$properties = array();
 		foreach($rawProperties as $rawProperty) {
@@ -32,7 +32,7 @@ class RecessReflectionClass extends ReflectionClass {
 		return $properties;
 	}
 	function getMethods($getAttachedMethods = true){
-		Library::import('recess.lang.RecessReflectionMethod');
+		Library::import('recess.lang.reflection.RecessReflectionMethod');
 		$rawMethods = parent::getMethods();
 		$methods = array();
 		foreach($rawMethods as $rawMethod) {
@@ -40,8 +40,8 @@ class RecessReflectionClass extends ReflectionClass {
 			$methods[] = $method;
 		}
 		
-		if($getAttachedMethods && is_subclass_of($this->name, 'RecessObject')) {
-			$methods = array_merge($methods, RecessObject::getAttachedMethods($this->name));
+		if($getAttachedMethods && is_subclass_of($this->name, 'Object')) {
+			$methods = array_merge($methods, Object::getAttachedMethods($this->name));
 		}
 		
 		return $methods;

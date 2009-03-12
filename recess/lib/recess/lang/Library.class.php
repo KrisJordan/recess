@@ -5,12 +5,12 @@ require_once($_ENV['dir.lib'] . 'recess/cache/Cache.class.php');
 /**
  * Library is an important low level utility in Recess used to make importing class files
  * less painful. Library is also an important level of indirection between PHP's native
- * include/require functions. Library is how Recess! dynamically 'compiles' all classes
+ * include/require functions. Library is how Recess dynamically 'compiles' all classes
  * into a single PHP file.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  * 

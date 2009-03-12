@@ -24,8 +24,8 @@ Library::import('recess.database.sql.ISqlSelectOptions');
  * @author Kris Jordan <krisjordan@gmail.com>
  * @contributor Luiz Alberto Zaiats 
  * 
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
@@ -179,11 +179,11 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		if(	!empty($this->joins) )
 			throw new RecessException('Update does not use joins.', get_defined_vars());
 		if(	!empty($this->orderBy) ) 
-			throw new RecessException('Update (in Recess!) does not use order by.', get_defined_vars());
+			throw new RecessException('Update (in Recess) does not use order by.', get_defined_vars());
 		if(	isset($this->limit) )
-			throw new RecessException('Update (in Recess!) does not use limit.', get_defined_vars());
+			throw new RecessException('Update (in Recess) does not use limit.', get_defined_vars());
 		if(	isset($this->offset) )
-			throw new RecessException('Update (in Recess!) does not use offset.', get_defined_vars());
+			throw new RecessException('Update (in Recess) does not use offset.', get_defined_vars());
 		if(	isset($this->distinct) )
 			throw new RecessException('Update does not use distinct.', get_defined_vars());
 	}

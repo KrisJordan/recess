@@ -6,24 +6,30 @@ Library::import('recess.database.orm.annotations');
  * of the data source (Databases::getSource($name)) this Model should talk to.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
-class DatabaseAnnotation extends ModelAnnotation {
-	public $source;
+class DatabaseAnnotation extends Annotation {
 	
-	function init($array) {
-		if(isset($array[0]) && count($array) == 1) {
-			$this->source = $array[0];
-		} else {
-			throw new RecessException('!Database annotation takes 1 parameter: name. Ex: !Database Default', get_defined_vars());
-		}
+	public function usage() {
+		return '!Database databaseName';
+	}
+
+	public function isFor() {
+		return Annotation::FOR_CLASS;
+	}
+
+	protected function validate($class) {
+		$this->acceptsNoKeyedValues();
+		$this->exactParameterCount(1);
+		$this->validOnInstancesOf($class, Model::CLASSNAME);
 	}
 	
-	function massage(ModelDescriptor &$descriptor) {
-		$descriptor->source = $this->source;
+	protected function expand($class, $reflection, $descriptor) {
+		$descriptor->source = $this->values[0];
 	}
+	
 }
 ?>

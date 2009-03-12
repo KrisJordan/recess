@@ -1,6 +1,6 @@
 <?php
-Library::import('recess.lang.RecessObject');
-Library::import('recess.lang.RecessReflectionClass');
+Library::import('recess.lang.Object');
+Library::import('recess.lang.reflection.RecessReflectionClass');
 Library::import('recess.lang.Annotation', true);
 Library::import('recess.framework.interfaces.IController');
 Library::import('recess.framework.controllers.annotations.ViewAnnotation', true);
@@ -15,7 +15,7 @@ Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
  */
-abstract class AbstractController extends RecessObject implements IController {
+abstract class AbstractController extends Object implements IController {
 	
 	public abstract function init();
 	
@@ -102,14 +102,6 @@ abstract class AbstractController extends RecessObject implements IController {
 		Library::import('recess.http.responses.ForwardingUnauthorizedResponse');
 		return new ForwardingUnauthorizedResponse($this->request, $forwardUri, $realm);
 	}
-}
-
-class ControllerDescriptor extends RecessObjectDescriptor {
-	public $routes = array();
-	public $methodUrls = array();
-	public $routesPrefix = '';
-	public $viewClass = 'recess.framework.views.NativeView';
-	public $viewPrefix = '';
 }
 
 ?>

@@ -8,7 +8,7 @@ Library::import('recess.http.Methods');
  * @contributor Luiz Alberto Zaiats
  * 
  * @copyright 2008, 2009 Kris Jordan
- * @package Recess! Framework
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */

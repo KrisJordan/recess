@@ -2,7 +2,7 @@
 Library::import('recess.http.Request');
 
 interface IController {
-	function serve(Request $request);
+	// function wrappedServe(Request $request);
 	static function getRoutes($class);
 }
 

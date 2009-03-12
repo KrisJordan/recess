@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.http.ForwardingResponse');
 /**
- * Entry into Recess! Framework occurs in the coordinator. It is responsible
+ * Entry into Recess PHP Framework occurs in the coordinator. It is responsible
  * for the flow of control from preprocessing of request data, the serving of a request
  * in a controller, and rendering a response to the request through a view.
  * 
@@ -10,7 +10,7 @@ Library::import('recess.http.ForwardingResponse');
  */
 final class Recess {
 	/**
-	 * Recess! Framework Entry Point
+	 * Recess PHP Framework Entry Point
 	 * @param Request $request The raw Request.
 	 * @package recess
 	 * @static 

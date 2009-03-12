@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.lang.Inflector');
-Library::import('recess.lang.RecessObject');
-Library::import('recess.lang.RecessReflectionClass');
+Library::import('recess.lang.Object');
+Library::import('recess.lang.reflection.RecessReflectionClass');
 Library::import('recess.lang.Annotation');
 
 Library::import('recess.database.Databases');
@@ -23,12 +23,18 @@ Library::import('recess.database.orm.relationships.BelongsToRelationship');
  * Model is the basic unit of organization in Recess' simple ORM.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
-abstract class Model extends RecessObject implements ISqlConditions {
+abstract class Model extends Object implements ISqlConditions {
+	
+	const CLASSNAME = 'Model';
+	const INSERT = 'insert';
+	const UPDATE = 'update';
+	const DELETE = 'delete';
+	const SAVE = 'save';
 	
 	/**
 	 * Constructor can take either a keyed array or a string/int
@@ -142,55 +148,23 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	static function getProperties($classOrInstance) {
 		return self::getClassDescriptor($classOrInstance)->properties;
 	}
+
+	protected static function initClassDescriptor($class) {	
+		return new ModelDescriptor($class, false);
+	}
 	
-	/**
-	 * Implementation of the RecessObject abstract method. This method
-	 * computes a static ModelDescriptor based on reflected meta data
-	 * and annotations from the model class.
-	 *
-	 * @see RecessObject
-	 * @param string $class
-	 * @return ModelDescriptor
-	 */
-	static protected function buildClassDescriptor($class) {
-		$descriptor = new ModelDescriptor($class, false);
-		
-		try {
-			$reflection = new RecessReflectionClass($class);
-		} catch(ReflectionException $e) {
-			throw new RecessException('Class "' . $class . '" has not been declared.', get_defined_vars());
+	protected static function shapeDescriptorWithProperty($class, $property, $descriptor, $annotations) {
+		if(!$property->isStatic() && $property->isPublic()) {
+			$modelProperty = new ModelProperty();
+			$modelProperty->name = $property->name;
+			$descriptor->properties[$modelProperty->name] = $modelProperty;
 		}
-		
-		$annotations = $reflection->getAnnotations();
-		foreach($annotations as $annotation) {
-			if($annotation instanceof ModelAnnotation) {
-				$annotation->massage($descriptor);
-			}
-		}
-		
-		$reflectedProperties = $reflection->getProperties();
-		$properties = array();
-		foreach($reflectedProperties as $reflectedProperty) {
-			if(!$reflectedProperty->isStatic() && $reflectedProperty->isPublic()) {
-				$property = new ModelProperty();
-				$property->name = $reflectedProperty->name;
-				$annotations = $reflectedProperty->getAnnotations();
-				foreach($annotations as $annotation) {
-					if($annotation instanceof ModelPropertyAnnotation) {
-						$annotation->massage($property);
-						if($property->isPrimaryKey === true) {
-							$descriptor->primaryKey = $property->name;
-						}
-					}
-				}
-				$properties[] = $property;
-			}
-		}
-		$descriptor->properties = $properties;
-		
+		return $descriptor;
+	}
+	
+	protected static function finalClassDescriptor($class, $descriptor) {
 		$modelSource = Databases::getSource($descriptor->getSourceName());
-		$modelSource->cascadeTableDescriptor($descriptor->getTable(), $modelSource->modelToTableDescriptor($descriptor));
-		
+		$modelSource->cascadeTableDescriptor($descriptor->getTable(), $modelSource->modelToTableDescriptor($descriptor));	
 		return $descriptor;
 	}
 	
@@ -270,6 +244,11 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	protected function assignmentSqlForThisObject(ModelDescriptor $descriptor, $useAssignment = true, $excludePrimaryKey = false) {
 		$sqlBuilder = new SqlBuilder();
 		$sqlBuilder->from($descriptor->getTable());
+		
+		if(empty($descriptor->columns)) {
+			throw new RecessException('The "' . $descriptor->getTable() . '" table does not appear to exist in your database.', get_defined_vars());
+		}
+		
 		foreach($this as $column => $value) {
 			if($excludePrimaryKey && $descriptor->primaryKey == $column) continue;
 			if(in_array($column, $descriptor->columns) && isset($value)) {
@@ -288,8 +267,10 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 *
 	 * @param boolean $cascade - Also delete models related to this model?
 	 * @return boolean
+	 * 
+	 * !Wrappable delete
 	 */
-	function delete($cascade = true) {	
+	function wrappedDelete($cascade = true) {
 		$thisClassDescriptor = self::getClassDescriptor($this);
 		
 		if($cascade) {
@@ -305,10 +286,11 @@ abstract class Model extends RecessObject implements ISqlConditions {
 
 	/**
 	 * Insert row into the data source based on the values of this instance.
-	 *
 	 * @return boolean
+	 * 
+	 * !Wrappable insert
 	 */
-	function insert() {
+	function wrappedInsert() {
 		$thisClassDescriptor = self::getClassDescriptor($this);
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor);
@@ -324,10 +306,11 @@ abstract class Model extends RecessObject implements ISqlConditions {
 
 	/**
 	 * Update a row in the data source based on the values of this instance.
-	 *
 	 * @return boolean
+	 * 
+	 * !Wrappable update
 	 */
-	function update() {
+	function wrappedUpdate() {
 		$thisClassDescriptor = self::getClassDescriptor($this);
 		
 		$sqlBuilder = $this->assignmentSqlForThisObject($thisClassDescriptor, true, true);
@@ -341,8 +324,10 @@ abstract class Model extends RecessObject implements ISqlConditions {
 	 * Insert or update depending on whether or not this instance's primary key is set.
 	 *
 	 * @return boolean
+	 * 
+	 * !Wrappable save
 	 */
-	function save()   {
+	function wrappedSave()   {
 		if($this->primaryKeyIsSet()) {
 			return $this->update();
 		} else {
@@ -495,7 +480,7 @@ abstract class Model extends RecessObject implements ISqlConditions {
 /**
  * Class descriptor + metadata for a model.
  */
-class ModelDescriptor extends RecessObjectDescriptor {
+class ModelDescriptor extends ClassDescriptor {
 	
 	public $primaryKey = 'id';
 	private $table;

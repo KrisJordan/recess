@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.lang.RecessObjectRegistry');
+Library::import('recess.lang.ObjectRegistry');
 
 Library::import('recess.database.Databases');
 Library::import('recess.database.orm.Model');
@@ -96,91 +96,13 @@ abstract class ModelTest extends PHPUnit_Extensions_Database_TestCase {
 	
 	function getDataSet() {
 		Databases::setDefaultSource($this->source);
-		RecessObject::clearDescriptors();
+		Object::clearDescriptors();
 		return $this->createXMLDataSet('recess/database/orm/sample-data.xml');
 	}
 	
 	function tearDown() {
-//		$this->source->commit();
-//		$this->source->beginTransaction();
-//		$this->source->exec('DROP TABLE IF EXISTS persons');
-//	 	$this->source->exec('DROP TABLE IF EXISTS groups');
-//	 	$this->source->exec('DROP TABLE IF EXISTS groupships');
-//		$this->source->exec('DROP TABLE IF EXISTS books');
-//	 	$this->source->exec('DROP TABLE IF EXISTS chapters');
-//	 	$this->source->exec('DROP TABLE IF EXISTS cars');
-//		$this->source->exec('DROP TABLE IF EXISTS movies');
-//		$this->source->exec('DROP TABLE IF EXISTS generas');
-//		$this->source->exec('DROP TABLE IF EXISTS movies_generas_joins');
-//	 	$this->source->exec('DROP TABLE IF EXISTS political_partys');
-//		$this->source->exec('DROP TABLE IF EXISTS books_generas_joins');
-//		$this->source->commit();
 		unset($this->source);
 	}
-	
-//	function setUpHelper() {
-//		$this->source->beginTransaction();
-//		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Kris", "Jordan", 23, 1, "321-456-7890")');
-//		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Joel", "Sutherland", 23, 1, "919-485-5387")');
-//		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Clay", "Schossow", 22, 2, "917-228-5749")');
-//		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Barack", "Obama", 47, 1, "203-507-4577")');
-//		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("Josh", "Lockhart", 22, 1, "")');
-//		$this->source->exec('INSERT INTO persons (firstName, lastName, age, politicalPartyId, phone) VALUES ("John", "McCain", 72, 3, "")');
-//		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Democrat")');
-//		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Independent")');
-//		$this->source->exec('INSERT INTO political_partys (party) VALUES ("Republican")');
-//		$this->source->exec('INSERT INTO books (authorId, title) VALUES (4,"The Audacity of Hope: Thoughts on Reclaiming the American Dream")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Republicans and Democrats")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Values")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Our Constitution")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Politics")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Opportunity")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Faith")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Race")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"The World Beyond our Borders")');
-//		$this->source->exec('INSERT INTO chapters (bookId, title) VALUES (1,"Family")');
-//		$this->source->exec('INSERT INTO books (authorId, title) VALUES (3,"How to Be a Sketch Ball")'); // 1
-//		$this->source->exec('INSERT INTO books (authorId, title) VALUES (2,"Steve Nash: A Modern Day Hero")'); // 2
-//		$this->source->exec('INSERT INTO books (authorId, title) VALUES (1,"How Michael Scott Touched My Life, and Could Touch Yours Too")'); // 3
-//		$this->source->exec('INSERT INTO books (authorId, title) VALUES (4,"Dreams from My Father: A Story of Race and Inheritance")'); // 4
-//		$this->source->exec('INSERT INTO books (authorId, title) VALUES (4,"Barack Obama: What He Believes In - From His Own Works")'); // 5
-//		$this->source->exec('INSERT INTO books (authorId, title) VALUES (3,"Hoop Dreams, The Clay Schossow Story")'); // 6
-//		$this->source->exec('INSERT INTO movies (authorId, title) VALUES (3,"Hoop Dreams, The Clay Schossow Story, The Movie")');
-//		$this->source->exec('INSERT INTO movies (authorId, title) VALUES (3,"Clay Schossow: Unleashed")');
-//		$this->source->exec('INSERT INTO movies (authorId, title) VALUES (3,"LeBron James and Other Assorted Dreams of Clay Schossow")');
-//		$this->source->exec('INSERT INTO generas (title) VALUES ("Sports Healing")'); // 1
-//		$this->source->exec('INSERT INTO generas (title) VALUES ("Political Healing")'); // 2
-//		$this->source->exec('INSERT INTO generas (title) VALUES ("Social Healing")'); // 3
-//		$this->source->exec('INSERT INTO generas (title) VALUES ("Comedy Healing")'); // 4
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (1,3)');
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (2,3)');
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (2,4)');
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (3,1)'); // 4: 4, 6: 3
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (4,4)');
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (5,3)');
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (6,3)');
-//		$this->source->exec('INSERT INTO books_generas_joins (bookId,generaId) VALUES (7,1)');
-//		$this->source->exec('INSERT INTO movies_generas_joins (movieId,generaId) VALUES (1,1)');
-//		$this->source->exec('INSERT INTO movies_generas_joins (movieId,generaId) VALUES (1,4)');
-//		$this->source->exec('INSERT INTO movies_generas_joins (movieId,generaId) VALUES (2,4)');
-//		$this->source->exec('INSERT INTO movies_generas_joins (movieId,generaId) VALUES (3,1)');
-//		$this->source->exec('INSERT INTO groups (name) VALUES ("NRA")'); // 1
-//		$this->source->exec('INSERT INTO groups (name) VALUES ("Tree Huggers")'); // 2
-//		$this->source->exec('INSERT INTO groups (name) VALUES ("Hackers")'); // 3
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (2,1)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (3,1)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (3,2)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (2,2)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (1,3)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (2,4)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (2,5)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (3,5)');
-//		$this->source->exec('INSERT INTO groupships (groupId,personId) VALUES (1,6)');
-//		$this->source->exec('INSERT INTO cars (personId,make,isDriveable) VALUES (1,"VW",1)');
-//		$this->source->exec('INSERT INTO cars (personId,make,isDriveable) VALUES (2,"Toyota",1)');
-//		$this->source->commit();
-//		$this->source->beginTransaction();
-//	}
 
 	function testAll() {
 		$person = new Person();
@@ -356,7 +278,7 @@ abstract class ModelTest extends PHPUnit_Extensions_Database_TestCase {
 		$this->assertEquals($people_count + 1, count($people));
 	}
 	
-	function testDelete() {
+	function testDelete() {		
 		$people = Make::a('Person')->all();
 		$people_count = count($people);
 		$this->assertTrue($people[0]->delete());

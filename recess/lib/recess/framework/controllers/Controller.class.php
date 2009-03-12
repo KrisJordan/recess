@@ -16,6 +16,9 @@ Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation
  * @contributor Joshua Paine
  */
 abstract class Controller extends AbstractController {
+	
+	const CLASSNAME = 'Controller';
+	
 	/** @var Request */
 	protected $request;
 	
@@ -32,40 +35,27 @@ abstract class Controller extends AbstractController {
 	}
 	
 	public function init() { }
-	
-	protected static function buildClassDescriptor($class) {
-		try {
-			$reflection = new RecessReflectionClass($class);
-		} catch(ReflectionException $e) {
-			throw new RecessException('Class "' . $class . '" has not been declared.', get_defined_vars());
-		}
-		
-		$descriptor = new ControllerDescriptor();
-		
-		$annotations = $reflection->getAnnotations();
-		foreach($annotations as $annotation) {
-			if($annotation instanceof ControllerAnnotation) {
-				$annotation->massage($class, '', $descriptor);
-			}
-		}
-		
-		$reflectedMethods = $reflection->getMethods(false);
-		$methods = array();
+
+	protected static function initClassDescriptor($class) {
+		$descriptor = new ClassDescriptor();
+		$descriptor->routes = array();
+		$descriptor->methodUrls = array();
+		$descriptor->routesPrefix = '';
+		$descriptor->viewClass = 'recess.framework.views.NativeView';
+		$descriptor->viewPrefix = '';
+		return $descriptor;
+	}
+
+	protected static function shapeDescriptorWithMethod($class, $method, $descriptor, $annotations) {
 		$unreachableMethods = array('serve','urlTo','__call','__construct','init','application');
-		foreach($reflectedMethods as $reflectedMethod) {
-			if(in_array($reflectedMethod->getName(),$unreachableMethods)) continue;
-			$annotations = $reflectedMethod->getAnnotations();
-			foreach($annotations as $annotation) {
-				if($annotation instanceof ControllerAnnotation) {
-					$annotation->massage(Library::getFullyQualifiedClassName($class), $reflectedMethod->name, $descriptor, $reflectedMethod);
-				}
-			}
-			
-			if(	empty($annotations) && 
-				$reflectedMethod->isPublic() && 
-				!$reflectedMethod->isStatic()
+
+		if(in_array($method->getName(), $unreachableMethods)) return $descriptor;
+		
+		if(	empty($annotations) && 
+				$method->isPublic() && 
+				!$method->isStatic()
 			   ) {
-			   	$parameters = $reflectedMethod->getParameters();
+			   	$parameters = $method->getParameters();
 			   	$parameterNames = array();
 			   	foreach($parameters as $parameter) {
 			   		$parameterNames[] = '$' . $parameter->getName();
@@ -78,15 +68,13 @@ abstract class Controller extends AbstractController {
 				// Default Routing for Public Methods Without Annotations
 				$descriptor->routes[] = 
 					new Route(	$class, 
-								$reflectedMethod->getName(), 
+								$method->getName(), 
 								Methods::GET, 
-								$descriptor->routesPrefix . $reflectedMethod->getName() . $parameterPath);
-			}
+								$descriptor->routesPrefix . $method->getName() . $parameterPath);
 		}
-		
 		return $descriptor;
 	}
-	
+
 	/**
 	 * urlTo is a helper method that returns the url to a controller method.
 	 * Examples:
@@ -156,9 +144,10 @@ abstract class Controller extends AbstractController {
 	 * Call the method and return its response.
 	 *
 	 * @param DefaultRequest $request The HTTP request being served.
-	 * @final
+	 * 
+	 * !Wrappable serve
 	 */
-	final function serve(Request $request) {		
+	function wrappedServe(Request $request) {		
 		$this->request = $request;
 		
 		$shortWiredResponse = $this->init();

@@ -1,10 +1,10 @@
 <?php
-$title = 'Recess! Tools! - Home';
+$title = 'Recess Tools! - Home';
 $selectedNav = '';
 include_once($viewsDir . 'common/header.php');
 ?>
 
-<h1>Welcome to Recess!</h1>
+<h1>Welcome to Recess</h1>
 
 <?php if(get_magic_quotes_gpc()): ?>
 	<div class="error">

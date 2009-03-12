@@ -40,7 +40,7 @@ class AttrBAnnotation {
 	function init($args) {}
 }
 
-Library::import('recess.lang.RecessReflectionClass');
+Library::import('recess.lang.reflection.RecessReflectionClass');
 
 class RecessReflectionClassTest extends PHPUnit_Framework_TestCase {
 	

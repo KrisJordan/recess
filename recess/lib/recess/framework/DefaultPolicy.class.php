@@ -42,6 +42,7 @@ class DefaultPolicy implements IPolicy {
 				throw new RecessResponseException('METHOD not supported, supported METHODs are: ' . implode(',', $routeResult->acceptableMethods), ResponseCodes::HTTP_METHOD_NOT_ALLOWED, get_defined_vars());
 			}
 		} else {
+			print_r($routes);exit;
 			throw new RecessResponseException('Resource does not exist.', ResponseCodes::HTTP_NOT_FOUND, get_defined_vars());
 		}
 		

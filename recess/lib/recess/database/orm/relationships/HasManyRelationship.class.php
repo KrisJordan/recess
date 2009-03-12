@@ -6,8 +6,8 @@ Library::import('recess.database.orm.relationships.Relationship');
  * foreign key relationship on the RDBMS.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
@@ -35,15 +35,15 @@ class HasManyRelationship extends Relationship {
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
 		$alias = $this->name;
-		$attachedMethod = new RecessObjectAttachedMethod($this,'selectModel', $alias);
+		$attachedMethod = new AttachedMethod($this,'selectModel', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'addTo' . ucfirst($this->name);
-		$attachedMethod = new RecessObjectAttachedMethod($this,'addTo', $alias);
+		$attachedMethod = new AttachedMethod($this,'addTo', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'removeFrom' . ucfirst($this->name);
-		$attachedMethod = new RecessObjectAttachedMethod($this,'removeFrom', $alias);
+		$attachedMethod = new AttachedMethod($this,'removeFrom', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 	}
 	

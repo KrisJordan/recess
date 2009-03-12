@@ -1,23 +1,30 @@
 <?php
-Library::import('recess.framework.controllers.annotations.ControllerAnnotation');
+Library::import('recess.lang.Annotation');
 Library::import('recess.framework.routing.Route');
 
-class RoutesPrefixAnnotation extends ControllerAnnotation {
-	protected $prefix;
+class RoutesPrefixAnnotation extends Annotation {
 	
-	function init($array) {
-		if(count($array) == 1) {
-			$this->prefix = $array[0];
-		} else {
-			throw new RecessException('RoutePrefixAnnotation takes 1 parameter: prefix.', get_defined_vars());
-		}
+	public function usage() {
+		return '!RoutesPrefix prefix/of/route/';
+	}
+
+	public function isFor() {
+		return Annotation::FOR_CLASS;
+	}
+
+	protected function validate($class) {
+		$this->acceptsNoKeyedValues();
+		$this->exactParameterCount(1);
+		$this->validOnInstancesOf($class, Controller::CLASSNAME);
 	}
 	
-	function massage($controller, $method, ControllerDescriptor $descriptor, ReflectionMethod $reflectedMethod = null) {
-		if($this->prefix == '/')
+	protected function expand($class, $reflection, $descriptor) {
+		$prefix = $this->values[0];
+		if($prefix == '/')
 			$descriptor->routesPrefix = '';
 		else
-			$descriptor->routesPrefix = $this->prefix;
+			$descriptor->routesPrefix = $prefix;
 	}
+
 }
 ?>

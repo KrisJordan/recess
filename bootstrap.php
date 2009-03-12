@@ -1,6 +1,6 @@
 <?php
 /**
- * Recess! Framework is bootstrapped by passing control to Recess::main().
+ * Recess PHP Framework is bootstrapped by passing control to Recess::main().
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
  */
@@ -19,7 +19,7 @@ set_exception_handler(array('Diagnostics','handleException'));
 Library::import('recess.http.Environment');
 Library::import('recess.Recess');
 
-// Entry point to Recess!
+// Entry point to Recess
 Recess::main(Environment::getRawRequest(), RecessConf::$policy, RecessConf::$applications, RecessConf::getRoutes(), RecessConf::$plugins);
 
 // RecessConf follows...

@@ -1,8 +1,8 @@
 <?php if(isset($bootstrapped)) unset($bootstrapped); else exit;
 /**
- * Welcome to Recess! Let's have some fun.
+ * Welcome to Recess Let's have some fun.
  * 
- * Recess! is full-stack, PHP application development framework.
+ * Recess is full-stack, PHP application development framework.
  * For tutorials, documentation, bug reports, feature suggestions
  * head over to: 
  * 

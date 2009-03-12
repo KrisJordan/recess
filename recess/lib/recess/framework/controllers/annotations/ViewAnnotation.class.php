@@ -1,27 +1,31 @@
 <?php
-Library::import('recess.framework.controllers.annotations.ControllerAnnotation');
+Library::import('recess.lang.Annotation');
 
-class ViewAnnotation extends ControllerAnnotation {
+class ViewAnnotation extends Annotation {
 
-	protected $viewClass = 'Native';
+	const PREFIX = 'prefix';
+	
 	protected $prefix = '';
 	
-	function init($values) {
-		if(isset($values[0])) {
-			$this->viewClass = $values[0];
-		} else {
-			throw new RecessException('View annotation requires a view class (like Smarty or Native).');
-		}
-		
-		if(isset($values['Prefix'])) {
-			$this->prefix = $values['Prefix'];
-		}
+	public function usage() {
+		return '!View ViewProvider [, Prefix: pathWithinViews/]';
+	}
+
+	public function isFor() {
+		return Annotation::FOR_CLASS;
+	}
+
+	protected function validate($class) {
+		$this->acceptedKeys(array(self::PREFIX));
+		$this->minimumParameterCount(1);
+		$this->maximumParameterCount(2);
+		$this->validOnInstancesOf($class, Controller::CLASSNAME);
 	}
 	
-	function massage($controller, $method, ControllerDescriptor $descriptor, ReflectionMethod $reflectedMethod = null) {
-		$descriptor->viewClass = 'recess.framework.views.' . $this->viewClass . 'View';
+	protected function expand($class, $reflection, $descriptor) {
+		$descriptor->viewClass = 'recess.framework.views.' . $this->values[0] . 'View';
 		$descriptor->viewPrefix = $this->prefix;
 	}
-	
+
 }
 ?>

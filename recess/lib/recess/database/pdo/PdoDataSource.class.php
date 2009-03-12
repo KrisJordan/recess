@@ -7,12 +7,12 @@ Library::import('recess.database.pdo.RecessTableDescriptor');
 Library::import('recess.database.pdo.RecessColumnDescriptor');
 
 /**
- * A PDO wrapper in the Recess! Framework that provides a single interface for commonly 
+ * A PDO wrapper in the Recess PHP Framework that provides a single interface for commonly 
  * needed operations (i.e.: list tables, list columns in a table, etc).
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
@@ -58,7 +58,7 @@ class PdoDataSource extends PDO {
 	
 	/**
 	 * Locate the pdo driver specific data source provider, instantiate, and return.
-	 * Throws ProviderDoesNotExistException for a pdo driver without a Recess! provider.
+	 * Throws ProviderDoesNotExistException for a pdo driver without a Recess provider.
 	 *
 	 * @return IPdoDataSourceProvider
 	 */

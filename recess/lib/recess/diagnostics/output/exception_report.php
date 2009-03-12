@@ -204,7 +204,7 @@ function printContext($context) {
 		<div id="container">
 			<div id="header">
 				<div id="logo">
-					<h1 class="logo">Recess!</h1>
+					<h1 class="logo">Recess</h1>
 				</div>
 				<div id="httpCode">
 					<h2>500 Internal Server Error</h2>
@@ -212,7 +212,7 @@ function printContext($context) {
 			</div>
 			<div id="body">
 				<div id="error">
-					<h2><?php print $exception->getMessage(); ?></h2>
+					<h2><?php print nl2br($exception->getMessage()); ?></h2>
 					<p>Location: Line <?php print $exception->getLine(); ?> of <?php print $exception->getFile(); ?></p>
 					<?php printCodeSnippet($exception->getFile(), $exception->getLine()); ?>
 					<?php if($exception instanceof RecessException || $exception instanceof RecessErrorException) { printContext($exception->context); } ?>
@@ -221,7 +221,6 @@ function printContext($context) {
 				<div id="callstack">
 					<h2>Call Stack</h2>
 					<ul class="thestack">
-										
 					<?php
 					$i = 0;
 					$exceptionTrace = array();

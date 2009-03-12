@@ -4,8 +4,8 @@
  * foreign key relationship on the RDBMS.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @copyright 2008 Kris Jordan
- * @package Recess! Framework
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
  */
@@ -25,15 +25,15 @@ class BelongsToRelationship extends Relationship {
 	
 	function attachMethodsToModelDescriptor(ModelDescriptor &$descriptor) {
 		$alias = $this->name;
-		$attachedMethod = new RecessObjectAttachedMethod($this, 'selectModel', $alias);
+		$attachedMethod = new AttachedMethod($this, 'selectModel', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'set' . ucfirst($this->name);
-		$attachedMethod = new RecessObjectAttachedMethod($this,'set', $alias);
+		$attachedMethod = new AttachedMethod($this,'set', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 		
 		$alias = 'unset' . ucfirst($this->name);
-		$attachedMethod = new RecessObjectAttachedMethod($this,'remove', $alias);
+		$attachedMethod = new AttachedMethod($this,'remove', $alias);
 		$descriptor->addAttachedMethod($alias, $attachedMethod);
 	}
 	

@@ -25,12 +25,12 @@
 			}
 		}
 		?>
-		<title><?php if(isset($title)) echo $title; else echo 'Recess! Tools!'; ?></title>
+		<title><?php if(isset($title)) echo $title; else echo 'Recess Tools!'; ?></title>
 	</head>
 	<body>
 	<div class="container">
 			<div class="span-11 header">
-				<h1>Recess! Tools</h1>
+				<h1>Recess Tools</h1>
 			</div>
 			<div class="span-13 last">
 				<p class="qotm quiet">"Give us the tools, and we'll finish the job." ~Churchill</p>

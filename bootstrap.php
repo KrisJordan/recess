@@ -100,10 +100,45 @@ abstract class RecessConf {
 		Library::import('recess.database.orm.ModelDataSource');
 		
 		if(empty(RecessConf::$defaultDatabase)) {
-			die('Congratulations, Recess is almost setup!<br /><strong>Next step</strong>: Setup <strong>recess-conf.php</strong> to point to your database. Checkout the <strong>README.textile</strong> file for detailed instructions.');
+			$message = 'Congratulations, Recess is almost setup!<br />';
+			$message .= '<strong>Next Step(s):</strong>';
+			$message .= '<ul>';
+			$pdoMessages = array();
+			if(!extension_loaded('PDO')) {
+				$pdoMessages[] = 'Install PHP\'s PDO Extension';
+				$pdoMessages[] = 'Install Sqlite or MySQL PDO Driver';
+			} else {
+				$drivers = pdo_drivers();
+				$hasMySql = in_array('mysql', $drivers);
+				$hasSqlite = in_array('sqlite', $drivers);
+				if(!$hasMySql && !$hasSqlite) {
+					$pdoMessages[] = 'Install Sqlite and/or MySQL PDO Driver';
+				} else {
+					$databases = '';
+					if($hasSqlite) { $databases = 'Sqlite'; };
+					if($hasMySql) { if($databases != '') { $databases .= ', '; } $databases .= 'MySql'; }
+					$pdoMessages[] = 'You have drivers for the following databases: ' . $databases;
+				}
+			}	
+			$pdoMessages[] = 'Setup <strong>recess-conf.php</strong> to point to your database.';
+			$pdoMessages[] = 'Checkout the <strong>README.textile</strong> file for instructions.';
+			$pdoMessages = '<li>' . implode('</li><li>', $pdoMessages) . '</li>';
+			$message .= $pdoMessages . '</ul>';
+			die($message);
 		}
-		Databases::setDefaultSource(new ModelDataSource(RecessConf::$defaultDatabase));//,RecessConf::$defaultDatabase[1],RecessConf::$defaultDatabase[2]));
 		
+		try {
+			Databases::setDefaultSource(new ModelDataSource(RecessConf::$defaultDatabase));
+		} catch(DataSourceCouldNotConnectException $e) {
+			$databaseType = parse_url(RecessConf::$defaultDatabase[0], PHP_URL_SCHEME);
+			if(!in_array($databaseType, pdo_drivers())) {
+				$message = 'It looks like PHP could not load the driver needed to connect to <strong>' . RecessConf::$defaultDatabase[0] . '</strong><br />';
+				$message .= 'Please install the <strong>' . ucfirst($databaseType) . '</strong> PDO driver and enable it in php.ini';
+			} else {
+				$message = 'Error connecting to data source: ' . $e->getMessage();
+			}
+			die($message);
+		}
 		if(!empty(RecessConf::$namedDatabases)) {
 			foreach(RecessConf::$namedDatabases as $name => $sourceInfo) {
 				Databases::addSource($name, new ModelDataSource($sourceInfo));

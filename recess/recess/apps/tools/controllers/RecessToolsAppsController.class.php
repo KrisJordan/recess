@@ -236,7 +236,7 @@ class RecessToolsAppsController extends Controller {
 		
 		$app = new $app;
 		if(strpos($app->modelsPrefix,'recess.apps.') !== false) {
-			$base = $_ENV['dir.lib'];
+			$base = $_ENV['dir.recess'];
 		} else {
 			$base = $_ENV['dir.apps'];
 		}
@@ -285,7 +285,7 @@ class RecessToolsAppsController extends Controller {
 	public function generateScaffolding($app, $model) {
 		$app = new $app;
 		if(strpos($app->controllersPrefix,'recess.apps.') !== false) {
-			$base = $_ENV['dir.lib'];
+			$base = $_ENV['dir.recess'];
 		} else {
 			$base = $_ENV['dir.apps'];
 		}

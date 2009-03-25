@@ -42,7 +42,7 @@ abstract class Model extends Object implements ISqlConditions {
 	 *
 	 * @param mixed $data
 	 */
-	public function __construct($data = null) {
+	final public function __construct($data = null) {
 		if(is_numeric($data) || is_string($data)) {
 			$primaryKey = Model::primaryKeyName($this);
 			$this->$primaryKey = $data;

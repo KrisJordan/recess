@@ -231,9 +231,7 @@ abstract class Object {
 			$annotations = $method->getAnnotations();
 			$descriptor = call_user_func(array($class, 'shapeDescriptorWithMethod'), $class, $method, $descriptor, $annotations);
 			foreach($annotations as $annotation) {
-				//if($annotation instanceof Annotation) {
-					$annotation->expandAnnotation($class, $method, $descriptor);
-				//}
+				$annotation->expandAnnotation($class, $method, $descriptor);
 			}
 		}
 		
@@ -241,9 +239,7 @@ abstract class Object {
 			$annotations = $property->getAnnotations();
 			$descriptor = call_user_func(array($class, 'shapeDescriptorWithProperty'), $class, $property, $descriptor, $annotations);
 			foreach($annotations as $annotation) {
-				//if($annotation instanceof Annotation) {
-					$annotation->expandAnnotation($class, $property, $descriptor);
-				//}
+				$annotation->expandAnnotation($class, $property, $descriptor);
 			}
 		}
 		

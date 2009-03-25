@@ -33,7 +33,11 @@ abstract class RecessConf {
 	
 	public static $recessDir = '';
 	
+	public static $pluginsDir = '';
+	
 	public static $appsDir = '';
+	
+	public static $dataDir = '';
 	
 	public static $useTurboSpeed = false;
 	
@@ -60,17 +64,19 @@ abstract class RecessConf {
 		
 		$_ENV['dir.recess'] = self::$recessDir;
 		$_ENV['dir.apps'] = self::$appsDir;
+		$_ENV['dir.temp'] = self::$dataDir . 'temp/';
 		$_ENV['dir.test'] = self::$recessDir . 'test/';
-		$_ENV['dir.temp'] = self::$recessDir . 'temp/';
-		$_ENV['dir.lib'] = self::$recessDir . 'lib/';
+		
 		if(!isset($_ENV['url.content'])) {
 			$_ENV['url.content'] = $_ENV['url.base'] . 'content/';
 		}
 		
 		date_default_timezone_set(self::$defaultTimeZone);
 		
-		require_once($_ENV['dir.lib'] . 'recess/lang/Library.class.php');
-		Library::addClassPath($_ENV['dir.lib']);
+		require_once($_ENV['dir.recess'] . 'recess/lang/Library.class.php');
+		Library::addClassPath(self::$appsDir);
+		Library::addClassPath(self::$pluginsDir);
+		Library::addClassPath(self::$recessDir);
 		
 		if(self::$useTurboSpeed) {
 			Library::$useNamedRuns = true;
@@ -83,8 +89,6 @@ abstract class RecessConf {
 		
 		Library::init();
 		Library::beginNamedRun('recess');
-		
-		Library::addClassPath(self::$appsDir);
 		
 		Library::import('recess.framework.Application');
 		foreach(self::$applications as $key => $app) {

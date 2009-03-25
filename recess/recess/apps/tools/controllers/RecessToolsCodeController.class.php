@@ -33,7 +33,7 @@ class RecessToolsCodeController extends Controller {
 	
 	protected function checkIndex() {
 		$this->recursiveIndex($_ENV['dir.apps']);
-		$this->recursiveIndex($_ENV['dir.lib']);
+		$this->recursiveIndex($_ENV['dir.recess']);
 	}
 	
 	/** !Route GET */

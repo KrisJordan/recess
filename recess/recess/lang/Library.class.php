@@ -1,6 +1,6 @@
 <?php
-require_once($_ENV['dir.lib'] . 'recess/diagnostics/Diagnostics.class.php');
-require_once($_ENV['dir.lib'] . 'recess/cache/Cache.class.php');
+require_once($_ENV['dir.recess'] . 'recess/diagnostics/Diagnostics.class.php');
+require_once($_ENV['dir.recess'] . 'recess/cache/Cache.class.php');
 
 /**
  * Library is an important low level utility in Recess used to make importing class files

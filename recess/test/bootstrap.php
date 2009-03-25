@@ -6,13 +6,13 @@ $_ENV['dir.bootstrap'] = str_replace('\\','/',realpath(dirname(__FILE__) . '/../
 $_ENV['url.base'] = str_replace('AllTests.php', '', $_SERVER['PHP_SELF']);
 
 $_ENV['dir.recess'] = $_ENV['dir.bootstrap'] . 'recess/';
+$_ENV['dir.plugins'] = $_ENV['dir.bootstrap'] . 'plugins/';
 $_ENV['dir.apps'] = $_ENV['dir.bootstrap'] . 'apps/';
-$_ENV['dir.test'] = $_ENV['dir.recess'] . 'test/';
-$_ENV['dir.temp'] = $_ENV['dir.recess'] . 'temp/';
-$_ENV['dir.lib'] = $_ENV['dir.recess'] . 'lib/';
+$_ENV['dir.test'] = $_ENV['dir.bootstrap'] . 'data/test/';
+$_ENV['dir.temp'] = $_ENV['dir.bootstrap'] . 'data/temp/';
 $_ENV['url.content'] = $_ENV['url.base'] . 'content/';
 
-require_once($_ENV['dir.lib'] . 'recess/lang/Library.class.php');
-Library::addClassPath($_ENV['dir.lib']);
+require_once($_ENV['dir.recess'] . 'recess/lang/Library.class.php');
+Library::addClassPath($_ENV['dir.recess']);
 
 ?>

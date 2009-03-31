@@ -215,7 +215,7 @@ class RecessToolsAppsController extends Controller {
 		foreach($propertyNames as $i => $name) {
 			if($name == "") continue;
 			$property = new ModelProperty();
-			$property->name = $name;
+			$property->name = trim($name);
 			if($name == $primaryKey) {
 				$property->isPrimaryKey = true;
 			}

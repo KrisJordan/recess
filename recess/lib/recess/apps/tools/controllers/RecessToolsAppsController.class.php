@@ -185,13 +185,12 @@ class RecessToolsAppsController extends Controller {
 	}
 	
 	/** !Route POST, app/$app/model/gen */
-	public function generateModel($app) { 
-		// TODO: Clean up this pile of crap
+	public function generateModel($app) {
 		$values = $this->request->post;
 		
 		$modelName = $values['modelName'];
 		$tableExists = $values['tableExists'] == 'yes' ? true : false;
-		if(!$tableExists) {
+		if($tableExists) {
 			$dataSource = $values['existingDataSource'];
 			$createTable = false;
 			$tableName = $values['existingTableName'];

@@ -14,7 +14,7 @@ include_once($viewsDir . 'common/header.php');
 <h2>Step 2) Pick Your Database Table</h2>
 <div class="span-19" id="tableOptions">
 	<div class="span-7">
-		<h3><input type="radio" name="tableExists" value="yes" /> Table does not exist.</h3>
+		<h3><input type="radio" name="tableExists" value="no" /> Table does not exist.</h3>
 		<table style="display:none">
 		<tr>
 		<td><label for="dataSource">Data Source:</label></td>
@@ -45,7 +45,7 @@ include_once($viewsDir . 'common/header.php');
 		</table>
 	</div>
 	<div class="span-6 last">
-		<h3><input type="radio" name="tableExists" value="no" /> Table already exists.</h3>
+		<h3><input type="radio" name="tableExists" value="yes" /> Table already exists.</h3>
 		<table style="display:none">
 		<tr>
 		<td><label for="existingDataSource">Data Source:</label></td>

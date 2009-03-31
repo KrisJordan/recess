@@ -91,7 +91,7 @@ class Library {
 					$classInfo = self::$classesByClass[$class];
 					$fullName = $classInfo[self::NAME];
 					$path = self::$paths[$classInfo[self::PATH]];
-					$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+					$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . self::CLASS_FILE_EXTENSION;
 					$classFile = $path . $fileName;
 					$code = file_get_contents($classFile);
 					fwrite($file, $code);
@@ -185,7 +185,7 @@ class Library {
 		if(class_exists($class, false) || interface_exists($class, false)) return true;
 		
 		$pathIndex = self::$classesByClass[$class][self::PATH];
-		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . self::CLASS_FILE_EXTENSION;
 		
 		if($pathIndex == -1) {
 			foreach(self::$paths as $index => $path) {

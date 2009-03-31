@@ -6,6 +6,14 @@ include_once($viewsDir . 'common/header.php');
 
 <h1>Welcome to Recess!</h1>
 
+<?php if(get_magic_quotes_gpc()): ?>
+	<div class="error">
+		<h3><strong>Warning</strong>: PHP's <a href="http://us3.php.net/manual/en/security.magicquotes.php">Magic Quotes</a> Setting is Enabled!<br /></h3>
+		<p><strong><a href="http://us3.php.net/manual/en/security.magicquotes.disabling.php">You should turn off magic quotes.</a></strong> It is a setting in php.ini.<br />
+		Why are magic quotes bad? Here's <a href="http://us3.php.net/manual/en/security.magicquotes.whynot.php"> the official word from PHP</a>.net.</p>
+	</div>
+<?php endif; ?>
+
 <h2>What is Tools?</h2>
 <p>
 Recess Tools is an application to help you along the development path. With Tools you can inspect the Recess Applications you have installed, ensure databases are connected properly, and browse code. 

@@ -671,9 +671,9 @@ class Criterion {
 		$this->value = $value;
 		$this->operator = $operator;
 		if(!isset($pdoLabel)) {
-			$this->pdoLabel = preg_replace('/[ \-.,\(\)]/', '_', $column);
+			$this->pdoLabel = preg_replace('/[ \-.,\(\)`]/', '_', $column);
 		} else {
-			$this->pdoLabel = preg_replace('/[ \-.,\(\)]/', '_', $pdoLabel);
+			$this->pdoLabel = preg_replace('/[ \-.,\(\)`]/', '_', $pdoLabel);
 		}
 	}
 	

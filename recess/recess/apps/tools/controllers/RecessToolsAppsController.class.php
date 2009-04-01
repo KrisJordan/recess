@@ -185,13 +185,12 @@ class RecessToolsAppsController extends Controller {
 	}
 	
 	/** !Route POST, app/$app/model/gen */
-	public function generateModel($app) { 
-		// TODO: Clean this up.
+	public function generateModel($app) {
 		$values = $this->request->post;
 		
 		$modelName = $values['modelName'];
 		$tableExists = $values['tableExists'] == 'yes' ? true : false;
-		if(!$tableExists) {
+		if($tableExists) {
 			$dataSource = $values['existingDataSource'];
 			$createTable = false;
 			$tableName = $values['existingTableName'];
@@ -215,7 +214,7 @@ class RecessToolsAppsController extends Controller {
 		foreach($propertyNames as $i => $name) {
 			if($name == "") continue;
 			$property = new ModelProperty();
-			$property->name = $name;
+			$property->name = trim($name);
 			if($name == $primaryKey) {
 				$property->isPrimaryKey = true;
 			}

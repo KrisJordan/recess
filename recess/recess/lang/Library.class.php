@@ -34,6 +34,8 @@ class Library {
 	const PATHS_CACHE_KEY = 'Recess::*::Library::$paths';
 	const NAMED_RUNS_PATH = '';
 	const PHP_EXTENSION = '.php';
+	const CLASS_FILE_EXTENSION = '.class.php';
+	const CLASS_FILE_EXTENSION_LENGTH = 10;
 	
 	const NAME = 0;
 	const PATH = 1;
@@ -89,10 +91,9 @@ class Library {
 					$classInfo = self::$classesByClass[$class];
 					$fullName = $classInfo[self::NAME];
 					$path = self::$paths[$classInfo[self::PATH]];
-					$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+					$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . self::CLASS_FILE_EXTENSION;
 					$classFile = $path . $fileName;
 					$code = file_get_contents($classFile);
-					// $code = preg_replace('/\nLibrary::import\(.*/','',file_get_contents($classFile));
 					fwrite($file, $code);
 				}
 				
@@ -184,7 +185,7 @@ class Library {
 		if(class_exists($class, false) || interface_exists($class, false)) return true;
 		
 		$pathIndex = self::$classesByClass[$class][self::PATH];
-		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . '.class.php';
+		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . self::CLASS_FILE_EXTENSION;
 		
 		if($pathIndex == -1) {
 			foreach(self::$paths as $index => $path) {
@@ -272,8 +273,8 @@ class Library {
 			if(file_exists($path . self::pathSeparator . $package)) {
 				$dir = dir($path . self::pathSeparator . $package);
 				while(false !== ($entry = $dir->read())) {
-					$extensionPosition = strpos($entry, '.class.php');
-					if($extensionPosition !== false) {
+					$extensionPosition = strpos($entry, self::CLASS_FILE_EXTENSION);
+					if($extensionPosition === strlen($entry) - self::CLASS_FILE_EXTENSION_LENGTH) {
 						$classes[] = substr($entry, 0, $extensionPosition);
 					}
 				}

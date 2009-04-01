@@ -1,12 +1,12 @@
-h1. "Recess! PHP Framework":http://www.recessframework.org/
+h1. "Recess PHP Framework":http://www.recessframework.org/
 
-Welcome to the Recess Framework Preview! Let's have some fun...
+Welcome to the Recess PHP Framework! Let's have some fun...
 
 h2. Requirements
 
 * Apache
 * mod_rewrite suggested
-* PHP 5.1 or greater (tested on 5.2.6)
+* PHP 5.2.3 or greater
 
 h2. Installation Process
 
@@ -54,17 +54,12 @@ h2. Recess Tools Mini-tutorial
 ## Poke around in here to get a sense of what Tools just generated.
 # From here have fun, keep tinkering, and stay tuned to RecessFramework.org
 
-h2. On the Horizon
-
-Following the preview the priorities of Recess are:
-
-* Tutorials and Documentation (!!!)
-* Forms and Validation (Fairly naive in this preview release.)
-* Friendlier Production-mode Error Pages
-* More REST: Content-negotiation, HEAD, OPTIONS, etc.
-* More powerful Models
-
-Stay tuned, ask questions, and get involved at RecessFramework.org.
+Stay tuned, ask questions, and get involved in the Recess Community:
+* IRC: irc.freenode.net #recess
+* Mailing List: http://groups.google.com/group/recess-framework
+* Github: http://github.com/recess/recess/
+* Forum: http://www.recessframework.org/
+* Twitter: http://twitter.com/RecessFramework
 
 Enjoy Recess!
 

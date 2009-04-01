@@ -129,8 +129,8 @@ function printContext($context) {
 <html xmlns="http://www.w3.org/1999/XHTML" xml:lang="en" lang="en" dir="ltr"> 
 
 	<head>
-		<title>Recess diagnostics! 500 :(</title>
-		<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js"></script> 
+		<title>Recess! diagnostics! 500 :(</title>
+		<script type="text/javascript" src="<?php echo $_ENV['url.content']; ?>js/jquery/jquery-1.2.6.js"></script> 
 		<script type="text/javascript">
 			$(document).ready(function() {
 				$('.callstackdetails').hide();

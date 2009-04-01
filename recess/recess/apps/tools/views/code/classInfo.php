@@ -131,7 +131,7 @@ function printRelationships($relationships) { ?>
 	foreach($relationships as $relationship) { ?>
 		<li><span class="relationship-type"><?php echo $relationship->getType(); ?></span>
 			<?php echo $relationship->name; ?>, Class: 
-			<a href="<?php echo $relationship->foreignClass; ?>"><?php echo $relationship->foreignClass; ?></a>
+			<a href="<?php echo Library::getFullyQualifiedClassName($relationship->foreignClass); ?>"><?php echo $relationship->foreignClass; ?></a>
 			<ul class="relationship-details">
 				<li>ForeignKey: <?php echo $relationship->foreignKey; ?></li>
 				<li>OnDelete: <?php echo ($relationship->onDelete == 'unspecified') ? $relationship->getDefaultOnDeleteMode() : $relationship->onDelete; ?></li>

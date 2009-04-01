@@ -1,18 +1,3 @@
-<?php
-$qotms = array(
-			'Because it\'s no fun killing bugs without a magnifying glass.',
-			'Because it\'s no fun building tree forts without a hammer.',
-			'Because it\'s no fun building sandcastles without buckets.',
-			'Because it\'s no fun digging holes without a shovel.',
-			'Because it\'s no fun playing hide-and-seek alone.',
-			'Because it\'s no fun finding booty without a treasure map.',
-			'Because it\'s no fun fighting evil without a sling shot.',
-			'Because it\'s no fun being chased by girls without a cooties shot.',
-			'Because it\'s no fun playing slip \'n slide without a hose.',
-			'Because it\'s no fun walking in the dark without a night light.',
-);
-?>
-
 <html>
 	<head>
 		<!-- Blue Print -->
@@ -48,7 +33,7 @@ $qotms = array(
 				<h1>Recess Tools</h1>
 			</div>
 			<div class="span-13 last">
-				<p class="qotm quiet"><?php echo $qotms[rand(0,count($qotms)-1)]; ?></p>
+				<p class="qotm quiet">"Give us the tools, and we'll finish the job." ~Churchill</p>
 			</div>
 			<div class="span-19">
 				<?php include_once($viewsDir . 'common/navbar.php'); ?>

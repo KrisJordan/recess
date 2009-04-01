@@ -61,7 +61,7 @@
 				$("#tableOptions table :input").attr("disabled","disabled");
 				$(this).parent().parent().children("table").css({display: "block"});
 				$(this).parent().parent().find(":input").removeAttr("disabled");
-				if($(this).val() == "yes") {
+				if($(this).val() == "no") {
 					enablePropertiesForm();
 				} else {
 					disablePropertiesForm();
@@ -219,4 +219,4 @@
 		
 	}
 </script>
-<script type="text/javascript" src="http://jqueryjs.googlecode.com/files/jquery-1.2.6.min.js"></script> 
+<script type="text/javascript" src="<?php echo $_ENV['url.content']; ?>js/jquery/jquery-1.2.6.js"></script> 

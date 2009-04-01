@@ -91,6 +91,14 @@ class MoviesGenerasJoin extends Model { }
  */
 class Movie extends Model { }
 
+/**
+ * !HasMany children, Class: Page, Key: parentId
+ * !BelongsTo parent, Class: Page, Key: parentId
+ * !Table pages
+ */
+class Page extends Model {}
+
+
 abstract class ModelTest extends PHPUnit_Extensions_Database_TestCase {
 	protected $source;
 	
@@ -104,6 +112,14 @@ abstract class ModelTest extends PHPUnit_Extensions_Database_TestCase {
 		unset($this->source);
 	}
 
+	function testHierarchy() {
+		$page = new Page();
+		$page = $page->equal('id',1)->first();
+		$this->assertEquals($page->children()->count(), 1);
+		$this->assertEquals($page->parent(), false);
+		$this->assertEquals($page->children()->equal('title','Child 1')->count(), 1);
+	}
+	
 	function testAll() {
 		$person = new Person();
 		$people = $person->all();

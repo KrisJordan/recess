@@ -34,7 +34,7 @@ abstract class Application {
 	 *
 	 * @var string
 	 */
-	public $publicPath = '';
+	public $assetUrl = '';
 	
 	/**
 	 * OVERRIDE THIS with the routing prefix to your application
@@ -83,8 +83,8 @@ abstract class Application {
 		return $this->viewsDir;
 	}
 	
-	function getPublicPath() {
-		return $this->publicPath;
+	function getAssetUrl() {
+		return $this->assetUrl;
 	}
 	
 	function urlTo($methodName) {

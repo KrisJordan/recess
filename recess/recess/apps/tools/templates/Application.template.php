@@ -6,7 +6,9 @@ class {{programmaticName}}Application extends Application {
 		
 		$this->name = '{{appName}}';
 		
-		$this->viewsDir = $_ENV['dir.apps'] . '{{camelProgrammaticName}}/views/';	
+		$this->viewsDir = $_ENV['dir.apps'] . '{{camelProgrammaticName}}/views/';
+		
+		$this->assetUrl = $_ENV['url.base'] . 'apps/{{camelProgrammaticName}}/public/';
 		
 		$this->modelsPrefix = '{{camelProgrammaticName}}.models.';
 		

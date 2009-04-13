@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.framework.helpers.AbstractHelper');
+Library::import('recess.framework.AbstractHelper');
 Library::import('recess.framework.helpers.Url');
 
 /**
@@ -75,7 +75,6 @@ class Html extends AbstractHelper {
 	 *
 	 * @param   string|array  filename, or array of filenames to match to array of medias
 	 * @param   string|array  media type of stylesheet, or array to match filenames
-	 * @param   boolean       include the index_page in the link
 	 * @return  string
 	 */
 	public static function css($style, $media = FALSE) {

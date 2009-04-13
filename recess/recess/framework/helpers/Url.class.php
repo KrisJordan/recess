@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.framework.helpers.AbstractHelper');
+Library::import('recess.framework.AbstractHelper');
 
 /**
  * The URL helper is used in views to generate URLs to many aspects
@@ -58,7 +58,7 @@ class Url extends AbstractHelper {
 	 * @return string URL to an asset.
 	 */
 	public static function asset($file = ''){
-		return self::$publicPath . $file;
+		return self::$assetUrl . $file;
 	}
 	
 	/**

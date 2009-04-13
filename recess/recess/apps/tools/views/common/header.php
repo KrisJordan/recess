@@ -1,17 +1,19 @@
 <html>
 	<head>
 		<!-- Blue Print -->
-		<link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/blueprint/screen.css" type="text/css" media="screen, projection" />
-		<link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/blueprint/print.css" type="text/css" media="print" /> 
+		<?php echo html::css('blueprint/screen', 'screen'); ?>
+		<?php echo html::css('blueprint/print', 'print'); ?>
 		<!--[if IE]>
-		  <link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection" />
+			<?php echo html::css('blueprint/ie', 'screen'); ?>
 		<![endif]-->
-		<link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/recess.css" />
-		<!-- Syntax Highlighter -->  
-		<link type="text/css" rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/SyntaxHighlighter.css"></link>
-		<script language="javascript" src="<?php echo $_ENV['url.content']; ?>js/shCore.js"></script>
-		<script language="javascript" src="<?php echo $_ENV['url.content']; ?>js/shBrushPhp.js"></script>
-		<script language="javascript" src="<?php echo $_ENV['url.content']; ?>js/shBrushSql.js"></script>
+		<?php echo html::css('recess'); ?>
+		 
+		<?php
+		echo html::css('SyntaxHighlighter');
+		echo html::js('shCore');
+		echo html::js('shBrushPhp');
+		echo html::js('shBrushSql'); 
+		?>
 		<script language="javascript">
 			window.onload = function() {
 				dp.SyntaxHighlighter.ClipboardSwf = '<?php echo $_ENV['url.content']; ?>flash/clipboard.swf';

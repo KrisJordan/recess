@@ -4,7 +4,7 @@ Library::import('recess.database.Databases');
 Library::import('recess.database.pdo.PdoDataSource');
 
 /**
- * !View Native, Prefix: database/
+ * !View Recess, Prefix: database/
  * !RoutesPrefix database/
  */
 class RecessToolsDatabaseController extends Controller {

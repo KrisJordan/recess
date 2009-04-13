@@ -1,9 +1,12 @@
 <?php
-$title = 'New Model Helper';
-$selectedNav = 'apps';
-$scripts = array('apps/newModelJQuery.php');
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/apps');
+Layout::blockAssign('title', $app);
+
+Layout::block('scripts');
+include_once($viewsDir . 'apps/newModelJQuery.php');
+Layout::blockEnd();
 ?>
+
 <h1>New <strong>Model</strong> Helper</h1>
 <p>The purpose of this helper is to help speed the process of creating Recess Models. Please note <span class="highlight">this form is <strong>not</strong> child proof</span>!</p>
 <form class="modelForm" method="POST" action="<?php echo $controller->urlTo('generateModel',$app); ?>">
@@ -193,6 +196,3 @@ include_once($viewsDir . 'common/header.php');
 	<tbody id="relationTemplate">
 	</tbody>
 </table>
-<?php
-include_once($viewsDir . 'common/footer.php');
-?>

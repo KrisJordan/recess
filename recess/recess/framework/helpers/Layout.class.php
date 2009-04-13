@@ -54,6 +54,12 @@ class Layout extends AbstractHelper {
 		}
 	}
 	
+	public static function blockAssign($title, $value) {
+		self::block($title);
+		echo $value;
+		self::blockEnd();
+	}
+	
 	public static function slot($title) {
 		if(!empty(self::$slotStack)) {
 			die('can\'t nest slots');
@@ -76,6 +82,14 @@ class Layout extends AbstractHelper {
 		} else {
 			ob_end_flush();
 		}
+	}
+	
+	public static function slotAppend($title, $value) {
+		self::block($title);
+		echo $value;
+		self::slot($title);
+		self::slotEnd();
+		self::blockEnd();
 	}
 	
 	public static function extendEnd() {

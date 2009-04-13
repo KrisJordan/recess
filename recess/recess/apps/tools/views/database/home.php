@@ -1,7 +1,6 @@
 <?php
-$title = 'Data Sources';
-$selectedNav = 'database';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/database');
+Layout::blockAssign('title', 'Home');
 ?>
 <h1>Data Sources</h1>
 <hr />
@@ -20,4 +19,3 @@ include_once($viewsDir . 'common/header.php');
 	<hr />
 <?php endforeach; ?>
 <h3><a href="<?php echo $controller->urlTo('newSource'); ?>">Add another Data Source</a></h3>
-<?php include_once($viewsDir . 'common/footer.php'); ?>

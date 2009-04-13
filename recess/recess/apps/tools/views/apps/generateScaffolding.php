@@ -1,7 +1,6 @@
 <?php
-$title = 'Scaffolding Generation';
-$selectedNav = 'apps';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/apps');
+Layout::blockAssign('title', 'Scaffolding Generation');
 ?>
 
 <h1>Generating Scaffolding for <?php echo $modelName; ?>...</h1>
@@ -15,5 +14,3 @@ foreach($messages as $message) {
 </pre>
 
 <h2><a href="<?php echo $controller->urlTo('app', $appName); ?>">Back to Application</a></h2>
-
-<?php include_once($viewsDir . 'common/footer.php'); ?>

@@ -1,7 +1,6 @@
 <?php
-$title = 'Package ' . $package->name; 
-$selectedNav = 'code';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/code');
+Layout::blockAssign('title', $package->name);
 ?>
 <?php
 

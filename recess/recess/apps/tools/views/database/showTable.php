@@ -1,9 +1,7 @@
 <?php
-$title = 'Data Sources - ' . $sourceName . ':' . $table;
-$selectedNav = 'database';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/database');
+Layout::blockAssign('title', $sourceName . ':' . $table);
 ?>
-
 <h1>Table: <strong><?php echo $table;?></strong></h1>
 <h2>Source: <?php echo $sourceName;?></h2>
 <h2>Columns:</h2>
@@ -40,4 +38,3 @@ if($i % 2 == 0) {
 </table>
 <hr />
 <h3><a href="<?php echo $controller->urlTo('emptyTable',$sourceName,$table); ?>">Empty Table</a> - <a href="<?php echo $controller->urlTo('dropTable', $sourceName, $table); ?>">Drop Table</a></h3>
-<?php include_once($viewsDir . 'common/footer.php'); ?>

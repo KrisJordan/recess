@@ -1,7 +1,6 @@
 <?php
-$title = 'Applications - ' . $app->name;
-$selectedNav = 'apps';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/apps');
+Layout::blockAssign('title', $app->name);
 
 Library::import('recess.apps.tools.controllers.RecessToolsCodeController');
 $codeController = new RecessToolsCodeController($response->request->meta->app);
@@ -52,11 +51,9 @@ printClassesInNamespace($app->controllersPrefix, $codeController);
 <?php
 $routes = new RtNode();
 $app->addRoutesToRouter($routes);
-include_once($viewsDir . 'common/printRoutes.php');
-printRoutes($routes, $codeController);
+// include_once($viewsDir . 'common/printRoutes.php');
+Part::render('routes/table', $routes, $codeController, '');
 ?>
 
 <hr />
 <p>Trying to <a href="<?php echo $controller->urlTo('uninstall',get_class($app)); ?>">uninstall <?php echo $app->name; ?></a>?</p>
-
-<?php include_once($viewsDir . 'common/footer.php'); ?>

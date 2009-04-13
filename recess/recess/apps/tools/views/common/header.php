@@ -38,4 +38,4 @@
 				<p class="qotm quiet">"Give us the tools, and we'll finish the job." ~Churchill</p>
 			</div>
 			<div class="span-19">
-				<?php include_once($viewsDir . 'common/navbar.php'); ?>
+				<?php include($viewsDir . 'common/navbar.php'); ?>

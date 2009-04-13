@@ -17,6 +17,7 @@ class RecessView extends NativeView {
 	protected function render(Response $response) {
 		$this->loadHelper(
 						'recess.framework.helpers.Layout',
+						'recess.framework.helpers.Part',
 						'recess.framework.helpers.Url',
 						'recess.framework.helpers.Html');
 		parent::render($response);

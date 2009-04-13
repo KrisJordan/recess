@@ -1,7 +1,6 @@
 <?php
-$title = 'Code Browsing';
-$selectedNav = 'code';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/code');
+Layout::blockAssign('title', 'Code Browser');
 ?>
 <h1>Code Browser</h1>
 <?php if(count($packages) == 0):?>
@@ -36,4 +35,3 @@ function printTable($controller, $objects, $columns = 4) {
 ?>
 
 <a href="<?php echo $controller->urlTo('index'); ?>">Re-index your Code</a>
-<?php include_once($viewsDir . 'common/footer.php'); ?>

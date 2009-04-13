@@ -1,7 +1,6 @@
 <?php
-$title = 'New Application Instructions';
-$selectedNav = 'apps';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/apps');
+Layout::blockAssign('title', 'Model Created');
 ?>
 <h1>Creating <strong><?php echo $modelName; ?></strong> Model...</h1>
 
@@ -37,7 +36,3 @@ if(!$tableGenAttempted) {
 <h2><span class="highlight">Next Steps</span></h2>
 
 <h3><a href="<?php echo $controller->urlTo('generateScaffolding', $appName, $modelName); ?>">Generate Scaffolding</a> | <a href="<?php echo $controller->urlTo('app', $appName); ?>">Back to Code</a></h3>
-
-<?php
-include_once($viewsDir . 'common/footer.php');
-?>

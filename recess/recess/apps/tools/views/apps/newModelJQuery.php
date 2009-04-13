@@ -219,4 +219,4 @@
 		
 	}
 </script>
-<script type="text/javascript" src="<?php echo $_ENV['url.content']; ?>js/jquery/jquery-1.2.6.js"></script> 
+<?php echo Html::js('jquery/jquery-1.2.6') ?>

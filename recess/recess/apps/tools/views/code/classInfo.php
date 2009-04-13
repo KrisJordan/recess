@@ -1,7 +1,6 @@
 <?php
-$title = 'Model ' . $reflection->name;
-$selectedNav = 'code';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/code');
+Layout::blockAssign('title', 'Class ' . $reflection->name);
 ?>
 
 <?php
@@ -94,10 +93,6 @@ if(!empty($staticMethods)) {
 ?>
 
 </div>
-
-<?php
-include_once($viewsDir . 'common/footer.php');
-?>
 
 <?php
 // Print Methods

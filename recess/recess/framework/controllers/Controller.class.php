@@ -1,10 +1,10 @@
 <?php
-Library::import('recess.framework.controllers.AbstractController');
+Library::import('recess.framework.AbstractController');
 
-Library::import('recess.lang.Annotation', true);
-Library::import('recess.framework.controllers.annotations.ViewAnnotation', true);
-Library::import('recess.framework.controllers.annotations.RouteAnnotation', true);
-Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation', true);
+Library::import('recess.lang.Annotation');
+Library::import('recess.framework.controllers.annotations.ViewAnnotation');
+Library::import('recess.framework.controllers.annotations.RouteAnnotation');
+Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation');
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,

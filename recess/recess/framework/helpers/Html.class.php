@@ -54,8 +54,6 @@ class Html extends AbstractHelper {
 	public static function anchor($uri, $title = NULL, $attributes = NULL) {
 		if ($uri === '') {
 			$siteUrl = url::base();
-		} elseif (strpos($uri, '://') === false AND strpos($uri, '#') !== 0) {
-			$siteUrl = url::base($uri);
 		} else {
 			$siteUrl = $uri;
 		}

@@ -1,6 +1,7 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
-Library::import('recess.framework.views.View');
+Library::import('recess.framework.views.RecessView');
+Library::import('recess.framework.views.NativeView');
 Library::import('recess.framework.interfaces.IPolicy');
 
 class DefaultPolicy implements IPolicy {
@@ -51,7 +52,7 @@ class DefaultPolicy implements IPolicy {
 	}
 	
 	public function getViewFor(Response &$response) {
-		$view = Library::importAndInstantiate($response->meta->viewClass);
+		$view = new $response->meta->viewClass;
 		$response->meta->viewDir = $response->meta->app->getViewsDir() . $response->meta->viewPrefix;
 		return $view;
 	}

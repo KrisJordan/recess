@@ -150,7 +150,7 @@ abstract class Controller extends AbstractController {
 		
 		$shortWiredResponse = $this->init();
 		if($shortWiredResponse instanceof Response) {
-				$shortWiredResponse->meta->viewClass = 'recess.framework.views.NativeView';
+				$shortWiredResponse->meta->viewClass = 'RecessView';
 				$shortWiredResponse->meta->viewPrefix = '';
 				return $shortWiredResponse;
 		}

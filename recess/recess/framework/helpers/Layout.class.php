@@ -14,7 +14,7 @@ class Layout extends AbstractHelper {
 	
 	protected static $app;
 	
-	public static function init($view) {
+	public static function init(AbstractView $view) {
 		$response = $view->getResponse();
 		self::$app = $response->meta->app;
 	}

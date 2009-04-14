@@ -10,7 +10,7 @@ class Part extends AbstractHelper {
 	
 	protected static $loaded = array();
 	
-	public static function init($view) {
+	public static function init(AbstractView $view) {
 		$response = $view->getResponse();
 		self::$app = $response->meta->app;
 	}

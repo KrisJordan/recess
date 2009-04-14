@@ -110,10 +110,11 @@ class RecessToolsCodeController extends Controller {
 		}
 	}
 	 
-	/** !Route GET, package/$package */
-	function packageInfo ($package) {
+	/** !Route GET, package/$packageName */
+	function packageInfo ($packageName) {
 		Library::import('recess.apps.tools.models.RecessReflectorPackage');
-		$package = new RecessReflectorPackage($package);
+		$package = new RecessReflectorPackage();
+		$package->name = $packageName;
 		$this->package = $package->find()->first();
 		
 	}

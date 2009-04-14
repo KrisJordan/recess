@@ -22,12 +22,6 @@ class RecessReflectorPackage extends Model {
 		return $this->children()->orderBy('name ASC');
 	}
 	
-	function __construct($name = '') {
-		if($name != '') {
-			$this->name = $name;
-		}
-	}
-	
 	function insert() {		
 		parent::insert();
 		$dotPosition = strrpos($this->name, Library::dotSeparator);
@@ -35,7 +29,8 @@ class RecessReflectorPackage extends Model {
 		if($dotPosition !== false) { 
 			$parentName = substr($this->name, 0, $dotPosition);
 			
-			$parent = new RecessReflectorPackage($parentName);
+			$parent = new RecessReflectorPackage();
+			$parent->name = $parentName;
 			
 			if(!$parent->exists()) {
 				$parent->insert();

@@ -21,7 +21,7 @@ class Layout extends AbstractHelper {
 	
 	public static function extend($layout) {
 		if(!empty(self::$extendStack)) {
-			die('error: can\'t nest extends');
+			throw new RecessFrameworkException('Nesting extends is not allowed.', 1);
 		}
 		
 		array_push(self::$extendStack, $layout);
@@ -30,11 +30,11 @@ class Layout extends AbstractHelper {
 	
 	public static function block($title) {
 		if(empty(self::$extendStack)) {
-			die('error: not extending');
+			throw new RecessFrameworkException('Blocks are only valid when extending a layout using Layout::extend()', 1);
 		}
 		
 		if(!empty(self::$blockStack)) {
-			die('error: cant nest blocks');
+			throw new RecessFrameworkException('Nesting blocks is not allowed. You must end a block with Layout::blockEnd() before starting a new block.', 1);
 		}
 		
 		array_push(self::$blockStack, $title);
@@ -43,7 +43,7 @@ class Layout extends AbstractHelper {
 	
 	public static function blockEnd() {
 		if(empty(self::$blockStack)) {
-			die('not in a block!');
+			throw new RecessFrameworkException('Block end encountered without a preceding Layout::block() to open the block.', 1);
 		}
 		
 		$blockName = array_pop(self::$blockStack);
@@ -62,7 +62,7 @@ class Layout extends AbstractHelper {
 	
 	public static function slot($title) {
 		if(!empty(self::$slotStack)) {
-			die('can\'t nest slots');
+			throw new RecessFrameworkException('Nesting slots is not allowed. You must end a slot with Layout::slotEnd() before starting a new slot.', 1);
 		}
 		
 		array_push(self::$slotStack, $title);
@@ -71,7 +71,7 @@ class Layout extends AbstractHelper {
 	
 	public static function slotEnd() {
 		if(empty(self::$slotStack)) {
-			die('not in a slot');
+			throw new RecessFrameworkException('Slot end encountered without a preceding Layout::slot() to open the slot.', 1);
 		}
 		
 		$slotName = array_pop(self::$slotStack);

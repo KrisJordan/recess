@@ -10,7 +10,7 @@ Library::import('recess.apps.tools.models.RecessReflectorProperty');
 Library::import('recess.apps.tools.models.RecessReflectorMethod');
 
 /**
- * !View Native, Prefix: code/
+ * !View Recess, Prefix: code/
  * !RoutesPrefix code/
  */
 class RecessToolsCodeController extends Controller {
@@ -110,10 +110,11 @@ class RecessToolsCodeController extends Controller {
 		}
 	}
 	 
-	/** !Route GET, package/$package */
-	function packageInfo ($package) {
+	/** !Route GET, package/$packageName */
+	function packageInfo ($packageName) {
 		Library::import('recess.apps.tools.models.RecessReflectorPackage');
-		$package = new RecessReflectorPackage($package);
+		$package = new RecessReflectorPackage();
+		$package->name = $packageName;
 		$this->package = $package->find()->first();
 		
 	}

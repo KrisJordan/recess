@@ -2,7 +2,7 @@
 Library::import('recess.framework.controllers.Controller');
 
 /**
- * !View Native, Prefix: home/
+ * !View Recess, Prefix: home/
  */
 class RecessToolsHomeController extends Controller {
 	

@@ -1,7 +1,6 @@
 <?php
-$title = 'Scaffolding Generation';
-$selectedNav = 'apps';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/apps');
+Layout::blockAssign('title', 'Scaffolding Generation');
 ?>
 
 <h1>Select the Model to Generate Scaffolding for:</h1>
@@ -23,5 +22,3 @@ printClassesInNamespace($app->modelsPrefix, $controller, $app);
 
 <hr />
 <h2><a href="<?php echo $controller->urlTo('app', get_class($app)); ?>">Back to Application</a></h2>
-
-<?php include_once($viewsDir . 'common/footer.php'); ?>

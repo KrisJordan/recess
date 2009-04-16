@@ -2,7 +2,7 @@
 Library::import('recess.framework.controllers.Controller');
 
 /**
- * !View Native, Prefix: tests/
+ * !View Recess, Prefix: tests/
  * !RoutesPrefix tests/
  */
 class RecessToolsTestsController extends Controller {

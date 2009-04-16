@@ -1,10 +1,9 @@
 <?php
-$title = 'Applications';
-$selectedNav = 'apps';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/apps');
+Layout::blockAssign('Title', 'Home');
 ?>
-<h1>Applications</h1>
 
+<h1>Applications</h1>
 <?php
 if(isset($flash)) {
 	echo '<p class="highlight">' . $flash . '</p>';
@@ -27,5 +26,3 @@ foreach($apps as $app) {
 ?>
 <hr />
 <h3><a href="<?php echo $controller->urlTo('newApp'); ?>">Start a New Application</a></h3>
-
-<?php include_once($viewsDir . 'common/footer.php'); ?>

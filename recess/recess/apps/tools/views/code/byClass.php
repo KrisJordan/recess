@@ -1,8 +1,8 @@
 <?php
-$title = 'Browsing Code by Package';
-$selectedNav = 'code';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/code');
+Layout::blockAssign('title', 'By Class');
 ?>
+
 <h1>Browse Code by Class</h1>
 
 <table>
@@ -25,4 +25,3 @@ for($row = 0 ; $row < $perColumn ; $row++) {
 }
 ?>
 </table>
-<?php include_once($viewsDir . 'common/footer.php'); ?>

@@ -1,10 +1,8 @@
 <?php
-$title = 'Package ' . $package->name; 
-$selectedNav = 'code';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/code');
+Layout::blockAssign('title', $package->name);
 ?>
 <?php
-
 function linkedPackagePath($package, $linkPrefix = "") {
 	$parts = explode('.', $package);
 	$partsSize = count($parts);
@@ -17,7 +15,6 @@ function linkedPackagePath($package, $linkPrefix = "") {
 			echo $parts[$i];
 	}
 }
-
 ?>
 
 <h1><?php linkedPackagePath($package->name); ?></h1>
@@ -38,7 +35,3 @@ foreach($package->classes() as $class) {
 }
 ?>
 </ul>
-
-<?php
-include_once($viewsDir . 'common/footer.php');
-?>

@@ -1,7 +1,6 @@
 <?php
-$title = 'Data Sources';
-$selectedNav = 'database';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/database');
+Layout::blockAssign('title', 'New Data Source');
 ?>
 <h1>Adding a New Named Data Source</h1>
 <p>Recess allows for multiple named data sources. Currently only MySQL and Sqlite are supported.</p>
@@ -34,10 +33,5 @@ RecessConf::$namedDatabases
 	</li>
 	<li>Save.</li>
 </ol>
-
-
-
-
 <hr />
 <h3><a href="<?php echo $controller->urlTo('home'); ?>">Return to Data Sources</a></h3>
-<?php include_once($viewsDir . 'common/footer.php'); ?>

@@ -1,9 +1,8 @@
 <?php
-$title = 'New Application Instructions';
-$selectedNav = 'apps';
-include_once($viewsDir . 'common/header.php');
-
+Layout::extend('layouts/apps');
+Layout::blockAssign('title', 'New Application');
 ?>
+
 
 <h1>New Application Walkthrough - Step 2</h1>
 
@@ -20,7 +19,3 @@ include_once($viewsDir . 'common/header.php');
 <input type="submit" value="Next Step" /><br /><br />
 
 <?php $form->end(); ?>
-
-<?php
-include_once($viewsDir . 'common/footer.php');
-?>

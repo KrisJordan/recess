@@ -18,10 +18,7 @@ class Diagnostics {
 		
 		if($exception instanceof LibraryException) {
 			// Special Case for LibraryException to shift front value from stack
-			$trace = $exception->getTrace();
-			if(count($trace) > 0) 
-				array_shift($trace);
-			$exception = new RecessTraceException($exception->getMessage(), $trace);
+			$exception = new RecessFrameworkException($exception->getMessage(), 1, $exception->getTrace());
 		}
 		
 		if($exception instanceof RecessResponseException) {
@@ -92,12 +89,22 @@ class RecessErrorException extends ErrorException {
 	}
 }
 
-class RecessTraceException extends RecessErrorException {
+class RecessFrameworkException extends RecessErrorException {
 	public $trace;
-	
-	public function __construct($message, $trace = array()) {
-		parent::__construct($message, 0, 0, isset($trace[0]['file']) ? $trace[0]['file'] : '', isset($trace[0]['line']) ? $trace[0]['line'] : 0, array());
+	protected $shifts;
+	public function __construct($message, $shifts = 0, $trace = array()) {
+		if(empty($trace)) {
+			$trace = debug_backtrace();
+		}
+		
+		while($shifts > 0 && !empty($trace)) {
+			array_shift($trace);
+			--$shifts;
+		}
+		
 		$this->trace = $trace;
+		
+		parent::__construct($message, 0, 0, isset($trace[0]['file']) ? $trace[0]['file'] : '', isset($trace[0]['line']) ? $trace[0]['line'] : 0, array());
 	}
 	
 	public function getRecessTrace() {

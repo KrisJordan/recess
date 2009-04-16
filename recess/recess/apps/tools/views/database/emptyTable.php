@@ -1,7 +1,6 @@
 <?php
-$title = 'Data Sources - Empty ' . $tableName;
-$selectedNav = 'database';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/database');
+Layout::blockAssign('title', 'Empty ' . $tableName);
 ?>
 
 <h1><span class="highlight">Empty "<?php echo $tableName; ?>" table</span>?</h1>
@@ -11,5 +10,3 @@ include_once($viewsDir . 'common/header.php');
 <form method="POST" action="<?php echo $controller->urlTo('emptyTablePost',$sourceName,$tableName); ?>">
 	<input class="removed" type="submit" name="confirm" value="Yes, Empty it!" />
 </form>
-
-<?php include_once($viewsDir . 'common/footer.php'); ?>

@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.framework.views.AbstractView');
+Library::import('recess.framework.AbstractView');
 
 class NativeView extends AbstractView {	
 	/**

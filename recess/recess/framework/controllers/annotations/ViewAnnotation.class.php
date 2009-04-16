@@ -7,6 +7,8 @@ class ViewAnnotation extends Annotation {
 	
 	protected $prefix = '';
 	
+	protected $viewClass = 'RecessView';
+	
 	public function usage() {
 		return '!View ViewProvider [, Prefix: pathWithinViews/]';
 	}
@@ -23,7 +25,13 @@ class ViewAnnotation extends Annotation {
 	}
 	
 	protected function expand($class, $reflection, $descriptor) {
-		$descriptor->viewClass = 'recess.framework.views.' . $this->values[0] . 'View';
+		if(isset($this->values[0])) {
+			$this->viewClass = $this->values[0];
+			if(strpos($this->viewClass, 'View') === false) {
+				$this->viewClass .= 'View';
+			}
+		}
+		$descriptor->viewClass = $this->viewClass;
 		$descriptor->viewPrefix = $this->prefix;
 	}
 

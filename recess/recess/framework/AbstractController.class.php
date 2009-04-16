@@ -63,7 +63,7 @@ abstract class AbstractController extends Object implements IController {
 		return $response;
 	}
 
-	protected function buildUrl($uri,$scheme=null) {
+	protected function buildUrl($uri, $scheme=null) {
 		$parts = parse_url($uri);
 		if(!is_null($scheme)) {
 			$parts['scheme'] = $scheme;

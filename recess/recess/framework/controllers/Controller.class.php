@@ -1,10 +1,10 @@
 <?php
-Library::import('recess.framework.controllers.AbstractController');
+Library::import('recess.framework.AbstractController');
 
-Library::import('recess.lang.Annotation', true);
-Library::import('recess.framework.controllers.annotations.ViewAnnotation', true);
-Library::import('recess.framework.controllers.annotations.RouteAnnotation', true);
-Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation', true);
+Library::import('recess.lang.Annotation');
+Library::import('recess.framework.controllers.annotations.ViewAnnotation');
+Library::import('recess.framework.controllers.annotations.RouteAnnotation');
+Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation');
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,
@@ -13,7 +13,7 @@ Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation
  * the Response.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
- * @contributor Joshua Paine
+ * @author Joshua Paine
  */
 abstract class Controller extends AbstractController {
 	
@@ -89,15 +89,13 @@ abstract class Controller extends AbstractController {
 	 */
 	public function urlTo($methodName) {
 		$args = func_get_args();
-		array_shift($args);
 		
 		// First check to see if this is a urlTo on another Controller Class
 		if(strpos($methodName,'::') !== false) {
-		    list($controllerName, $methodName) = explode('::', $methodName, 2);
-		    $controller = new $controllerName($this->application);
-		    return $controller->urlTo($methodName);
+		    return call_user_func_array(array($this->application,'urlTo'),$args);
 		}
 		
+		array_shift($args);
 		$descriptor = Controller::getClassDescriptor($this);
 		if(isset($descriptor->methodUrls[$methodName])) {
 			$url = $descriptor->methodUrls[$methodName];
@@ -152,7 +150,7 @@ abstract class Controller extends AbstractController {
 		
 		$shortWiredResponse = $this->init();
 		if($shortWiredResponse instanceof Response) {
-				$shortWiredResponse->meta->viewClass = 'recess.framework.views.NativeView';
+				$shortWiredResponse->meta->viewClass = 'RecessView';
 				$shortWiredResponse->meta->viewPrefix = '';
 				return $shortWiredResponse;
 		}

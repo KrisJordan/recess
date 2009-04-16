@@ -3,7 +3,7 @@ Library::import('recess.framework.controllers.Controller');
 Library::import('recess.database.pdo.RecessType');
 
 /**
- * !View Native, Prefix: apps/
+ * !View Recess, Prefix: apps/
  * !RoutesPrefix apps/
  */
 class RecessToolsAppsController extends Controller {

@@ -1,7 +1,6 @@
 <?php
-$title = 'Browsing Code by Package';
-$selectedNav = 'code';
-include_once($viewsDir . 'common/header.php');
+Layout::extend('layouts/code');
+Layout::blockAssign('title', 'By Package');
 ?>
 
 <h1>Browse Code by Package</h1>
@@ -11,5 +10,3 @@ include_once($viewsDir . 'common/header.php');
 	<li><?php echo $package->name; ?></li>
 <?php endforeach; ?>
 </ul>
-
-<?php include_once($viewsDir . 'common/footer.php'); ?>

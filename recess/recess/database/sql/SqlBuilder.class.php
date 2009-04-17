@@ -301,7 +301,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	 * @return SqlBuilder
 	 */
 	public function lessThanOrEqualTo($column, $value)         { return $this->addCondition($column, $value, Criterion::LESS_THAN_EQUAL_TO); }
-	
+
 	/**
 	 * LIKE expression for WHERE clause of update, delete, or select statements, does not include wildcards.
 	 *
@@ -319,6 +319,24 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	 * @return SqlBuilder
 	 */
 	public function notLike($column, $value)        { return $this->addCondition($column, $value, Criterion::NOT_LIKE); }
+
+	/**
+	 * IS NULL expression for WHERE clause of update, delete, or select statements
+	 *
+	 * @param string $column
+	 * @param string $value
+	 * @return SqlBuilder
+	 */
+	public function isNull($column)        { return $this->addCondition($column, null, Criterion::IS_NULL); }
+	
+	/**
+	 * IS NOT NULL expression for WHERE clause of update, delete, or select statements
+	 *
+	 * @param string $column
+	 * @param string $value
+	 * @return SqlBuilder
+	 */
+	public function isNotNull($column)        { return $this->addCondition($column, null, Criterion::IS_NOT_NULL); }
 	
 	/**
 	 * Add a condition to the SqlBuilder statement. Additional logic here to prepend
@@ -659,6 +677,9 @@ class Criterion {
 	const LIKE = ' LIKE ';
 	const NOT_LIKE = ' NOT LIKE ';
 	
+	const IS_NULL = ' IS NULL';
+	const IS_NOT_NULL = ' IS NOT NULL';
+	
 	const COLON = ':';
 	
 	const ASSIGNMENT = '=';
@@ -686,6 +707,8 @@ class Criterion {
 		
 		if($this->operator == self::ASSIGNMENT) { 
 			return self::COLON . self::ASSIGNMENT_PREFIX . $this->pdoLabel;
+		} elseif($this->operator == self::IS_NULL || $this->operator == self::IS_NOT_NULL) {
+			return '';
 		} else {
 			return self::COLON . $this->pdoLabel;
 		}

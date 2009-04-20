@@ -68,12 +68,16 @@ class Layout extends AbstractHelper {
 		}
 		
 		$layout = self::$app->getViewsDir() . $layout;
-		if(strpos($layout, '.php') === false) {
+		if(strrpos($layout, '.') < strrpos($layout, '/')) {
 			$layout .= '.php';
 		}
 
 		if(!file_exists($layout)) {
+<<<<<<< HEAD:recess/recess/framework/helpers/Layout.class.php
 			throw new RecessFrameworkException('Extended layout does not exist. Expected location: ' . $layout, 1);
+=======
+			throw new RecessFrameworkException('Extended layout ('.$layout.') does not exist.', 1);
+>>>>>>> 27a284a... make Extended layout does not exist message more useful, make '.'-finder in filename composition less naive.:recess/recess/framework/helpers/Layout.class.php
 		}
 
 		array_push(self::$extendStack, $layout);

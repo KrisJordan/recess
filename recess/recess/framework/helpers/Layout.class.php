@@ -68,12 +68,12 @@ class Layout extends AbstractHelper {
 		}
 		
 		$layout = self::$app->getViewsDir() . $layout;
-		if(strpos($layout, '.') === false) {
+		if(strrpos($layout, '.') < strrpos($layout, '/')) {
 			$layout .= '.php';
 		}
 
 		if(!file_exists($layout)) {
-			throw new RecessFrameworkException('Extended layout does not exist.', 1);
+			throw new RecessFrameworkException('Extended layout ('.$layout.') does not exist.', 1);
 		}
 
 		array_push(self::$extendStack, $layout);

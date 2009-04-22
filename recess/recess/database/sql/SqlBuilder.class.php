@@ -443,7 +443,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			$name = $clause;
 		}
 		
-		if(isset($this->table) && strpos($clause,'.') === false && !array_key_exists($name, $this->selectAs)) {
+		if(isset($this->table) && strpos($clause,'.') === false && strpos($name,'(') === false && !array_key_exists($name, $this->selectAs)) {
 			$this->orderBy[] = $this->tableAsPrefix() . '.' . $clause; 
 		} else {
 			$this->orderBy[] = $clause;

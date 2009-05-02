@@ -93,7 +93,8 @@ class Library {
 					$path = self::$paths[$classInfo[self::PATH]];
 					$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . self::CLASS_FILE_EXTENSION;
 					$classFile = $path . $fileName;
-					$code = file_get_contents($classFile);
+					$code = rtrim(file_get_contents($classFile));
+					if(substr($code,-2)!='?'.'>') $code .= ('?'.'>');
 					fwrite($file, $code);
 				}
 				

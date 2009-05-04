@@ -1,5 +1,6 @@
 <?php
 Library::import('recess.lang.AttachedMethod');
+Library::import('recess.lang.WrappedMethod');
 
 /**
  * Recess PHP Framework class info object that stores additional

@@ -10,6 +10,8 @@ Library::import('recess.lang.Object');
  */
 class Request {	
 	
+	public $accepts;
+	
 	public $format;
 	public $headers;
 	public $resource;

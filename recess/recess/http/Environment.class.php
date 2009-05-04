@@ -20,7 +20,7 @@ class Environment {
 		$request->method = $_SERVER['REQUEST_METHOD'];
 		
 		$request->format = Formats::XHTML;
-		
+				
 		$request->setResource(self::stripQueryString($_SERVER['REQUEST_URI']));
 		
 		$request->get = $_GET;
@@ -41,6 +41,8 @@ class Environment {
 		}
 		
 		$request->headers = self::getHttpRequestHeaders();
+		
+		$request->accepts = new Accepts($request->headers);
 		
 		$request->username = @$_SERVER['PHP_AUTH_USER'];
 		

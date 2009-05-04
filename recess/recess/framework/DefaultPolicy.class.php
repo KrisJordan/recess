@@ -24,11 +24,7 @@ class DefaultPolicy implements IPolicy {
 		if($request->format != Formats::XHTML) {
 			$this->reparameterizeForFormat($request);
 		}
-		
-//		if($request->method == Methods::OPTIONS) {
-//			$response = new 
-//		}
-		
+			
 		return $request;
 	}
 	

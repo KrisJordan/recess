@@ -1,6 +1,7 @@
 <?php
 require_once 'PHPUnit/Framework.php';
-require_once 'recess/http/ContentNegotiationTest.php';
+require_once 'recess/http/AcceptsTest.php';
+require_once 'recess/http/AcceptsStringTest.php';
 
 class RecessHttpAllTests
 {
@@ -8,7 +9,8 @@ class RecessHttpAllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('recess.http');
 
-        $suite->addTestSuite('ContentNegotiationTest');
+        $suite->addTestSuite('AcceptsTest');
+        $suite->addTestSuite('AcceptsStringTest');
  		
         return $suite;
     }

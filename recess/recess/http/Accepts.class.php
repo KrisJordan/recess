@@ -7,7 +7,8 @@ class Accepts {
 	protected $headers;
 	
 	protected $types = false;
-	protected $typesArray = array();
+	protected $typesTried = array();
+	protected $typesCurrent = array();
 	
 	protected $languages = false;
 	protected $encodings = false;
@@ -28,14 +29,25 @@ class Accepts {
 	public function nextFormat() {
 		if($this->types === false) { $this->initFormats(); }
 		
-		while(current($this->typesArray) === false) {
+		while(current($this->typesCurrent) === false) {
+			$key = key($this->typesCurrent);
+			
 			$nextTypes = $this->types->next();
-			if($nextTypes === false) { return '*'; } // Base case, ran out of types in ACCEPT string
-			$this->typesArray = MimeType::formatsFor($nextTypes);			
+			
+			if($nextTypes === false) { return false; } // Base case, ran out of types in ACCEPT string
+			$this->typesTried = array_merge($this->typesTried, $this->typesCurrent);
+			
+			$nextTypes = MimeType::formatsFor($nextTypes);
+			$this->typesCurrent = array();
+			foreach($nextTypes as $type) {
+				if(!in_array($type, $this->typesTried)) {
+					$this->typesCurrent[] = $type;
+				}
+			}
 		}
 		
-		$result = each($this->typesArray);
-		return $result[1];
+		$result = each($this->typesCurrent);
+		return $result[1]; // Each returns an array of (key, value)
 	}
 	
 	protected function initFormats() {
@@ -45,6 +57,9 @@ class Accepts {
 	public function resetFormats() {
 		if($this->types !== false) 
 			$this->types->reset();
+			
+		$this->typesTried = array();
+		$this->typesCurrent = array();
 	}
 	
 	public function nextLanguage() {

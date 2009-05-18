@@ -35,22 +35,61 @@ class AcceptsTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('xml', $this->acceptChrome->nextFormat());
 		$this->assertEquals('png', $this->acceptChrome->nextFormat());
 		$this->assertEquals('text', $this->acceptChrome->nextFormat());
-		$this->assertEquals('*', $this->acceptChrome->nextFormat());
+		
+		// Now we go down the list of others to expand */*
+		$this->assertEquals('json', $this->acceptChrome->nextFormat());
+		$this->assertEquals('js', $this->acceptChrome->nextFormat());
+		$this->assertEquals('css', $this->acceptChrome->nextFormat());
+		$this->assertEquals('rss', $this->acceptChrome->nextFormat());
+		$this->assertEquals('yaml', $this->acceptChrome->nextFormat());
+		$this->assertEquals('atom', $this->acceptChrome->nextFormat());
+		$this->assertEquals('jpg', $this->acceptChrome->nextFormat());
+		$this->assertEquals('gif', $this->acceptChrome->nextFormat());
+		$this->assertEquals('form', $this->acceptChrome->nextFormat());
+		$this->assertEquals('url-form', $this->acceptChrome->nextFormat());
+		$this->assertEquals('csv', $this->acceptChrome->nextFormat());
 		$this->assertEquals(false, $this->acceptChrome->nextFormat());
 	}
 	
 	function testFirefoxContentTypes() {
 		$this->assertEquals('html', $this->acceptFirefox->nextFormat());
 		$this->assertEquals('xml', $this->acceptFirefox->nextFormat());
-		$this->assertEquals('*', $this->acceptFirefox->nextFormat());
+		
+		// Now we go down the list of others to expand */*
+		$this->assertEquals('json', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('js', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('css', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('rss', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('yaml', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('atom', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('text', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('png', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('jpg', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('gif', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('form', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('url-form', $this->acceptFirefox->nextFormat());
+		$this->assertEquals('csv', $this->acceptFirefox->nextFormat());
 		$this->assertEquals(false, $this->acceptFirefox->nextFormat());
 	}
 	
 	function testIEContentTypes() {
-		$this->assertEquals('jpg', $this->acceptIE->nextFormat());
 		$this->assertEquals('gif', $this->acceptIE->nextFormat());
-		$this->assertEquals('*', $this->acceptIE->nextFormat());
-		$this->assertEquals(false, $this->acceptIE->nextFormat());
+		$this->assertEquals('jpg', $this->acceptIE->nextFormat());
+		
+		// Now we go down the list of others to expand */*
+		$this->assertEquals('html', $this->acceptIE->nextFormat());
+		$this->assertEquals('xml', $this->acceptIE->nextFormat());
+		$this->assertEquals('json', $this->acceptIE->nextFormat());
+		$this->assertEquals('js', $this->acceptIE->nextFormat());
+		$this->assertEquals('css', $this->acceptIE->nextFormat());
+		$this->assertEquals('rss', $this->acceptIE->nextFormat());
+		$this->assertEquals('yaml', $this->acceptIE->nextFormat());
+		$this->assertEquals('atom', $this->acceptIE->nextFormat());
+		$this->assertEquals('text', $this->acceptIE->nextFormat());
+		$this->assertEquals('png', $this->acceptIE->nextFormat());
+		$this->assertEquals('form', $this->acceptIE->nextFormat());
+		$this->assertEquals('url-form', $this->acceptIE->nextFormat());
+		$this->assertEquals('csv', $this->acceptIE->nextFormat());
 	}
 }
 ?>

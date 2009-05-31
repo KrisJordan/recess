@@ -12,30 +12,37 @@ class NativeView extends AbstractView {
 	 * @abstract 
 	 */
 	protected function render(Response $response) {
-		switch($response->request->format) {
-			case Formats::JSON:
-				foreach($response->data as $key => $value) {
-					if($value instanceof ModelSet) {
-						$response->data[$key] = $value->toArray();
-					}
-					if($value instanceof Form) {
-						unset($response->data[$key]);
-					}
-					if(substr($key,0,1) == '_') {
-						unset($response->data[$key]);
-					}
-				}
-				if(isset($response->data['application'])) unset ($response->data['application']);
-				if(isset($response->data['controller'])) unset ($response->data['controller']);
-				print json_encode($response->data);
-				exit;
-			default:
-		}
-		
+		$this->renderFormats($response);
 		extract($response->data);
 		$viewsDir = $response->meta->app->getViewsDir();
 				
-		include_once($response->meta->viewDir . $response->meta->viewName . '.php');
+		include($response->meta->viewDir . $response->meta->viewName . '.php');
+	}
+	
+	protected function renderFormats(Response $response) {
+		switch($response->request->format) {
+			case Formats::JSON:
+				$this->render_JSON($response);
+			default:
+		}
+	}
+	
+	protected function render_JSON(Response $response) {
+		foreach($response->data as $key => $value) {
+			if($value instanceof ModelSet) {
+				$response->data[$key] = $value->toArray();
+			}
+			if($value instanceof Form) {
+				unset($response->data[$key]);
+			}
+			if(substr($key,0,1) == '_') {
+				unset($response->data[$key]);
+			}
+		}
+		if(isset($response->data['application'])) unset ($response->data['application']);
+		if(isset($response->data['controller'])) unset ($response->data['controller']);
+		print json_encode($response->data);
+		exit;
 	}
 }
 ?>

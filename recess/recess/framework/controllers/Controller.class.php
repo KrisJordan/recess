@@ -189,7 +189,7 @@ abstract class Controller extends AbstractController {
 		if(!isset($response->meta->viewName)) $response->meta->viewName = $methodName;
 		$response->meta->viewClass = $descriptor->viewClass;
 		$response->meta->viewPrefix = $descriptor->viewPrefix;
-		$response->data = get_object_vars($this);
+		if(empty($response->data)) $response->data = get_object_vars($this);
 		$response->data['controller'] = $this;
 		if(is_array($this->headers)) { foreach($this->headers as $header) $response->addHeader($header); }
 		unset($response->data['request']);

@@ -44,6 +44,7 @@ class Library {
 	static private $namedRun;
 	static private $namedRuns = array();
 	static private $inNamedRunImport = false;
+	static private $namedRunFileSize = 0;
 	
 	static function beginNamedRun($name) {
 		if(!self::$useNamedRuns || !isset($_ENV['dir.temp'])) return;
@@ -60,7 +61,8 @@ class Library {
 		$namedRunFile = $_ENV['dir.temp'] . self::NAMED_RUNS_PATH . $name . self::PHP_EXTENSION;
 		if(file_exists($namedRunFile)) {
 			self::$inNamedRunImport = true;
-			include_once($namedRunFile);
+			include($namedRunFile);
+			self::$namedRunFileSize = filesize($namedRunFile);
 			self::$inNamedRunImport = false;
 		}
 	}
@@ -70,7 +72,7 @@ class Library {
 			self::$namedRuns[self::$namedRun][] = $class;
 	}
 	
-	static function persistNamedRuns() {		
+	static function persistNamedRuns() {	
 		if(!isset($_ENV['dir.temp'])) return;
 		$tempDir = $_ENV['dir.temp'];
 		foreach(self::$namedRuns as $namedRun => $missedClasses) {
@@ -78,26 +80,43 @@ class Library {
 			$namedRunFile = $namedRunDir . $namedRun . self::PHP_EXTENSION;
 			
 			if(!empty($missedClasses)) {
-				if(file_exists($namedRunFile)) { // append to
-					$file = fopen($namedRunFile,'a');
+				$tempNamedRunFile = '';
+				$tries = 0;
+				do {
+					$tempNamedRunFile = $namedRunFile . '.' . rand(0,32768);	
+				} while(file_exists($tempNamedRunFile));
+					
+				if(file_exists($namedRunFile)) {
+					copy($namedRunFile, $tempNamedRunFile);
+					$file = fopen($tempNamedRunFile,'a');
+					if(filesize($tempNamedRunFile) !== self::$namedRunFileSize) {
+						fclose($file);
+						unlink($tempNamedRunFile);
+						return;
+					}
 				} else {
 					if(!file_exists($namedRunDir)) {
-						mkdir($namedRunDir);
+						mkdir($tempNamedRunFile);
 					}
-					$file = fopen($namedRunFile,'w');
+					$file = fopen($tempNamedRunFile,'w');
 				}
-				
+			
 				foreach($missedClasses as $class) {
 					$classInfo = self::$classesByClass[$class];
 					$fullName = $classInfo[self::NAME];
 					$path = self::$paths[$classInfo[self::PATH]];
 					$fileName = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . self::CLASS_FILE_EXTENSION;
 					$classFile = $path . $fileName;
-					$code = file_get_contents($classFile);
+					$code = rtrim(file_get_contents($classFile));
+					if(substr($code,-2)!='?'.'>') $code .= ('?'.'>');
 					fwrite($file, $code);
 				}
 				
 				fclose($file);
+				
+				copy($tempNamedRunFile, $namedRunFile);
+				
+				unlink($tempNamedRunFile);
 			}
 		}
 	}

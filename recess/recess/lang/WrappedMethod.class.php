@@ -94,7 +94,7 @@ class WrappedMethod {
 		
 		foreach($this->wrappers as $wrapper) {
 			$returns = $wrapper->before($object, $args);
-			if($returns != null) { 
+			if($returns !== null) { 
 				// Short-circuit return
 				return $returns;
 			}

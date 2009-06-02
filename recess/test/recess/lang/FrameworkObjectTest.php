@@ -38,9 +38,9 @@ class Add1ToAnnotation extends Annotation implements IWrapper {
 	
 	function combine(IWrapper $requiredWrapper) {}
 	
-	function before(&$args) {}
+	function before($object, &$args) {}
 	
-	function after($result) { return $result + 1; }
+	function after($object, $result) { return $result + 1; }
 }
 
 class ConcatAnnotation extends Annotation implements IWrapper {
@@ -60,9 +60,9 @@ class ConcatAnnotation extends Annotation implements IWrapper {
 	
 	function combine(IWrapper $requiredWrapper) {}
 	
-	function before(&$args) { $args[1] = $this->prepend . $args[1]; }
+	function before($object, &$args) { $args[1] = $this->prepend . $args[1]; }
 	
-	function after($result) { return $result . $this->append; }
+	function after($object, $result) { return $result . $this->append; }
 }
 
 /** 

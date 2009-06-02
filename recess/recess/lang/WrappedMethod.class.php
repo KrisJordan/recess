@@ -107,7 +107,7 @@ class WrappedMethod {
 		$returns = $this->reflectedMethod->invokeArgs($object, $args);
 		
 		foreach(array_reverse($this->wrappers) as $wrapper) {
-			$wrapperReturn = $wrapper->after($returns);
+			$wrapperReturn = $wrapper->after($object, $returns);
 			if($wrapperReturn != null) {
 				$returns = $wrapperReturn;
 			}

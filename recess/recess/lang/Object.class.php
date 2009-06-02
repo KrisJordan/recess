@@ -2,6 +2,8 @@
 Library::import('recess.lang.ClassDescriptor');
 Library::import('recess.lang.AttachedMethod');
 Library::import('recess.lang.WrappableAnnotation');
+Library::import('recess.lang.BeforeAnnotation');
+Library::import('recess.lang.AfterAnnotation');
 
 /**
  * Object is the base class for extensible classes in the Recess.

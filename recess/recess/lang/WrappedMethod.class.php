@@ -108,7 +108,7 @@ class WrappedMethod {
 		
 		foreach(array_reverse($this->wrappers) as $wrapper) {
 			$wrapperReturn = $wrapper->after($object, $returns);
-			if($wrapperReturn != null) {
+			if($wrapperReturn !== null) {
 				$returns = $wrapperReturn;
 			}
 		}

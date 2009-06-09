@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.http.AcceptsList');
-Library::import('recess.http.MimeType');
+Library::import('recess.http.MimeTypes');
 
 class Accepts {
 	
@@ -37,7 +37,7 @@ class Accepts {
 			if($nextTypes === false) { return false; } // Base case, ran out of types in ACCEPT string
 			$this->typesTried = array_merge($this->typesTried, $this->typesCurrent);
 			
-			$nextTypes = MimeType::formatsFor($nextTypes);
+			$nextTypes = MimeTypes::formatsFor($nextTypes);
 			$this->typesCurrent = array();
 			foreach($nextTypes as $type) {
 				if(!in_array($type, $this->typesTried)) {

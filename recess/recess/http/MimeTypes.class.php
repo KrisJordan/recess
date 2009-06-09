@@ -1,12 +1,12 @@
 <?php
-abstract class MimeType {
+abstract class MimeTypes {
 	
 	protected static $byFormat = array();
 	protected static $byMime = array();
 	
 	static function init() {
 		// TODO: Cache the MIME Type Data Structure
-		MimeType::registerMany(
+		MimeTypes::registerMany(
 			array(
 				array('html', array('text/html', 'application/xhtml+xml')),
 				array('xml', array('application/xml', 'text/xml', 'application/x-xml')),
@@ -105,5 +105,5 @@ abstract class MimeType {
 	
 }
 
-MimeType::init();
+MimeTypes::init();
 ?>

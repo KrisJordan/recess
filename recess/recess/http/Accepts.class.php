@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.http.AcceptsString');
+Library::import('recess.http.AcceptsList');
 Library::import('recess.http.MimeType');
 
 class Accepts {
@@ -51,7 +51,7 @@ class Accepts {
 	}
 	
 	protected function initFormats() {
-		$this->types = new AcceptsString($this->headers[self::TYPES]);
+		$this->types = new AcceptsList($this->headers[self::TYPES]);
 	}
 	
 	public function resetFormats() {

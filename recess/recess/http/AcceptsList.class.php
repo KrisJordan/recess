@@ -1,6 +1,6 @@
 <?php
 
-class AcceptsString {
+class AcceptsList {
 	
 	protected $range;
 	

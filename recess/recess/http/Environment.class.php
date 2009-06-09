@@ -1,6 +1,5 @@
 <?php
 Library::import('recess.http.Request');
-Library::import('recess.http.Formats');
 Library::import('recess.http.Methods');
 
 /**
@@ -19,7 +18,7 @@ class Environment {
 		
 		$request->method = $_SERVER['REQUEST_METHOD'];
 		
-		$request->format = Formats::XHTML;
+		$request->format = 'html';
 				
 		$request->setResource(self::stripQueryString($_SERVER['REQUEST_URI']));
 		

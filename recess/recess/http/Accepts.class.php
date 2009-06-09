@@ -7,6 +7,7 @@ class Accepts {
 	protected $headers;
 	
 	protected $types = false;
+	protected $typeOverride = null;
 	protected $typesTried = array();
 	protected $typesCurrent = array();
 	
@@ -19,15 +20,28 @@ class Accepts {
 	const ENCODINGS = 'ACCEPT_ENCODING';
 	const CHARSETS = 'ACCEPT_CHARSETS';
 	
-	public function __construct($headers, $overrides = array()) {
+	public function __construct($headers) {
 		$this->headers = $headers;
-		foreach($overrides as $key => $value) {
-			$this->headers[$key] = $value;
-		}
+	}
+	
+	protected function initFormats() {
+		$this->types = new AcceptsList($this->headers[self::TYPES]);
+	}
+	
+	public function overrideFormat($format) {
+		$this->typeOverride = $format;
+		$this->headers[self::TYPES] = array();
 	}
 	
 	public function nextFormat() {
-		if($this->types === false) { $this->initFormats(); }
+		if($this->types === false) { 
+			if($this->typeOverride !== null) {
+				$format = $this->typeOverride;
+				$this->typeOverride = null;
+				return $format;
+			}
+			$this->initFormats();
+		}
 		
 		while(current($this->typesCurrent) === false) {
 			$key = key($this->typesCurrent);
@@ -48,10 +62,6 @@ class Accepts {
 		
 		$result = each($this->typesCurrent);
 		return $result[1]; // Each returns an array of (key, value)
-	}
-	
-	protected function initFormats() {
-		$this->types = new AcceptsList($this->headers[self::TYPES]);
 	}
 	
 	public function resetFormats() {

@@ -2,7 +2,7 @@
 Library::import('recess.http.Accepts');
 
 class AcceptsTest extends PHPUnit_Framework_TestCase {	
-	protected $acceptChrome, $acceptFirefox, $acceptIE;
+	protected $acceptChrome, $acceptFirefox, $acceptIE, $acceptOverride;
 
 	function setup() {						
 		$this->acceptChrome
@@ -28,6 +28,15 @@ class AcceptsTest extends PHPUnit_Framework_TestCase {
 								'ACCEPT_ENCODING' => 'gzip, deflate',
 							 )
 					);
+					
+		$this->acceptOverride
+					= new Accepts(
+						array(	'ACCEPT' => 'image/gif, image/jpeg, image/pjpeg, application/x-ms-application, application/vnd.ms-xpsdocument, application/xaml+xml, application/x-ms-xbap, application/x-shockwave-flash, application/x-silverlight-2-b2, application/x-silverlight, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*',
+								'ACCEPT_LANGUAGE' => 'en-us',
+								'ACCEPT_ENCODING' => 'gzip, deflate',
+							 )
+					);
+		$this->acceptOverride->overrideFormat('xml');
 	}
 	
 	function testChromeContentTypes() {
@@ -90,6 +99,12 @@ class AcceptsTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('form', $this->acceptIE->nextFormat());
 		$this->assertEquals('url-form', $this->acceptIE->nextFormat());
 		$this->assertEquals('csv', $this->acceptIE->nextFormat());
+		$this->assertEquals(false, $this->acceptIE->nextFormat());
+	}
+	
+	function testOverrideContentTypes() {
+		$this->assertEquals('xml', $this->acceptOverride->nextFormat());
+		$this->assertEquals(false, $this->acceptOverride->nextFormat());
 	}
 }
 ?>

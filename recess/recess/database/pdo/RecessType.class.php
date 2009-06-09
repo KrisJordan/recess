@@ -33,7 +33,8 @@ abstract class RecessType {
 							self::FLOAT, 
 							self::TIME, 
 							self::TIMESTAMP, 
-							self::DATETIME, 
+							self::DATETIME,
+							self::DATE,
 							self::BLOB);
 		}
 		return self::$all;

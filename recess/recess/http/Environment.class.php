@@ -37,7 +37,6 @@ class Environment {
 			} else {
 				$request->put = self::getPutParameters($request->input);
 			}
-
 		}
 		
 		$request->headers = self::getHttpRequestHeaders();
@@ -50,10 +49,9 @@ class Environment {
 		
 		$request->cookies = $_COOKIE;
 		
-		// TODO: isAjax?, from django
-		// def is_ajax(self):
-        //  return self.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
-		
+		$request->isAjax =  isset($request->headers['X_REQUESTED_WITH']) 
+							&& $request->headers['X_REQUESTED_WITH'] == 'XMLHttpRequest';
+
 		return $request;
 	}
 	

@@ -18,6 +18,7 @@ class Request {
 	public $resourceParts = array();
 	public $method;
 	public $input;
+	public $isAjax = false;
 
 	public $get = array();
 	public $post = array();

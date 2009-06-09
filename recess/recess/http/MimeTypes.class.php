@@ -27,6 +27,14 @@ abstract class MimeTypes {
 		);
 	}
 	
+	static function preferredMimeTypeFor($format) {
+		if(isset(self::$byFormat[$format])) {
+			return self::$byFormat[$format][0];
+		} else {
+			return '?/?';
+		}
+	}
+	
 	static function formatsFor($types) {
 		$types = is_array($types) ? $types : array($types);
 		
@@ -81,8 +89,6 @@ abstract class MimeTypes {
 			$formats = is_array($type[0]) ? $type[0] : array($type[0]);
 			$mimes = is_array($type[1]) ? $type[1] : array($type[1]);
 			
-			// TODO: Create formats data structure
-			
 			foreach($mimes as $mime) { 
 				$parts = explode('/', $mime);
 				if(count($parts) == 2) {
@@ -98,11 +104,9 @@ abstract class MimeTypes {
 					self::$byFormat[$format] = array();
 				}
 				self::$byFormat[$format] = array_unique(array_merge(self::$byFormat[$format], $mimes));
-				
 			}
 		}
 	}
-	
 }
 
 MimeTypes::init();

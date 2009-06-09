@@ -7,7 +7,6 @@ class Accepts {
 	protected $headers;
 	
 	protected $types = false;
-	protected $typeOverride = null;
 	protected $typesTried = array();
 	protected $typesCurrent = array();
 	
@@ -28,18 +27,12 @@ class Accepts {
 		$this->types = new AcceptsList($this->headers[self::TYPES]);
 	}
 	
-	public function overrideFormat($format) {
-		$this->typeOverride = $format;
-		$this->headers[self::TYPES] = array();
+	public function forceFormat($mimeType) {
+		$this->headers[self::TYPES] = $mimeType;
 	}
 	
 	public function nextFormat() {
-		if($this->types === false) { 
-			if($this->typeOverride !== null) {
-				$format = $this->typeOverride;
-				$this->typeOverride = null;
-				return $format;
-			}
+		if($this->types === false) {
 			$this->initFormats();
 		}
 		

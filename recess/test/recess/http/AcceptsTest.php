@@ -36,7 +36,6 @@ class AcceptsTest extends PHPUnit_Framework_TestCase {
 								'ACCEPT_ENCODING' => 'gzip, deflate',
 							 )
 					);
-		$this->acceptOverride->overrideFormat('xml');
 	}
 	
 	function testChromeContentTypes() {
@@ -102,7 +101,16 @@ class AcceptsTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, $this->acceptIE->nextFormat());
 	}
 	
+	function testReset() {
+		$this->testIEContentTypes();
+		$this->acceptIE->resetFormats();
+		$this->testIEContentTypes();
+	}
+	
 	function testOverrideContentTypes() {
+		$this->acceptOverride->forceFormat(MimeTypes::preferredMimeTypeFor('xml'));
+		$this->assertEquals('xml', $this->acceptOverride->nextFormat());
+		$this->acceptOverride->resetFormats();
 		$this->assertEquals('xml', $this->acceptOverride->nextFormat());
 		$this->assertEquals(false, $this->acceptOverride->nextFormat());
 	}

@@ -3,6 +3,7 @@ Library::import('recess.framework.controllers.Controller');
 Library::import('recess.framework.views.RecessView');
 Library::import('recess.framework.views.NativeView');
 Library::import('recess.framework.interfaces.IPolicy');
+Library::import('recess.framework.http.MimeTypes');
 
 class DefaultPolicy implements IPolicy {
 	protected $controller;
@@ -16,14 +17,9 @@ class DefaultPolicy implements IPolicy {
 	 * @return	Request The refined Request.
 	 */
 	public function preprocess(Request &$request) {
-		
 		$this->getHttpMethodFromPost($request);
 
-		$this->getFormatFromResourceString($request);
-
-		if($request->format != Formats::XHTML) {
-			$this->reparameterizeForFormat($request);
-		}
+		$this->forceFormatFromResourceString($request);
 			
 		return $request;
 	}
@@ -69,7 +65,7 @@ class DefaultPolicy implements IPolicy {
 		return $request;
 	}
 
-	protected function getFormatFromResourceString(Request &$request) {
+	protected function forceFormatFromResourceString(Request &$request) {
 		$lastPartIndex = count($request->resourceParts) - 1;
 		if($lastPartIndex < 0) return $request;
 		
@@ -77,17 +73,18 @@ class DefaultPolicy implements IPolicy {
 		
 		$lastDotPosition = strrpos($lastPart, Library::dotSeparator);
 		if($lastDotPosition !== false) {
-			$substring = substr($lastPart, $lastDotPosition + 1);
-			if(in_array($substring, Formats::$all)) {
-				$request->format = $substring;
+			$format = substr($lastPart, $lastDotPosition + 1);
+			if($format !== '') {
+				$request->accepts->forceFormat($format);
 				$request->setResource(substr($request->resource, 0, strrpos($request->resource, Library::dotSeparator)));
-			} else {
-				$request->format = Formats::XHTML;
 			}
 		}
+		
 		return $request;
 	}
 
+	// @Todo: Worry about the "input" problem. This isn't based on the format
+	//			but rather it is based on the content-type of the entity.
 	protected function reparameterizeForFormat(Request &$request) {
 		if($request->format == Formats::JSON) {
 			$method = strtolower($request->method);

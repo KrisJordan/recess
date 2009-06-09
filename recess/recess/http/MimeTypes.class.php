@@ -31,7 +31,7 @@ abstract class MimeTypes {
 		if(isset(self::$byFormat[$format])) {
 			return self::$byFormat[$format][0];
 		} else {
-			return '?/?';
+			return false;
 		}
 	}
 	

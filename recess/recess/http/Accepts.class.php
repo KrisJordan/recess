@@ -27,8 +27,13 @@ class Accepts {
 		$this->types = new AcceptsList($this->headers[self::TYPES]);
 	}
 	
-	public function forceFormat($mimeType) {
-		$this->headers[self::TYPES] = $mimeType;
+	public function forceFormat($format) {
+		$mimeType = MimeTypes::preferredMimeTypeFor($format);
+		if($mimeType != false) {
+			$this->headers[self::TYPES] = $mimeType;
+		} else {
+			$this->headers[self::TYPES] = '';
+		}
 	}
 	
 	public function nextFormat() {

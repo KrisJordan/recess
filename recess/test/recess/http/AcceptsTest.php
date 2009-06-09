@@ -108,7 +108,7 @@ class AcceptsTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testOverrideContentTypes() {
-		$this->acceptOverride->forceFormat(MimeTypes::preferredMimeTypeFor('xml'));
+		$this->acceptOverride->forceFormat('xml');
 		$this->assertEquals('xml', $this->acceptOverride->nextFormat());
 		$this->acceptOverride->resetFormats();
 		$this->assertEquals('xml', $this->acceptOverride->nextFormat());

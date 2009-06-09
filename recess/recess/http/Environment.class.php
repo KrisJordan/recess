@@ -1,6 +1,7 @@
 <?php
 Library::import('recess.http.Request');
 Library::import('recess.http.Methods');
+Library::import('recess.http.Accepts');
 
 /**
  * @author Kris Jordan <krisjordan@gmail.com>

@@ -14,15 +14,18 @@ class RecessView extends NativeView {
 	 * @param Response $response
 	 * @abstract 
 	 */
-	protected function render(Response $response) {
-		$this->renderFormats($response);
+	protected function render($format, Response $response) {
 		$this->loadHelper(
 						'recess.framework.helpers.Layout',
 						'recess.framework.helpers.Part',
 						'recess.framework.helpers.Url',
 						'recess.framework.helpers.Html');
-		parent::render($response);
-		Layout::extendEnd();
+		if(parent::render($format, $response)) {
+			Layout::extendEnd();
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

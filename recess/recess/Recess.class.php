@@ -26,26 +26,19 @@ final class Recess {
 		}
 		
 		$pluggedPolicy = $policy;
-		
-		// foreach($plugins as $plugin) {
-		//	$pluggedPolicy = $plugin->decorate($pluggedPolicy);
-		// }
-		
-		// try {
-		
+
 		$request = $pluggedPolicy->preprocess($request);
 		
-		// $controller = $pluggedPolicy->getControllerFor($request, $routing);
 		$controller = $pluggedPolicy->getControllerFor($request, $apps, $routes);
 		
 		$response = $controller->serve($request);
 		
 		$view = $pluggedPolicy->getViewFor($response);
-		
+
 		ob_start();
-		
+
 		$view->respondWith($response);
-		
+
 		if($response instanceof ForwardingResponse) {
 			$forwardRequest = new Request();
 			$forwardRequest->setResource($response->forwardUri);
@@ -66,21 +59,9 @@ final class Recess {
 			}
 			Recess::main($forwardRequest, $policy, $apps, $routes, $plugins);
 		}
-		
+
 		ob_end_flush();
-		
-		// $pluggedPolicy->end();
-		
-		// } catch(Exception $e) {
-		
-		//		$plugins->preHandleException($e);
-		
-		//		Diagnostics::handleException($e);
-		
-		//		$plugins->postHandleException($e);
-		
-		// }
-		
+
 	}
 }
 ?>

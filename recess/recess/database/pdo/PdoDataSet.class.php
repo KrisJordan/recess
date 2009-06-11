@@ -301,6 +301,18 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	function notLike($lhs, $rhs) { $copy = clone $this; $copy->sqlBuilder->notLike($lhs,$rhs); return $copy; }
 	
 	/**
+	 * @see SqlBuilder::isNull
+	 * @return PdoDataSet
+	 */	
+	function isNull($lhs) { $copy = clone $this; $copy->sqlBuilder->isNull($lhs); return $copy; }
+
+	/**
+	 * @see SqlBuilder::like
+	 * @return PdoDataSet
+	 */
+	function isNotNull($lhs) { $copy = clone $this; $copy->sqlBuilder->isNotNull($lhs); return $copy; }
+	
+	/**
 	 * @see SqlBuilder::where
 	 * @return PdoDataSet
 	 */	

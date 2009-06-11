@@ -76,6 +76,9 @@ class Html extends AbstractHelper {
 	 * @return  string
 	 */
 	public static function css($style, $media = FALSE) {
+		if(is_array($media)) {
+			$media = implode(', ', $media);
+		}
 		return html::link($style, 'stylesheet', 'text/css', '.css', $media);
 	}
 

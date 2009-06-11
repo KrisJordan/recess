@@ -233,17 +233,30 @@ class SqliteCacheProvider implements ICacheProvider {
 	function __construct() {
 		$this->pdo = new Pdo('sqlite:' . $_ENV['dir.temp'] . 'sqlite-cache.db');
 		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		try {
-			$this->setStatement = $this->pdo->prepare('INSERT OR REPLACE INTO cache (key,value,expire) values (:key,:value,:expire)');
-			$this->getStatement = $this->pdo->prepare('SELECT value,expire FROM cache WHERE key = :key');
-			$this->getManyStatement = $this->pdo->prepare('SELECT value,expire,key FROM cache WHERE key LIKE :key');
-		} catch(PDOException $e) {
-			$this->pdo->exec('CREATE TABLE "cache" ("key" TEXT PRIMARY KEY  NOT NULL , "value" TEXT NOT NULL , "expire" INTEGER NOT NULL)');
-			$this->pdo->exec('CREATE INDEX "expiration" ON "cache" ("expire" ASC)');
-			$this->setStatement = $this->pdo->prepare('INSERT OR REPLACE INTO cache (key,value,expire) values (:key,:value,:expire)');
-			$this->getStatement = $this->pdo->prepare('SELECT value,expire FROM cache WHERE key = :key');
-			$this->getManyStatement = $this->pdo->prepare('SELECT value,expire,key FROM cache WHERE key LIKE :key');
+		
+		$tries = 0;
+		while($tries < 2) {
+			try {
+				$tries++;
+				$this->setStatement = $this->pdo->prepare('INSERT OR REPLACE INTO cache (key,value,expire) values (:key,:value,:expire)');
+				$this->getStatement = $this->pdo->prepare('SELECT value,expire FROM cache WHERE key = :key');
+				$this->getManyStatement = $this->pdo->prepare('SELECT value,expire,key FROM cache WHERE key LIKE :key');
+				break;
+			} catch(PDOException $e) {
+			
+				try {
+					$this->pdo->exec('CREATE TABLE "cache" ("key" TEXT PRIMARY KEY  NOT NULL , "value" TEXT NOT NULL , "expire" INTEGER NOT NULL)');
+					$this->pdo->exec('CREATE INDEX "expiration" ON "cache" ("expire" ASC)');
+				} catch(PDOException $e) {
+					if($tries == 2) {
+						die('Could not create cache table.');
+					}
+					sleep(1);
+					continue;
+				}
+			}
 		}
+		
 		$this->time = time();
 	}
 	

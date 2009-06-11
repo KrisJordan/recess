@@ -2,6 +2,8 @@
 Library::import('recess.lang.ClassDescriptor');
 Library::import('recess.lang.AttachedMethod');
 Library::import('recess.lang.WrappableAnnotation');
+Library::import('recess.lang.BeforeAnnotation');
+Library::import('recess.lang.AfterAnnotation');
 
 /**
  * Object is the base class for extensible classes in the Recess.
@@ -68,6 +70,18 @@ abstract class Object {
 	}
 	
 	/**
+	 * Wrap a method on a class. The result of this static method is the provided IWrapper
+	 * implementation will be called before and after the wrapped method.
+	 * 
+	 * @param string $wrapOnClassName
+	 * @param string $wrappableMethodName
+	 * @param IWrapper $wrapper
+	 */
+	static function wrapMethod($wrapOnClassName, $wrappableMethodName, IWrapper $wrapper) {
+		self::getClassDescriptor($wrapOnClassName)->addWrapper($wrappableMethodName, $wrapper);
+	}
+	
+	/**
 	 * Dynamic dispatch of function calls to attached methods.
 	 *
 	 * @param string $name
@@ -84,7 +98,6 @@ abstract class Object {
 			array_unshift($arguments, $this);
 			$reflectedMethod = new ReflectionMethod($object, $method);
 			return $reflectedMethod->invokeArgs($object, $arguments);
-			// return call_user_func_array($method, $object, $arguments);
 		} else {
 			throw new RecessException('"' . get_class($this) . '" class does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
 		}

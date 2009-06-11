@@ -1,7 +1,6 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
-Library::import('recess.framework.views.SmartyView');
-Library::import('recess.framework.views.NativeView');
+Library::import('recess.framework.views.RecessView');
 Library::import('recess.database.orm.Model');
 
 abstract class Application {

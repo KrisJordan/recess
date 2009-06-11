@@ -88,15 +88,20 @@ class RecessToolsAppsController extends Controller {
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/models', 'models');
 		
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/controllers', 'controllers');
-		$this->messages[] = $this->tryGeneratingFile('Home Controller', $this->application->codeTemplatesDir . 'HomeController.template.php', $appDir . '/controllers/' . $programmaticName . 'HomeController.class.php', $appReplacements);
+		$this->messages[] = $this->tryGeneratingFile('Home Controller', $this->application->codeTemplatesDir . 'scaffolding/controllers/HomeController.template.php', $appDir . '/controllers/' . $programmaticName . 'HomeController.class.php', $appReplacements);
 		
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/views', 'views');
-		$this->messages[] = $this->tryCreatingDirectory($appDir . '/views/common', 'common views');
-		$this->messages[] = $this->tryGeneratingFile('Header View Template', $this->application->codeTemplatesDir . 'header.template.php', $appDir . '/views/common/header.php', $appReplacements);
-		$this->messages[] = $this->tryGeneratingFile('Navigation Template', $this->application->codeTemplatesDir . 'navigation.template.php', $appDir . '/views/common/navigation.php', $appReplacements);
-		$this->messages[] = $this->tryGeneratingFile('Footer Template', $this->application->codeTemplatesDir . 'footer.template.php', $appDir . '/views/common/footer.php', $appReplacements);
+		$this->messages[] = $this->tryCreatingDirectory($appDir . '/views/parts', 'common parts');
+		$this->messages[] = $this->tryGeneratingFile('Navigation Part', $this->application->codeTemplatesDir . 'scaffolding/views/parts/navigation.part.template.php', $appDir . '/views/parts/navigation.part.php', $appReplacements);
+		$this->messages[] = $this->tryGeneratingFile('Style Part', $this->application->codeTemplatesDir . 'scaffolding/views/parts/style.part.template.php', $appDir . '/views/parts/style.part.php', $appReplacements);
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/views/home', 'home views');
-		$this->messages[] = $this->tryGeneratingFile('Home Template', $this->application->codeTemplatesDir . 'index.template.php', $appDir . '/views/home/index.php', $appReplacements);
+		$this->messages[] = $this->tryGeneratingFile('Home Template', $this->application->codeTemplatesDir . 'scaffolding/views/home/index.template.php', $appDir . '/views/home/index.php', $appReplacements);
+		$this->messages[] = $this->tryGeneratingFile('Master Layout', $this->application->codeTemplatesDir . 'scaffolding/views/master.template.php', $appDir . '/views/master.php', $appReplacements);
+		
+		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public', 'public');
+		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public/css', 'css');
+		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public/js', 'javascript');
+		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public/img', 'images');
 	}
 	
 	private function tryCreatingDirectory($path, $name) {
@@ -304,9 +309,9 @@ class RecessToolsAppsController extends Controller {
 		
 		$this->messages[] = $this->tryGeneratingFile('RESTful ' . $model . ' Controller', $this->application->codeTemplatesDir . 'scaffolding/controllers/ResourceController.template.php', $controllersDir . $model . 'Controller.class.php', $replacements);
 		
-		$indexFieldTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/indexField.template.php');
-		$indexDateFieldTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/indexDateField.template.php');
-		$editFormInputTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/editFormInput.template.php');
+		$indexFieldTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/resource/indexField.template.php');
+		$indexDateFieldTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/resource/indexDateField.template.php');
+		$editFormInputTemplate = $this->getTemplate($this->application->codeTemplatesDir . 'scaffolding/views/resource/editFormInput.template.php');
 		
 		$indexFields = '';
 		$formFields = '';
@@ -338,9 +343,12 @@ class RecessToolsAppsController extends Controller {
 		
 		$viewsDir = $app->viewsDir . $replacements['viewsPrefix'] . '/';
 		$this->messages[] = $this->tryCreatingDirectory($viewsDir, $model . ' views dir');
-		$this->messages[] = $this->tryGeneratingFile('index view', $this->application->codeTemplatesDir . 'scaffolding/views/index.template.php', $viewsDir . 'index.php', $replacements);
-		$this->messages[] = $this->tryGeneratingFile('editForm view', $this->application->codeTemplatesDir . 'scaffolding/views/editForm.template.php', $viewsDir . 'editForm.php', $replacements, true);
-		$this->messages[] = $this->tryGeneratingFile('static details', $this->application->codeTemplatesDir . 'scaffolding/views/details.template.php', $viewsDir . 'details.php', $replacements);
+		$this->messages[] = $this->tryGeneratingFile('resource layout', $this->application->codeTemplatesDir . 'scaffolding/views/resource/layout.template.php', $viewsDir . 'layout.php', $replacements);
+		$this->messages[] = $this->tryGeneratingFile('index view', $this->application->codeTemplatesDir . 'scaffolding/views/resource/index.template.php', $viewsDir . 'index.php', $replacements);
+		$this->messages[] = $this->tryGeneratingFile('editForm view', $this->application->codeTemplatesDir . 'scaffolding/views/resource/editForm.template.php', $viewsDir . 'editForm.php', $replacements, true);
+		$this->messages[] = $this->tryGeneratingFile('form part', $this->application->codeTemplatesDir . 'scaffolding/views/resource/form.part.template.php', $viewsDir . 'form.part.php', $replacements, true);
+		$this->messages[] = $this->tryGeneratingFile('static details', $this->application->codeTemplatesDir . 'scaffolding/views/resource/details.template.php', $viewsDir . 'details.php', $replacements);
+		$this->messages[] = $this->tryGeneratingFile('details part', $this->application->codeTemplatesDir . 'scaffolding/views/resource/details.part.template.php', $viewsDir . 'details.part.php', $replacements);
 		$this->appName = get_class($app);
 		$this->modelName = $model;
 	}

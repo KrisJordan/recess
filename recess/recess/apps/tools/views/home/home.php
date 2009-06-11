@@ -2,7 +2,6 @@
 <?php Layout::blockAssign('title', 'Welcome'); ?>
 
 <h1>Welcome to Recess</h1>
-
 <?php if(get_magic_quotes_gpc()): ?>
 	<div class="error">
 		<h3><strong>Warning</strong>: PHP's <a href="http://us3.php.net/manual/en/security.magicquotes.php">Magic Quotes</a> Setting is Enabled!<br /></h3>

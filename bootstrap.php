@@ -74,9 +74,10 @@ abstract class RecessConf {
 		date_default_timezone_set(self::$defaultTimeZone);
 		
 		require_once($_ENV['dir.recess'] . 'recess/lang/Library.class.php');
-		Library::addClassPath(self::$appsDir);
-		Library::addClassPath(self::$pluginsDir);
+		
 		Library::addClassPath(self::$recessDir);
+		Library::addClassPath(self::$pluginsDir);
+		Library::addClassPath(self::$appsDir);
 		
 		if(self::$useTurboSpeed) {
 			Library::$useNamedRuns = true;

@@ -172,7 +172,7 @@ abstract class Object {
 	 * 
 	 * @param $class string Name of class whose descriptor is being initialized.
 	 * @param $method ReflectionMethod
-	 * @param $descriptor ClassDescriptor ByRef
+	 * @param $descriptor ClassDescriptor
 	 * @param $annotations Array of annotations found on method.
 	 * @return ClassDescriptor
 	 */
@@ -186,7 +186,7 @@ abstract class Object {
 	 * 
 	 * @param $class string Name of class whose descriptor is being initialized.
 	 * @param $property ReflectionProperty
-	 * @param $descriptor ClassDescriptor ByRef
+	 * @param $descriptor ClassDescriptor
 	 * @param $annotations Array of annotations found on method.
 	 * @return ClassDescriptor
 	 */
@@ -200,7 +200,7 @@ abstract class Object {
 	 * 
 	 * @param $class
 	 * @param $descriptor
-	 * @return unknown_type
+	 * @return ClassDescriptor
 	 */
 	protected static function finalClassDescriptor($class, $descriptor) { return $descriptor; }
 	

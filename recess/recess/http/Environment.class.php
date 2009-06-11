@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.http.Request');
-Library::import('recess.http.Formats');
 Library::import('recess.http.Methods');
+Library::import('recess.http.Accepts');
 
 /**
  * @author Kris Jordan <krisjordan@gmail.com>
@@ -19,8 +19,8 @@ class Environment {
 		
 		$request->method = $_SERVER['REQUEST_METHOD'];
 		
-		$request->format = Formats::XHTML;
-		
+		$request->format = 'html';
+				
 		$request->setResource(self::stripQueryString($_SERVER['REQUEST_URI']));
 		
 		$request->get = $_GET;
@@ -37,10 +37,11 @@ class Environment {
 			} else {
 				$request->put = self::getPutParameters($request->input);
 			}
-
 		}
 		
 		$request->headers = self::getHttpRequestHeaders();
+		
+		$request->accepts = new Accepts($request->headers);
 		
 		$request->username = @$_SERVER['PHP_AUTH_USER'];
 		
@@ -48,10 +49,9 @@ class Environment {
 		
 		$request->cookies = $_COOKIE;
 		
-		// TODO: isAjax?, from django
-		// def is_ajax(self):
-        //  return self.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
-		
+		$request->isAjax =  isset($request->headers['X_REQUESTED_WITH']) 
+							&& $request->headers['X_REQUESTED_WITH'] == 'XMLHttpRequest';
+
 		return $request;
 	}
 	

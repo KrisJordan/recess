@@ -26,10 +26,7 @@ abstract class Controller extends AbstractController {
 	
 	/** @var Application */
 	protected $application;
-	
-	/** The formats/content-types which a controller responds to. */
-	protected $formats = array(Formats::XHTML);
-	
+		
 	public function __construct($application = null) {
 		$this->application = $application;
 	}
@@ -194,7 +191,6 @@ abstract class Controller extends AbstractController {
 		if(is_array($this->headers)) { foreach($this->headers as $header) $response->addHeader($header); }
 		unset($response->data['request']);
 		unset($response->data['headers']);
-		unset($response->data['formats']);
 		return $response;
 	}
 

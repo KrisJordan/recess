@@ -16,7 +16,7 @@ require_once($_ENV['dir.recess'] . 'recess/cache/Cache.class.php');
  * 
  * @todo Allow framework to register packages/shortcuts? i.e.: Library::import('recess.framework.models.Model') vs. Library::import('recess','Model')
  */
-class Library {
+abstract class Library {
 	static private $classesByClass = array();	// = array( 'Inflector' => array( 'recess.lang.Inflector', 0 );
 	static private $classesByFull = array();	// 'recess.lang.Inflector'
 	static private $dirtyClasses = false;

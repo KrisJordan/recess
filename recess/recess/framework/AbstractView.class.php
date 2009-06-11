@@ -26,7 +26,12 @@ abstract class AbstractView extends Object {
 		
 		if(ResponseCodes::canHaveBody($response->code) && !$response instanceof ForwardingResponse) {
 			$this->response = $response;
-			$this->render($response);
+			
+			while(($format = $response->request->accepts->nextFormat()) !== false) {
+				if($this->render($format, $response)) {
+					return true;
+				}
+			}
 		}
 	}
 	
@@ -100,7 +105,7 @@ abstract class AbstractView extends Object {
 	 * @param Response $response
 	 * @abstract 
 	 */
-	protected abstract function render(Response $response);
+	protected abstract function render($format, Response $response);
 
 }
 ?>

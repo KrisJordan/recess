@@ -2,47 +2,41 @@
 Library::import('recess.framework.AbstractView');
 
 class NativeView extends AbstractView {	
-	/**
-	 * Realizes HTTP's body content based on the Response parameter. Responsible
-	 * for returning content in the format desired. The render method likely uses
-	 * inversion of control which delegates to another method within the view to 
-	 * realize the Response.
-	 *
-	 * @param Response $response
-	 * @abstract 
-	 */
-	protected function render(Response $response) {
-		$this->renderFormats($response);
-		extract($response->data);
-		$viewsDir = $response->meta->app->getViewsDir();
-				
-		include($response->meta->viewDir . $response->meta->viewName . '.php');
-	}
 	
-	protected function renderFormats(Response $response) {
-		switch($response->request->format) {
-			case Formats::JSON:
-				$this->render_JSON($response);
-			default:
+	protected function render($format, Response $response) {
+		if($format == 'html') {
+			$extension = '.php';
+		} else {
+			$extension = ".$format.php";
+		}
+		
+		$viewTemplate = $response->meta->viewDir . $response->meta->viewName . $extension;
+		if(file_exists($viewTemplate)) {
+			extract($response->data);
+			$viewsDir = $response->meta->app->getViewsDir();
+			include($viewTemplate);
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
-	protected function render_JSON(Response $response) {
-		foreach($response->data as $key => $value) {
-			if($value instanceof ModelSet) {
-				$response->data[$key] = $value->toArray();
-			}
-			if($value instanceof Form) {
-				unset($response->data[$key]);
-			}
-			if(substr($key,0,1) == '_') {
-				unset($response->data[$key]);
-			}
-		}
-		if(isset($response->data['application'])) unset ($response->data['application']);
-		if(isset($response->data['controller'])) unset ($response->data['controller']);
-		print json_encode($response->data);
-		exit;
-	}
+//	protected function render_JSON(Response $response) {
+//		foreach($response->data as $key => $value) {
+//			if($value instanceof ModelSet) {
+//				$response->data[$key] = $value->toArray();
+//			}
+//			if($value instanceof Form) {
+//				unset($response->data[$key]);
+//			}
+//			if(substr($key,0,1) == '_') {
+//				unset($response->data[$key]);
+//			}
+//		}
+//		if(isset($response->data['application'])) unset ($response->data['application']);
+//		if(isset($response->data['controller'])) unset ($response->data['controller']);
+//		print json_encode($response->data);
+//		exit;
+//	}
 }
 ?>

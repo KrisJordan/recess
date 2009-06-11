@@ -114,5 +114,10 @@ class AcceptsTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('xml', $this->acceptOverride->nextFormat());
 		$this->assertEquals(false, $this->acceptOverride->nextFormat());
 	}
+	
+	function testBlank() {
+		$blank = new Accepts(array());
+		$this->assertEquals(false, $blank->nextFormat());
+	}
 }
 ?>

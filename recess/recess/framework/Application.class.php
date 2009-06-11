@@ -1,6 +1,6 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
-Library::import('recess.framework.views.RecessView');
+Library::import('recess.framework.views.LayoutsView');
 Library::import('recess.database.orm.Model');
 
 abstract class Application {
@@ -38,7 +38,7 @@ abstract class Application {
 	/**
 	 * OVERRIDE THIS with the routing prefix to your application
 	 *
-	 * @var unknown_type
+	 * @var string
 	 */
 	public $routingPrefix = '/';
 	

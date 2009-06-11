@@ -14,6 +14,8 @@ Library::import('recess.lang.Object');
 abstract class AbstractView extends Object {
 	protected $response;
 	
+	public abstract function canRespondWith(Response $response);
+	
 	/**
 	 * The entry point from the Recess with a Response to be rendered.
 	 * Delegates the two steps in rendering a view: 1) Send Headers, 2) Render Body
@@ -26,12 +28,7 @@ abstract class AbstractView extends Object {
 		
 		if(ResponseCodes::canHaveBody($response->code) && !$response instanceof ForwardingResponse) {
 			$this->response = $response;
-			
-			while(($format = $response->request->accepts->nextFormat()) !== false) {
-				if($this->render($format, $response)) {
-					return true;
-				}
-			}
+			$this->render($response);
 		}
 	}
 	
@@ -105,7 +102,7 @@ abstract class AbstractView extends Object {
 	 * @param Response $response
 	 * @abstract 
 	 */
-	protected abstract function render($format, Response $response);
+	protected abstract function render(Response $response);
 
 }
 ?>

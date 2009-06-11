@@ -1,9 +1,13 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
-Library::import('recess.framework.views.RecessView');
+Library::import('recess.framework.views.LayoutsView');
 Library::import('recess.framework.views.NativeView');
+Library::import('recess.framework.views.JsonView');
 Library::import('recess.framework.interfaces.IPolicy');
 Library::import('recess.framework.http.MimeTypes');
+
+// TODO: Remove this import in 0.3
+Library::import('recess.framework.views.RecessView');
 
 class DefaultPolicy implements IPolicy {
 	protected $controller;
@@ -25,7 +29,6 @@ class DefaultPolicy implements IPolicy {
 	}
 	
 	public function getControllerFor(Request &$request, array $applications, RtNode $routes) {
-		
 		$routeResult = $routes->findRouteFor($request);
 		
 		if($routeResult->routeExists) {
@@ -44,9 +47,36 @@ class DefaultPolicy implements IPolicy {
 	}
 	
 	public function getViewFor(Response &$response) {
-		$view = new $response->meta->viewClass;
-		$response->meta->viewDir = $response->meta->app->getViewsDir() . $response->meta->viewPrefix;
-		return $view;
+		// TODO: When version 0.3 is released, remove this conditional
+		// 		 and break backwards compatibility with versions <= 0.12
+		if(!isset($response->meta->respondWith) || empty($response->meta->respondWith)) {
+			$view = new $response->meta->viewClass;
+			$response->meta->respondWith = array($view);
+			if($view != 'LayoutsView') {
+				$response->meta->respondWith[] = $view;
+			}
+			$response->meta->respondWith[] = 'JsonView';
+		}
+		
+		// Here we select a view that can respond in the desired format
+		$viewClasses = $response->meta->respondWith;
+		$views = array();
+		foreach($viewClasses as $viewClass) {
+			$views[] = new $viewClass();
+		}
+		
+		$accepts = $response->request->accepts;
+		$accepts->resetFormats();
+		do {
+			$format = $accepts->nextFormat();
+			foreach($views as $view) {
+				if($view->canRespondWith($response)) {
+					return $view;
+				}
+			}
+		} while ($format !== false);
+		
+		throw new RecessResponseException('Unable to provide with desired content-type.', ResponseCodes::HTTP_NOT_ACCEPTABLE, array());
 	}
 	
 	/////////////////////////////////////////////////////////////////////////

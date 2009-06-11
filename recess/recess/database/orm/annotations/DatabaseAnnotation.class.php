@@ -24,7 +24,7 @@ class DatabaseAnnotation extends Annotation {
 	protected function validate($class) {
 		$this->acceptsNoKeyedValues();
 		$this->exactParameterCount(1);
-		$this->validOnInstancesOf($class, Model::CLASSNAME);
+		$this->validOnSubclassesOf($class, Model::CLASSNAME);
 	}
 	
 	protected function expand($class, $reflection, $descriptor) {

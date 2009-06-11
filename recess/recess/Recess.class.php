@@ -24,16 +24,14 @@ final class Recess {
 			print_r($calls);
 			die('Forwarding loop in main?');
 		}
-		
-		$pluggedPolicy = $policy;
 
-		$request = $pluggedPolicy->preprocess($request);
+		$request = $policy->preprocess($request);
 		
-		$controller = $pluggedPolicy->getControllerFor($request, $apps, $routes);
+		$controller = $policy->getControllerFor($request, $apps, $routes);
 		
 		$response = $controller->serve($request);
 		
-		$view = $pluggedPolicy->getViewFor($response);
+		$view = $policy->getViewFor($response);
 
 		ob_start();
 

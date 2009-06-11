@@ -58,7 +58,8 @@ class AcceptsList {
 				}
 			}
 			
-			if($params[0][strlen($params[0])-1] === '*') {
+			$lenParams0 = strlen($params[0]);
+			if($lenParams0 > 0 && $params[0][$lenParams0-1] === '*') {
 				$q -= 0.01;
 				
 				if($params[0][0] === '*') {

@@ -5,6 +5,8 @@ Library::import('recess.lang.Annotation');
 Library::import('recess.framework.controllers.annotations.ViewAnnotation');
 Library::import('recess.framework.controllers.annotations.RouteAnnotation');
 Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation');
+Library::import('recess.framework.controllers.annotations.PrefixAnnotation');
+Library::import('recess.framework.controllers.annotations.RespondWithAnnotation');
 
 /**
  * The controller is responsible for interpretting a preprocessed Request,
@@ -38,8 +40,9 @@ abstract class Controller extends AbstractController {
 		$descriptor->routes = array();
 		$descriptor->methodUrls = array();
 		$descriptor->routesPrefix = '';
-		$descriptor->viewClass = 'recess.framework.views.NativeView';
-		$descriptor->viewPrefix = '';
+		$descriptor->viewClass = 'recess.framework.views.LayoutsView';
+		$descriptor->viewsPrefix = '';
+		$descriptor->respondWith = array();
 		return $descriptor;
 	}
 
@@ -147,8 +150,8 @@ abstract class Controller extends AbstractController {
 		
 		$shortWiredResponse = $this->init();
 		if($shortWiredResponse instanceof Response) {
-				$shortWiredResponse->meta->viewClass = 'RecessView';
-				$shortWiredResponse->meta->viewPrefix = '';
+				$shortWiredResponse->meta->viewClass = 'LayoutsView';
+				$shortWiredResponse->meta->viewsPrefix = '';
 				return $shortWiredResponse;
 		}
 		
@@ -184,8 +187,11 @@ abstract class Controller extends AbstractController {
 		
 		$descriptor = self::getClassDescriptor($this);
 		if(!isset($response->meta->viewName)) $response->meta->viewName = $methodName;
+		// TODO: Remove this deprecated viewClass at 0.3
 		$response->meta->viewClass = $descriptor->viewClass;
-		$response->meta->viewPrefix = $descriptor->viewPrefix;
+		$response->meta->viewsPrefix = $descriptor->viewsPrefix;
+		
+		$response->meta->respondWith = $descriptor->respondWith;
 		if(empty($response->data)) $response->data = get_object_vars($this);
 		$response->data['controller'] = $this;
 		if(is_array($this->headers)) { foreach($this->headers as $header) $response->addHeader($header); }

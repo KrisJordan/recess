@@ -33,6 +33,7 @@ class Request {
 	
 	public function __construct() {
 		$this->meta = new Meta;
+		$this->accepts = new Accepts(array());
 	}
 	
 	public function setResource($resource) {

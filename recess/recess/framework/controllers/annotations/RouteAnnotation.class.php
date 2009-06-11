@@ -20,7 +20,7 @@ class RouteAnnotation extends Annotation {
 	protected function validate($class) {
 		$this->minimumParameterCount(1);
 		$this->maximumParameterCount(2);
-		$this->validOnInstancesOf($class, Controller::CLASSNAME);
+		$this->validOnSubclassesOf($class, Controller::CLASSNAME);
 		$this->acceptedIndexedValues(0, array(Methods::GET, Methods::POST, Methods::PUT, Methods::DELETE));
 	}
 	

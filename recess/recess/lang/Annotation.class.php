@@ -123,7 +123,7 @@ abstract class Annotation {
 		$this->acceptedKeys(array());
 	}
 	
-	protected function validOnInstancesOf($annotatedClass, $baseClass) {
+	protected function validOnSubclassesOf($annotatedClass, $baseClass) {
 		if( !is_subclass_of($annotatedClass, $baseClass) ) {
 			$this->errors[] = get_class($this) . " is only valid on objects of type $baseClass.";
 		}

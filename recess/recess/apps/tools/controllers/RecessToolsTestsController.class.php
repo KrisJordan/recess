@@ -2,11 +2,10 @@
 Library::import('recess.framework.controllers.Controller');
 
 /**
- * !View Recess, Prefix: tests/
- * !RoutesPrefix tests/
+ * !RespondWith Layouts, Json
+ * !Prefix tests/
  */
 class RecessToolsTestsController extends Controller {
-	
 	public function init() {
 		if(RecessConf::$mode == RecessConf::PRODUCTION) {
 			throw new RecessResponseException('Tools are available only during development.', ResponseCodes::HTTP_NOT_FOUND, array());
@@ -17,7 +16,5 @@ class RecessToolsTestsController extends Controller {
 	public function home() {
 		
 	}
-	
 }
-
 ?>

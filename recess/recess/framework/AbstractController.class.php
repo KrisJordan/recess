@@ -1,12 +1,13 @@
 <?php
 Library::import('recess.lang.Object');
 Library::import('recess.lang.reflection.RecessReflectionClass');
-Library::import('recess.lang.Annotation', true);
+Library::import('recess.lang.Annotation');
 Library::import('recess.framework.interfaces.IController');
-Library::import('recess.framework.controllers.annotations.ViewAnnotation', true);
-Library::import('recess.framework.controllers.annotations.RouteAnnotation', true);
-Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation', true);
-
+Library::import('recess.framework.controllers.annotations.ViewAnnotation');
+Library::import('recess.framework.controllers.annotations.RouteAnnotation');
+Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation');
+Library::import('recess.framework.controllers.annotations.PrefixAnnotation');
+Library::import('recess.framework.controllers.annotations.RespondWithAnnotation');
 /**
  * The controller is responsible for interpretting a preprocessed Request,
  * performing some action in response to the Request (usually CRUDS), and
@@ -23,8 +24,8 @@ abstract class AbstractController extends Object implements IController {
 		return self::getClassDescriptor($class)->viewClass;
 	}
 	
-	public static function getViewPrefix($class) {
-		return self::getClassDescriptor($class)->viewPrefix;
+	public static function getviewsPrefix($class) {
+		return self::getClassDescriptor($class)->viewsPrefix;
 	}
 	
 	public static function getRoutes($class) {

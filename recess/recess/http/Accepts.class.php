@@ -6,15 +6,16 @@ class Accepts {
 	
 	protected $headers;
 	
-	protected $types = false;
-	protected $typesTried = array();
-	protected $typesCurrent = array();
+	protected $format = '';
+	protected $formats = false;
+	protected $formatsTried = array();
+	protected $formatsCurrent = array();
 	
 	protected $languages = false;
 	protected $encodings = false;
 	protected $charsets = false;
 	
-	const TYPES = 'ACCEPT';
+	const FORMATS = 'ACCEPT';
 	const LANGUAGES = 'ACCEPT_LANGUAGE';
 	const ENCODINGS = 'ACCEPT_ENCODING';
 	const CHARSETS = 'ACCEPT_CHARSETS';
@@ -23,51 +24,62 @@ class Accepts {
 		$this->headers = $headers;
 	}
 	
+	public function format() {
+		return $this->format;
+	}
+	
 	protected function initFormats() {
-		$this->types = new AcceptsList($this->headers[self::TYPES]);
+		if(isset($this->headers[self::FORMATS])) {
+			$this->formats = new AcceptsList($this->headers[self::FORMATS]);
+		} else {
+			$this->formats = new AcceptsList('');
+		}
 	}
 	
 	public function forceFormat($format) {
 		$mimeType = MimeTypes::preferredMimeTypeFor($format);
 		if($mimeType != false) {
-			$this->headers[self::TYPES] = $mimeType;
+			$this->headers[self::FORMATS] = $mimeType;
 		} else {
-			$this->headers[self::TYPES] = '';
+			$this->headers[self::FORMATS] = '';
 		}
 	}
 	
 	public function nextFormat() {
-		if($this->types === false) {
+		if($this->formats === false) {
 			$this->initFormats();
 		}
 		
-		while(current($this->typesCurrent) === false) {
-			$key = key($this->typesCurrent);
+		while(current($this->formatsCurrent) === false) {
+			$key = key($this->formatsCurrent);
 			
-			$nextTypes = $this->types->next();
+			$nextTypes = $this->formats->next();
 			
 			if($nextTypes === false) { return false; } // Base case, ran out of types in ACCEPT string
-			$this->typesTried = array_merge($this->typesTried, $this->typesCurrent);
+			$this->formatsTried = array_merge($this->formatsTried, $this->formatsCurrent);
 			
 			$nextTypes = MimeTypes::formatsFor($nextTypes);
-			$this->typesCurrent = array();
+			$this->formatsCurrent = array();
 			foreach($nextTypes as $type) {
-				if(!in_array($type, $this->typesTried)) {
-					$this->typesCurrent[] = $type;
+				if(!in_array($type, $this->formatsTried)) {
+					$this->formatsCurrent[] = $type;
 				}
 			}
 		}
 		
-		$result = each($this->typesCurrent);
+		$result = each($this->formatsCurrent);
+		$this->format = $result[1];
 		return $result[1]; // Each returns an array of (key, value)
 	}
 	
 	public function resetFormats() {
-		if($this->types !== false) 
-			$this->types->reset();
+		$this->format = '';
+		
+		if($this->formats !== false) 
+			$this->formats->reset();
 			
-		$this->typesTried = array();
-		$this->typesCurrent = array();
+		$this->formatsTried = array();
+		$this->formatsCurrent = array();
 	}
 	
 	public function nextLanguage() {

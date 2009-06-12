@@ -33,7 +33,7 @@ class Response {
 		return $this->cookies;
 	}
 	
-	protected function addHeader($header) {
+	public function addHeader($header) {
 		$this->headers[] = $header;
 	}
 	

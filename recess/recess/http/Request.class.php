@@ -10,12 +10,15 @@ Library::import('recess.lang.Object');
  */
 class Request {	
 	
+	public $accepts;
+	
 	public $format;
 	public $headers;
 	public $resource;
 	public $resourceParts = array();
 	public $method;
 	public $input;
+	public $isAjax = false;
 
 	public $get = array();
 	public $post = array();
@@ -30,6 +33,7 @@ class Request {
 	
 	public function __construct() {
 		$this->meta = new Meta;
+		$this->accepts = new Accepts(array());
 	}
 	
 	public function setResource($resource) {
@@ -42,7 +46,7 @@ class Request {
 	
 	public static function splitResourceString($resourceString) {
 		$parts = array_filter(split(Library::pathSeparator, $resourceString), array('Request','resourceFilter'));
-		if(!empty($parts)) { 
+		if(!empty($parts)) {
 			return array_combine(range(0, count($parts)-1), $parts);
 		} else {
 			return $parts;	

@@ -209,7 +209,7 @@ class Layout extends AbstractHelper {
 	
 	/**
 	 * End a template extension and process the parent. 
-	 * Called automatically by RecessView but can be called manually.
+	 * Called automatically by LayoutsView but can be called manually.
 	 */
 	public static function extendEnd() {
 		if(!empty(self::$extendStack)) {

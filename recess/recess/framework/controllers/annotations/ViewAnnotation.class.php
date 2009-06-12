@@ -7,7 +7,7 @@ class ViewAnnotation extends Annotation {
 	
 	protected $prefix = '';
 	
-	protected $viewClass = 'RecessView';
+	protected $viewClass = 'LayoutsView';
 	
 	public function usage() {
 		return '!View ViewProvider [, Prefix: pathWithinViews/]';
@@ -21,7 +21,7 @@ class ViewAnnotation extends Annotation {
 		$this->acceptedKeys(array(self::PREFIX));
 		$this->minimumParameterCount(1);
 		$this->maximumParameterCount(2);
-		$this->validOnInstancesOf($class, Controller::CLASSNAME);
+		$this->validOnSubclassesOf($class, Controller::CLASSNAME);
 	}
 	
 	protected function expand($class, $reflection, $descriptor) {
@@ -32,7 +32,7 @@ class ViewAnnotation extends Annotation {
 			}
 		}
 		$descriptor->viewClass = $this->viewClass;
-		$descriptor->viewPrefix = $this->prefix;
+		$descriptor->viewsPrefix = $this->prefix;
 	}
 
 }

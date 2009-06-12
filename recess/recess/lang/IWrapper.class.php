@@ -27,10 +27,11 @@ interface IWrapper {
 	 * after is non-null then after's return value will override the return value
 	 * of the wrapped method.
 	 * 
+	 * @param $object
 	 * @param $returnValue
 	 * @return mixed Should be of the same type as the wrapped method returns.
 	 */
-	function after($returnValue);
+	function after($object, $returnValue);
 	
 	/**
 	 * Attempt to combine a wrapper with another. Example usage:

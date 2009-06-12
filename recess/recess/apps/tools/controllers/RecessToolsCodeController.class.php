@@ -10,8 +10,8 @@ Library::import('recess.apps.tools.models.RecessReflectorProperty');
 Library::import('recess.apps.tools.models.RecessReflectorMethod');
 
 /**
- * !View Recess, Prefix: code/
- * !RoutesPrefix code/
+ * !RespondWith Layouts, Json
+ * !Prefix code/
  */
 class RecessToolsCodeController extends Controller {
 	

@@ -16,7 +16,7 @@ require_once($_ENV['dir.recess'] . 'recess/cache/Cache.class.php');
  * 
  * @todo Allow framework to register packages/shortcuts? i.e.: Library::import('recess.framework.models.Model') vs. Library::import('recess','Model')
  */
-class Library {
+abstract class Library {
 	static private $classesByClass = array();	// = array( 'Inflector' => array( 'recess.lang.Inflector', 0 );
 	static private $classesByFull = array();	// 'recess.lang.Inflector'
 	static private $dirtyClasses = false;
@@ -207,9 +207,10 @@ class Library {
 		$file = str_replace(self::dotSeparator,self::pathSeparator, $fullName) . self::CLASS_FILE_EXTENSION;
 		
 		if($pathIndex == -1) {
-			foreach(self::$paths as $index => $path) {
+			for($index = count(self::$paths) - 1; $index >= 0 ; $index--) {
+				$path = self::$paths[$index];
 				if(file_exists($path . $file)) {
-					include_once($path . $file);
+					include($path . $file);
 					if(class_exists($class, false) || interface_exists($class, false)) {
 						if(isset(self::$namedRun)) { self::namedRunMissed($class); }
 						self::$dirtyClasses = true;

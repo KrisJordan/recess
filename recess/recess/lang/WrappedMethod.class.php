@@ -94,7 +94,7 @@ class WrappedMethod {
 		
 		foreach($this->wrappers as $wrapper) {
 			$returns = $wrapper->before($object, $args);
-			if($returns != null) { 
+			if($returns !== null) { 
 				// Short-circuit return
 				return $returns;
 			}
@@ -107,8 +107,8 @@ class WrappedMethod {
 		$returns = $this->reflectedMethod->invokeArgs($object, $args);
 		
 		foreach(array_reverse($this->wrappers) as $wrapper) {
-			$wrapperReturn = $wrapper->after($returns);
-			if($wrapperReturn != null) {
+			$wrapperReturn = $wrapper->after($object, $returns);
+			if($wrapperReturn !== null) {
 				$returns = $wrapperReturn;
 			}
 		}

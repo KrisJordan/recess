@@ -2,17 +2,22 @@
 Library::import('recess.framework.controllers.Controller');
 
 /**
- * !View Native, Prefix: home/
+ * !RespondWith Layouts, Json
+ * !Prefix Routes: /, Views: home/
  */
 class WelcomeHomeController extends Controller {
-	
-	/** !Route GET */
+	/**
+	 * !Route GET, /
+	 */
 	function index() {
-		
 		$this->flash = 'Welcome to your new Recess app!';
-		
 	}
 	
-
+	/**
+	 * !Route GET, foo
+	 */
+	function foo() {
+		
+	}
 }
 ?>

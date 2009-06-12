@@ -4,6 +4,7 @@ require_once 'PHPUnit/Framework.php';
 require_once 'recess/lang/RecessLangAllTests.php';
 require_once 'recess/framework/RecessFrameworkAllTests.php';
 require_once 'recess/database/RecessDatabaseAllTests.php';
+require_once 'recess/http/RecessHttpAllTests.php';
 
 class RecessAllTests {
 	

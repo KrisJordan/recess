@@ -4,7 +4,7 @@ Library::import('recess.database.Databases');
 Library::import('recess.database.pdo.PdoDataSource');
 
 /**
- * !RespondWith Layouts, Json
+ * !RespondsWith Layouts, Json
  * !Prefix database/
  */
 class RecessToolsDatabaseController extends Controller {

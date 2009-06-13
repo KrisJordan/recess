@@ -1,10 +1,10 @@
 <?php
 Library::import('recess.lang.Annotation');
 
-class RespondWithAnnotation extends Annotation {
+class RespondsWithAnnotation extends Annotation {
 	
 	public function usage() {
-		return	"!RespondWith View[, View, ...]\n";
+		return	"!RespondsWith View[, View, ...]\n";
 	}
 
 	public function isFor() {

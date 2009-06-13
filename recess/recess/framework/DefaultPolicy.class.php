@@ -70,7 +70,7 @@ class DefaultPolicy implements IPolicy {
 		do {
 			$format = $accepts->nextFormat();
 			foreach($views as $view) {
-				if($view->canRespondWith($response)) {
+				if($view->canRespondsWith($response)) {
 					return $view;
 				}
 			}

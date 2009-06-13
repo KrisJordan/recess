@@ -18,7 +18,7 @@ class NativeView extends AbstractView {
 				. $extension;
 	}
 	
-	public function canRespondWith(Response $response) {
+	public function canRespondsWith(Response $response) {
 		return file_exists($this->getTemplateFor($response));
 	}
 	

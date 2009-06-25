@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/database');
-Layout::blockAssign('title', 'New Data Source');
+$title = 'New Data Source';
 ?>
 <h1>Adding a New Named Data Source</h1>
 <p>Recess allows for multiple named data sources. Currently only MySQL and Sqlite are supported.</p>

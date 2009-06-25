@@ -58,6 +58,10 @@ class DefaultPolicy implements IPolicy {
 			$response->meta->respondWith[] = 'JsonView';
 		}
 		
+		if($response instanceof ForwardingResponse) {
+			return new NativeView();
+		}
+		
 		// Here we select a view that can respond in the desired format
 		$viewClasses = $response->meta->respondWith;
 		$views = array();
@@ -70,13 +74,13 @@ class DefaultPolicy implements IPolicy {
 		do {
 			$format = $accepts->nextFormat();
 			foreach($views as $view) {
-				if($view->canRespondsWith($response)) {
+				if($view->canRespondWith($response)) {
 					return $view;
 				}
 			}
 		} while ($format !== false);
-		
-		throw new RecessResponseException('Unable to provide with desired content-type.', ResponseCodes::HTTP_NOT_ACCEPTABLE, array());
+		exit;
+		throw new RecessResponseException('Unable to provide with desired content-type.', ResponseCodes::HTTP_NOT_ACCEPTABLE, get_defined_vars());
 	}
 	
 	/////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/database');
-Layout::blockAssign('title', 'Home');
+$title = 'Home';
 ?>
 <h1>Data Sources</h1>
 <hr />

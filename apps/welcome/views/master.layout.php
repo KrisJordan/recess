@@ -1,15 +1,16 @@
+<?php
+Layout::input($title, 'string');
+Layout::input($body, 'Block');
+?>
 <html>
 	<head>
 		<!-- Blue Print -->
-		<link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/blueprint/screen.css" type="text/css" media="screen, projection" />
-		<link rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/blueprint/print.css" type="text/css" media="print" /> 
+		<?php echo Html::css('blueprint/screen', 'screen') ?>
+		<?php echo Html::css('blueprint/print', 'print') ?>
 		<!--[if IE]>
-		  <link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection" />
+			<?php echo Html::css('blueprint/ie', 'screen') ?>
 		<![endif]-->
-		<!-- Syntax Highlighter -->  
-		<link type="text/css" rel="stylesheet" href="<?php echo $_ENV['url.content']; ?>css/SyntaxHighlighter.css"></link>
 		<title><?php if(isset($title)) echo $title; else echo 'Recess!'; ?></title>
-		
 		<style type="text/css">
 			.error,.notice,.success{ margin: 0 0 1em 0; padding: 0.8em; border: 2px solid #000; }
 			.error{ background: #FBE3E4; border-color: #FBC2C4; }
@@ -38,6 +39,10 @@
 	<body>
 	<div class="container">
 		<div class="span-24">
-			<h1>Welcome to Recess!</h1>
+			<h1><?php echo $title ?></h1>
 		</div>
 		<div class="span-24 last">
+			<?php echo $body ?>
+		</div>
+	</body>
+</html>

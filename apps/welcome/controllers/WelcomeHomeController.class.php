@@ -12,12 +12,5 @@ class WelcomeHomeController extends Controller {
 	function index() {
 		$this->flash = 'Welcome to your new Recess app!';
 	}
-	
-	/**
-	 * !Route GET, foo
-	 */
-	function foo() {
-		
-	}
 }
 ?>

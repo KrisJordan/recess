@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/apps');
-Layout::blockAssign('Title', 'Home');
+$title = 'Home';
 ?>
 
 <h1>Applications</h1>

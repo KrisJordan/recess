@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/code');
-Layout::blockAssign('title', 'Class ' . $reflection->name);
+$title = 'Class ' . $reflection->name;
 ?>
 
 <?php

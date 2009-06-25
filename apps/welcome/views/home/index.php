@@ -1,6 +1,6 @@
 <?php 
+Layout::extend('master');
 $title = 'Welcome to Recess!';
-include_once($viewsDir . 'common/header.php');
 ?>
 <div class="span-24 last">
 <div class="span-12 notice">
@@ -17,5 +17,3 @@ include_once($viewsDir . 'common/header.php');
 </div>
 
 <h3>For more information visit <a href="http://www.recessframework.org/">http://www.recessframework.org/</a></h3>
-
-<?php include_once($viewsDir . 'common/footer.php'); ?>

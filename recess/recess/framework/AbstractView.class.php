@@ -14,7 +14,7 @@ Library::import('recess.lang.Object');
 abstract class AbstractView extends Object {
 	protected $response;
 	
-	public abstract function canRespondsWith(Response $response);
+	public abstract function canRespondWith(Response $response);
 	
 	/**
 	 * The entry point from the Recess with a Response to be rendered.

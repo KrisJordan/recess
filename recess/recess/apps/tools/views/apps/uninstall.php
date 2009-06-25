@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/apps');
-Layout::blockAssign('title', 'Uninstall');
+$title = 'Uninstall';
 ?>
 
 <h1>To <span class="removed">Uninstall</span> <?php echo $app->name; ?>...</h1>

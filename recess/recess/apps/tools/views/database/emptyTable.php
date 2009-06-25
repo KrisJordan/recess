@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/database');
-Layout::blockAssign('title', 'Empty ' . $tableName);
+$title = 'Empty ' . $tableName;
 ?>
 
 <h1><span class="highlight">Empty "<?php echo $tableName; ?>" table</span>?</h1>

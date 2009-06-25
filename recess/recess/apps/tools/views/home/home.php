@@ -1,5 +1,5 @@
 <?php Layout::extend('layouts/home'); ?>
-<?php Layout::blockAssign('title', 'Welcome'); ?>
+<?php $title = 'Welcome' ?>
 
 <h1>Welcome to Recess</h1>
 <?php if(get_magic_quotes_gpc()): ?>

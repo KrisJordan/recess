@@ -1,8 +1,7 @@
 <?php
-assert($routingNode instanceof RtNode);
-assert($codeController instanceof Controller);
-assert(is_string($fullPath));
-assert(is_string($omit));
+Part::input($routingNode, 'RtNode');
+Part::input($fullPath, 'string');
+Part::input($omit, 'string');
 
 if($omit != '' && strpos($fullPath, $omit) === 0) {
 	return;
@@ -30,10 +29,10 @@ if(!empty($staticPaths) || !empty($parametricPaths)) {
 	ksort($staticPaths);
 	ksort($parametricPaths);
 	foreach($staticPaths as $path => $node) {
-		Part::render('routes/rows', $node, $codeController, $fullPath . '/' . $path, $omit);
+		Part::draw('routes/rows', $node, $fullPath . '/' . $path, $omit);
 	}
 	foreach($parametricPaths as $path => $node) {
-		Part::render('routes/rows', $node, $codeController, $fullPath . '/$' . $path, $omit);
+		Part::draw('routes/rows', $node, $fullPath . '/$' . $path, $omit);
 	}
 }
 ?>

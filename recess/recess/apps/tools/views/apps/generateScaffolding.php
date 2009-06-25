@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/apps');
-Layout::blockAssign('title', 'Scaffolding Generation');
+$title = 'Scaffolding Generation';
 ?>
 
 <h1>Generating Scaffolding for <?php echo $modelName; ?>...</h1>

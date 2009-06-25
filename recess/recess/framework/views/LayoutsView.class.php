@@ -3,6 +3,7 @@ Library::import('recess.framework.views.NativeView');
 Library::import('recess.framework.helpers.Layout');
 Library::import('recess.framework.helpers.Url');
 Library::import('recess.framework.helpers.Html');
+Library::import('recess.framework.util.AssertedParams');
 
 class LayoutsView extends NativeView { 	
 	/**
@@ -15,13 +16,14 @@ class LayoutsView extends NativeView {
 	 * @abstract 
 	 */
 	protected function render(Response $response) {
-		$this->loadHelper(
-						'recess.framework.helpers.Layout',
-						'recess.framework.helpers.Part',
-						'recess.framework.helpers.Url',
-						'recess.framework.helpers.Html');
-		parent::render($response);
-		Layout::extendEnd();
+		$this->loadHelper(	'recess.framework.helpers.Layout',
+							'recess.framework.helpers.Part',
+							'recess.framework.helpers.Buffer',
+							'recess.framework.helpers.Url',
+							'recess.framework.helpers.Html' );
+		$template = $this->getTemplateFor($response);
+		$template = str_replace($response->meta->app->getViewsDir(), '', $template);
+		Layout::draw($template, $response->data);
 	}
 }
 ?>

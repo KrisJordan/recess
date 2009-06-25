@@ -1,42 +1,33 @@
 <?php
 Layout::extend('layouts/apps');
-Layout::blockAssign('title', $app->name);
-
-Library::import('recess.apps.tools.controllers.RecessToolsCodeController');
-$codeController = new RecessToolsCodeController($response->request->meta->app);
+$title = $app->name;
 ?>
 <h1><?php echo $app->name; ?></h1>
 <p>Class: 
 	<a href="<?php 
-	echo $codeController
-			->urlTo(
-					'classInfo',
-					Library::getFullyQualifiedClassName(
-						get_class($app)
-					)
-				); ?>"><?php echo get_class($app); ?></a></p>
+	echo Url::action('RecessToolsCodeController::classInfo', Library::getFullyQualifiedClassName(get_class($app))) ?>"><?php echo get_class($app); ?></a></p>
 <div class="span-6">
 <h2 class="bottom">Models (<a href="<?php echo $controller->urlTo('createModel',get_class($app)); ?>">new</a>)</h2>
-<p>Location: <a href="<?php echo $codeController->urlTo('packageInfo', substr($app->modelsPrefix,0,-1)); ?>"><?php echo $app->modelsPrefix; ?></a></p>
+<p>Location: <?php echo Html::anchor(Url::action('RecessToolsCodeController::packageInfo',substr($app->modelsPrefix,0,-1)), $app->modelsPrefix ) ?> </p>
 <?php
-function printClassesInNamespace($namespace, $codeController) {
+function printClassesInNamespace($namespace) {
 	$classes = Library::findClassesIn($namespace);
 	if(!empty($classes)) {
 		echo '<ul>';
 		foreach($classes as $class) {
-			echo '<li><a href="' . $codeController->urlTo('classInfo',$namespace . $class) . '">' . $class . '</a></li>';
+			echo '<li>' . Html::anchor(Url::action('RecessToolsCodeController::classInfo', $namespace . $class), $class) . '</li>';
 		}
 		echo '</ul>';
 	}
 }
-printClassesInNamespace($app->modelsPrefix, $codeController);
+printClassesInNamespace($app->modelsPrefix);
 ?>
 </div>
 <div class="span-6">
 <h2 class="bottom">Controllers (<a href="<?php echo $controller->urlTo('createController', get_class($app)); ?>">new</a>)</h2>
-<p>Location: <a href="<?php echo $codeController->urlTo('packageInfo', substr($app->controllersPrefix,0,-1)); ?>"><?php echo $app->controllersPrefix; ?></a></p>
+<p>Location: <?php echo Html::anchor(Url::action('RecessToolsCodeController::packageInfo',substr($app->controllersPrefix,0,-1)), $app->controllersPrefix ) ?></p>
 <?php
-printClassesInNamespace($app->controllersPrefix, $codeController);
+printClassesInNamespace($app->controllersPrefix);
 ?>
 </div>
 
@@ -52,7 +43,7 @@ printClassesInNamespace($app->controllersPrefix, $codeController);
 $routes = new RtNode();
 $app->addRoutesToRouter($routes);
 // include_once($viewsDir . 'common/printRoutes.php');
-Part::render('routes/table', $routes, $codeController, '');
+Part::draw('routes/table', $routes, '');
 ?>
 
 <hr />

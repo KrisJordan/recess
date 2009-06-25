@@ -1,5 +1,6 @@
 <?php
 Library::import('recess.framework.Application');
+Library::import('recess.framework.helpers.AssertiveTemplate');
 
 class RecessToolsApplication extends Application {
 	
@@ -23,6 +24,8 @@ class RecessToolsApplication extends Application {
 		
 		$this->routingPrefix = 'recess/';
 		
+		AssertiveTemplate::addPath($_ENV['dir.recess'] . 'recess/framework/parts/');
+
 	}
 }
 

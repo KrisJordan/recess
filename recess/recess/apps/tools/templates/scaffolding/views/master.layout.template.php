@@ -1,11 +1,17 @@
+<?php
+Layout::input($title, 'string');
+Layout::input($body, 'Block');
+Layout::input($navigation, 'Block', new HtmlBlock());
+Layout::input($style, 'Block', new HtmlBlock());
+?>
 <html>
 	<head>
-		<?php 
-		Layout::slot('style');
-			Part::render('parts/style');
-		Layout::slotEnd();		
+		<?php
+		if(!$style->draw()) {
+			Part::draw('parts/style');
+		}
 		?>
-		<title>{{appName}} - <?php Layout::slot('title'); Layout::slotEnd() ?></title> 
+		<title>{{appName}} - <?php echo $title; ?></title> 
 	</head>
 	<body>
 	<div class="container">
@@ -14,15 +20,9 @@
 		</div>
 		<div class="span-24 last">
 			<div class="navigation">
-			<?php
-			Layout::slot('navigation');
-			Layout::slotEnd();
-			?>
+			<?php echo $navigation; ?>
 			</div>
-			<?php 
-			Layout::slot('body');
-			Layout::slotEnd();
-			?>
+			<?php echo $body; ?>
 		</div>
 		<div class="span-24 footer">
 		  <p class="quiet bottom">

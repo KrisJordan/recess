@@ -1,5 +1,5 @@
 <?php
-assert(${{modelNameLower}} instanceof {{modelName}});
+Part::input(${{modelNameLower}}, '{{modelName}}');
 ?>
 <form method="POST" action="<?php echo Url::action('{{modelName}}Controller::delete', ${{modelNameLower}}->{{primaryKey}}) ?>">
 	<fieldset>

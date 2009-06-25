@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/database');
-Layout::blockAssign('title', 'Drop ' . $tableName);
+$title = 'Drop ' . $tableName;
 ?>
 <h1><span class="highlight">Drop "<?php echo $tableName; ?>" table</span>?</h1>
 <h2><a href="<?php echo $controller->urlTo('showTable', $sourceName, $tableName); ?>">No, Just Kidding, Take Me Back</a></h2>

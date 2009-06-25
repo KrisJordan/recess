@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/code');
-Layout::blockAssign('title', 'By Class');
+$title = 'By Class';
 ?>
 
 <h1>Browse Code by Class</h1>

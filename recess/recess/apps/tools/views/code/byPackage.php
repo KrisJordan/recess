@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/code');
-Layout::blockAssign('title', 'By Package');
+$title = 'By Package';
 ?>
 
 <h1>Browse Code by Package</h1>

@@ -1,3 +1,9 @@
+<?php
+Layout::input($title, 'string');
+Layout::input($body, 'Block');
+Layout::input($navigation, 'Block');
+Layout::input($scripts, 'Block', new HtmlBlock());
+?>
 <html>
 	<head>
 		<!-- Blue Print -->
@@ -20,8 +26,8 @@
 				dp.SyntaxHighlighter.HighlightAll('code');
 			}
 		</script>
-		<?php Layout::slot('scripts') ?><?php Layout::slotEnd() ?>
-		<title>Recess Tools!<?php Layout::slot('title') ?><?php Layout::slotEnd() ?></title>
+		<?php echo $scripts ?>
+		<title>Recess Tools!<?php echo $title; ?></title>
 	</head>
 	<body>
 	<div class="container">
@@ -32,10 +38,8 @@
 				<p class="qotm quiet">"Give us the tools, and we'll finish the job." ~Churchill</p>
 			</div>
 			<div class="span-19">
-				<?php Layout::slot('navigation') ?>
-				<?php Layout::slotEnd() ?>
-				<?php Layout::slot('body') ?>
-				<?php Layout::slotEnd() ?>
+				<?php echo $navigation; ?>
+				<?php echo $body; ?>
 			</div>
 			<div class="span-5 last infobar">
 			  <h3><span>Recess Resources</span></h3>

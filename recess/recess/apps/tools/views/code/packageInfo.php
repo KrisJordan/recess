@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/code');
-Layout::blockAssign('title', $package->name);
+$title = $package->name;
 ?>
 <?php
 function linkedPackagePath($package, $linkPrefix = "") {

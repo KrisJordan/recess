@@ -3,7 +3,7 @@ Library::import('recess.framework.AbstractView');
 
 class JsonView extends AbstractView {
 	
-	public function canRespondsWith(Response $response) {
+	public function canRespondWith(Response $response) {
 		return 'json' === $response->request->accepts->format();
 	}
 	

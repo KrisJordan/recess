@@ -95,8 +95,9 @@ class RecessToolsAppsController extends Controller {
 		$this->messages[] = $this->tryGeneratingFile('Navigation Part', $this->application->codeTemplatesDir . 'scaffolding/views/parts/navigation.part.template.php', $appDir . '/views/parts/navigation.part.php', $appReplacements);
 		$this->messages[] = $this->tryGeneratingFile('Style Part', $this->application->codeTemplatesDir . 'scaffolding/views/parts/style.part.template.php', $appDir . '/views/parts/style.part.php', $appReplacements);
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/views/home', 'home views');
+		$this->messages[] = $this->tryCreatingDirectory($appDir . '/views/layouts', 'layouts');
 		$this->messages[] = $this->tryGeneratingFile('Home Template', $this->application->codeTemplatesDir . 'scaffolding/views/home/index.template.php', $appDir . '/views/home/index.php', $appReplacements);
-		$this->messages[] = $this->tryGeneratingFile('Master Layout', $this->application->codeTemplatesDir . 'scaffolding/views/master.template.php', $appDir . '/views/master.php', $appReplacements);
+		$this->messages[] = $this->tryGeneratingFile('Master Layout', $this->application->codeTemplatesDir . 'scaffolding/views/master.layout.template.php', $appDir . '/views/layouts/master.layout.php', $appReplacements);
 		
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public', 'public');
 		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public/css', 'css');
@@ -343,7 +344,7 @@ class RecessToolsAppsController extends Controller {
 		
 		$viewsDir = $app->viewsDir . $replacements['viewsPrefix'] . '/';
 		$this->messages[] = $this->tryCreatingDirectory($viewsDir, $model . ' views dir');
-		$this->messages[] = $this->tryGeneratingFile('resource layout', $this->application->codeTemplatesDir . 'scaffolding/views/resource/layout.template.php', $viewsDir . 'layout.php', $replacements);
+		$this->messages[] = $this->tryGeneratingFile('resource layout', $this->application->codeTemplatesDir . 'scaffolding/views/resource/resource.layout.template.php', $viewsDir . '../layouts/' . $replacements['viewsPrefix'] . '.layout.php', $replacements);
 		$this->messages[] = $this->tryGeneratingFile('index view', $this->application->codeTemplatesDir . 'scaffolding/views/resource/index.template.php', $viewsDir . 'index.php', $replacements);
 		$this->messages[] = $this->tryGeneratingFile('editForm view', $this->application->codeTemplatesDir . 'scaffolding/views/resource/editForm.template.php', $viewsDir . 'editForm.php', $replacements, true);
 		$this->messages[] = $this->tryGeneratingFile('form part', $this->application->codeTemplatesDir . 'scaffolding/views/resource/form.part.template.php', $viewsDir . 'form.part.php', $replacements, true);

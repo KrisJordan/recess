@@ -1,13 +1,13 @@
 <?php 
-Layout::extend('{{modelNameLower}}/layout');
+Layout::extend('layouts/{{modelNameLower}}');
 if(isset(${{modelNameLower}}->{{primaryKey}})) {
 	$title = 'Edit {{modelName}} #' . ${{modelNameLower}}->{{primaryKey}};
 } else {
 	$title = 'Create New {{modelName}}';
 }
-Layout::blockAssign('title', $title);
+$title = $title;
 ?>
 
-<?php Part::render('{{modelNameLower}}/form', $_form, $title) ?>
+<?php Part::draw('{{modelNameLower}}/form', $_form, $title) ?>
 
 <?php echo Html::anchor(Url::action('{{modelName}}Controller::index'), '{{modelName}} List') ?>

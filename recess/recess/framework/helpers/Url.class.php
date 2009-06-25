@@ -69,8 +69,12 @@ class Url extends AbstractHelper {
 	 * @return string URL to an application action.
 	 */
 	public static function action($actionControllerMethodPair) {
-		$args = func_get_args();
-		return call_user_func_array(array(self::$app,'urlTo'),$args);
+		try {
+			$args = func_get_args();
+			return call_user_func_array(array(self::$app,'urlTo'),$args);
+		} catch(Exception $e) {
+			throw new RecessFrameworkException("No URL for $actionControllerMethodPair exists.", 1);
+		}
 	}
 	
 }

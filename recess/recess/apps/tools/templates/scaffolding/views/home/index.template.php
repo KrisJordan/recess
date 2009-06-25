@@ -1,6 +1,6 @@
 <?php
-Layout::extend('master');
-Layout::blockAssign('title', 'Home');
+Layout::extend('layouts/master');
+$title = 'Home';
 ?>
 <h1>Hello Kick-ass Developer!</h1>
 <h2 class="highlight"><?php echo $flash; ?></h2>

@@ -1,6 +1,6 @@
 <?php 
-Layout::extend('{{modelNameLower}}/layout');
-Layout::blockAssign('title', 'Index');
+Layout::extend('layouts/{{modelNameLower}}');
+$title = 'Index';
 ?>
 
 <h3><?php echo Html::anchor(Url::action('{{modelName}}Controller::newForm'), 'Create New {{modelName}}') ?></h3>
@@ -12,6 +12,6 @@ Layout::blockAssign('title', 'Index');
 <?php endif; ?>
 
 <?php foreach(${{modelNameLower}}Set as ${{modelNameLower}}): ?>
-	<?php Part::render('{{modelNameLower}}/details', ${{modelNameLower}}) ?>
+	<?php Part::draw('{{modelNameLower}}/details', ${{modelNameLower}}) ?>
 	<hr />
 <?php endforeach; ?>

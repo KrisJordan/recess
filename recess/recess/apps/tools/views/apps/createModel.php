@@ -1,10 +1,10 @@
 <?php
 Layout::extend('layouts/apps');
-Layout::blockAssign('title', $app);
+$title = $app;
 
-Layout::block('scripts');
-include_once($viewsDir . 'apps/newModelJQuery.php');
-Layout::blockEnd();
+Buffer::to($scripts);
+include 'newModelJQuery.php';
+Buffer::end();
 ?>
 
 <h1>New <strong>Model</strong> Helper</h1>

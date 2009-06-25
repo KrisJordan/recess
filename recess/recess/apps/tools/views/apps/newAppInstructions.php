@@ -1,6 +1,6 @@
 <?php
 Layout::extend('layouts/apps');
-Layout::blockAssign('title', 'New App Instructions');
+$title = 'New App Instructions';
 ?>
 
 <h1>Your apps dir isn't writeable...</h1>

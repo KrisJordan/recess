@@ -29,27 +29,33 @@ class Layout extends AssertiveTemplate {
 		Buffer::to($body);
 		$context = self::includeTemplate($template, $context);
 		Buffer::end();
-		if(!isset($context['body'])) {
-			$context['body'] = $body;
-		}
-		while($parent = array_pop(self::$parentStack)) {
-			try{
-				$parentInputs = self::getInputs($parent, 'Layout');
-			}catch(RecessFrameworkException $e) {
-//				if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
-					$trace = array_pop(self::$debugTraces);
-					throw new RecessErrorException('Extended layout does not exist.', 0, 0, $trace[0]['file'], $trace[0]['line'], $trace[0]['args']);
-//				} else {
-//					throw $e;
-//				}
+		
+		if(empty(self::$parentStack)) {
+			echo $body;
+			return true;
+		} else {
+			if(!isset($context['body'])) {
+				$context['body'] = $body;
 			}
-			$context = array_intersect_key($context, $parentInputs);
-			$context = self::includeTemplate($parent, $context);
+			while($parent = array_pop(self::$parentStack)) {
+				try{
+					$parentInputs = self::getInputs($parent, 'Layout');
+				}catch(RecessFrameworkException $e) {
+	//				if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
+						$trace = array_pop(self::$debugTraces);
+						throw new RecessErrorException('Extended layout does not exist.', 0, 0, $trace[0]['file'], $trace[0]['line'], $trace[0]['args']);
+	//				} else {
+	//					throw $e;
+	//				}
+				}
+				$context = array_intersect_key($context, $parentInputs);
+				$context = self::includeTemplate($parent, $context);
+			}
+	//		if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
+				array_pop(self::$debugTraces);
+	//		}
+			return true;
 		}
-//		if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
-			array_pop(self::$debugTraces);
-//		}
-		return true;
 	}
 	
 	/**

@@ -7,14 +7,13 @@ $title = 'Home';
 <?php foreach($sources as $name => $source): ?>
 	<h2 class="bottom"><?php echo $name; ?> (<?php echo $sourceInfo[$name]['driver']; ?>)</h2>
 	<div style="margin: 0 0 0 2em">
-	<p>DSN: <?php echo $sourceInfo[$name]['dsn']; ?>
+	<p>DSN: <?php echo $sourceInfo[$name]['dsn']; ?></p>
 	<h3 class="bottom">Tables:</h3>
 	<ul style="font-size: 1.8em">
 	<?php foreach($sourceInfo[$name]['tables'] as $table): ?>
 		<li><a href="<?php echo $controller->urlTo('showTable',$name,$table); ?>"><?php echo $table; ?></a></li>
 	<?php endforeach; ?>
 	</ul>
-	</p>
 	</div>
 	<hr />
 <?php endforeach; ?>

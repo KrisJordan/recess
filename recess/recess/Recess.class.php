@@ -44,7 +44,7 @@ final class Recess {
 			if(isset($response->context)) {
 				$forwardRequest->get = $response->context;
 			}
-			
+			$forwardRequest->accepts = $response->request->accepts;
 			$forwardRequest->cookies = $response->request->cookies;
 			$forwardRequest->username = $response->request->username;
 			$forwardRequest->password = $response->request->password;

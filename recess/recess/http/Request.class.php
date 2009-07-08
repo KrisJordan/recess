@@ -65,6 +65,8 @@ class Request {
 			return $this->put[$name];
 		} else if (isset($this->get[$name])) {
 			return $this->get[$name];
+		} else {
+			return '';
 		}
 	}
 }

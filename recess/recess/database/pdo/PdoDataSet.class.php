@@ -121,6 +121,9 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 		return iterator_count($this); 
 	}
 	
+	public function exists() {
+		return (bool)iterator_count($this);
+	}
 	
 	/*
 	 * The following methods are in accordance with the Iterator interface

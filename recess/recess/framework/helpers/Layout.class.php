@@ -66,7 +66,11 @@ class Layout extends AssertiveTemplate {
 	 * @param string The name of the layout being extended without the '.layout.php' extension.
 	 */
 	public static function extend($assertiveTemplate) {
-		array_push(self::$parentStack, $assertiveTemplate . '.layout.php');
+		if(strpos($assertiveTemplate,'/layout') !== strlen($assertiveTemplate) - 7) {
+			array_push(self::$parentStack, $assertiveTemplate . '.layout.php');
+		} else {
+			array_push(self::$parentStack, $assertiveTemplate . '.php');
+		}
 		//if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
 			$trace = debug_backtrace();
 			array_pop($trace);

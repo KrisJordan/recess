@@ -71,13 +71,14 @@ class ListBlock extends Block {
 	function prepend() {
 		$args = func_get_args();
 		$this->add($args, self::PREPEND);
+		return $this;
 	}
 	
 	/**
-	 * Private helper method for adding elements
+	 * protected helper method for adding elements
 	 * to the head or teail of the list.
 	 */
-	private function add($args, $mode) {
+	protected function add($args, $mode) {
 		if(!empty($args)) {
 			if(count($args) == 1) {
 				if(is_array($args[0])) {

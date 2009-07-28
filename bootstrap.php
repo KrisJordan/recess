@@ -20,7 +20,7 @@ Library::import('recess.http.Environment');
 Library::import('recess.Recess');
 
 // Entry point to Recess
-Recess::main(Environment::getRawRequest(), RecessConf::$policy, RecessConf::$applications, RecessConf::getRoutes(), RecessConf::$plugins);
+Recess::main(Environment::getRawRequest(), RecessConf::$policy, RecessConf::getRoutes(), RecessConf::$plugins);
 
 // RecessConf follows...
 
@@ -64,6 +64,7 @@ abstract class RecessConf {
 		
 		$_ENV['dir.recess'] = self::$recessDir;
 		$_ENV['dir.apps'] = self::$appsDir;
+		$_ENV['dir.plugins'] = self::$pluginsDir;
 		$_ENV['dir.temp'] = self::$dataDir . 'temp/';
 		$_ENV['dir.test'] = self::$recessDir . 'test/';
 		

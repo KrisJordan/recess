@@ -24,8 +24,6 @@ class RecessToolsApplication extends Application {
 		
 		$this->routingPrefix = 'recess/';
 		
-		AssertiveTemplate::addPath($_ENV['dir.recess'] . 'recess/framework/parts/');
-
 	}
 }
 

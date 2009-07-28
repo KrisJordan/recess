@@ -314,8 +314,20 @@ function __autoload($class) {
 }
 
 class Make {
-	static function a($class) { return new $class; }
-	static function an($class) { return new $class; }
+	static private $classes = array();
+	
+	static function a($class) { $args = func_get_args(); return self::makeByArray($args); }
+	static function an($class) { $args = func_get_args(); return self::makeByArray($args); }
+	
+	static private function makeByArray($args) {
+		$class = array_shift($args);
+		if($class != null) {
+			if(!isset(self::$classes[$class])) {
+				self::$classes[$class] = new ReflectionClass($class);
+			}
+			return self::$classes[$class]->newInstanceArgs($args);
+		}
+	}
 }
 
 register_shutdown_function(array('Library','shutdown'));

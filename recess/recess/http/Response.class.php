@@ -29,6 +29,10 @@ class Response {
 		$this->cookies[] = $cookie;
 	}
 	
+	public function addCookies($cookies) {
+		$this->cookies = array_merge($this->cookies, $cookies);
+	}
+	
 	public function getCookies() {
 		return $this->cookies;
 	}

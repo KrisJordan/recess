@@ -1,4 +1,5 @@
 <?php
+Library::import('recess.framework.helpers.blocks.Block');
 Library::import('recess.framework.helpers.blocks.HtmlBlock');
 Library::import('recess.framework.helpers.blocks.ListBlock');
 Library::import('recess.framework.AbstractHelper');

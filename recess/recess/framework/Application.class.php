@@ -1,7 +1,7 @@
 <?php
 Library::import('recess.framework.controllers.Controller');
-Library::import('recess.framework.views.LayoutsView');
 Library::import('recess.database.orm.Model');
+Library::import('recess.lang.PathFinder');
 
 abstract class Application {
 	
@@ -24,9 +24,9 @@ abstract class Application {
 	/**
 	 * OVERRIDE THIS with appname/views/
 	 *
-	 * @var string
+	 * @var PathFinder
 	 */
-	public $viewsDir = '';
+	public $viewsDir = null;
 	
 	/**
 	 * OVERRIDE THIS with the path to your app's public files relative to url.base, apps/appname/public/ by default
@@ -41,6 +41,44 @@ abstract class Application {
 	 * @var string
 	 */
 	public $routingPrefix = '/';
+	
+	public $plugins = array();
+	
+	protected $viewPathFinder = null;
+	
+	public function addViewPath($path) {
+		if($this->viewPathFinder == null) {
+			$this->viewPathFinder = new PathFinder();
+		}
+		$this->viewPathFinder->addPath($path);
+	}
+	
+	public function viewPathFinder() {
+		return $this->viewPathFinder;
+	}
+	
+	public function findView($view) {
+		return $this->viewPathFinder->find($view);
+	}
+	
+	static protected $runningApplication = null;
+	
+	static function active() {
+		return self::$runningApplication;
+	}
+	
+	static function activate(Application $application) {
+		$application->init();
+		self::$runningApplication = $application;	
+	}
+	
+	function init() {
+		$this->addViewPath($_ENV['dir.recess'] . 'recess/framework/ui/parts/');
+		foreach($this->plugins as $plugin) {
+			$plugin->init($this);
+		}
+		$this->addViewPath($this->viewsDir);
+	}
 	
 	function addRoutesToRouter(RtNode $router) {
 		$classes = $this->listControllers();
@@ -71,13 +109,11 @@ abstract class Application {
 		}
 		return $controllers;
 	}
-	
-	function getController($controller) {
-		Library::import($this->controllersPrefix . $controller);
-		$returnController = new $controller($this);
-		return $returnController;
-	}
-	
+
+	/** 
+	 * Deprecated. Use findView instead.
+	 * @return unknown_type
+	 */
 	function getViewsDir() {
 		return $this->viewsDir;
 	}

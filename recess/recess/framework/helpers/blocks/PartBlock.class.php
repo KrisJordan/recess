@@ -88,35 +88,46 @@ class PartBlock extends Block {
 		try {
 			$this->draw();
 		} catch(MissingRequiredDrawArgumentsException $e) {
-			throw new BlockToStringException($e->getMessage(), 1);
+			die($e->getMessage());
+		} catch(Exception $e) {
+			die($e->getMessage());
 		}
 		Buffer::end();
 		return (string)$returnsBlock;
 	}
 	
-	/**
-	 * Magic method for out-of-order assignment. Call with the name of 
-	 * an input and no arguments to get its current value, or one argument
-	 * to assign it a value.
-	 */
-	public function __call($name, $arguments) {
-		if(!empty($arguments)) {
-			$count = count($arguments);
-			if($count == 0) {
-				return $this->args[$name];
-			} else if($count == 1) {
-				$clone = clone $this;
-				$clone->assign($name, $arguments[0]);
-				return $clone;
+	public function get($input) {
+		if(!isset($this->args[$input])) {
+			$inputs = Part::getInputs($this->partPath);
+			if(isset($inputs[$input])) {
+				if(isset($inputs[$input]['default'])) {
+					eval('$this->args[$input] = ' . $inputs[$input]['default'] . ';');
+				} else {
+					return null;
+				}
+			} else {
+				throw new InputDoesNotExistException("Part '$this->partPath' does not have a '$input' input.", 1);
 			}
 		}
+		return $this->args[$input];
+	}
+	
+	public function set($name, $value) {
+		try {
+			$this->assign($name, $value);
+		} catch (InputDoesNotExistException $e) {
+			
+		} catch (InputTypeCheckException $e) {
+			throw new InputTypeCheckException($e->getMessage(), 1);	
+		}
+		return $this;
 	}
 	
 	/**
-	 * Private helper method for currying arguments into an instance.
+	 * protected helper method for currying arguments into an instance.
 	 * @param array
 	 */
-	private function curry($args) {
+	protected function curry($args) {
 		// pair any args with their input names
 		if(is_array($args) && !empty($args)) {
 			$inputs = Part::getInputs($this->partPath);
@@ -132,7 +143,8 @@ class PartBlock extends Block {
 						$this->assign($input, $args[$arg++]);
 					} catch(InputTypeCheckException $e) {
 						throw new InputTypeCheckException($e->getMessage(), 2);
-					}				}
+					}				
+				}
 				++$param;
 			}
 			$this->curriedArgs = $arg;
@@ -161,7 +173,7 @@ class PartBlock extends Block {
 				throw new InputTypeCheckException("Part input type mismatch '$property' expects '$expected' passed '$passed'.");
 			}
 		} else {
-			throw new InputDoesNotExistException("Part input '$property' does not exist.", 2); 
+			throw new InputDoesNotExistException("Part '$this->partPath' does not have a '$property' input.", 2); 
 		}
 	}
 }

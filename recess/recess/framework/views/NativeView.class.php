@@ -11,18 +11,16 @@ class NativeView extends AbstractView {
 			$extension = '.php';
 		}
 
-		$template =
-				$response->meta->app->getViewsDir() 
-				. $response->meta->viewsPrefix 
-				. $response->meta->viewName 
-				. $extension;
+		$template = $response->meta->viewsPrefix . 
+					$response->meta->viewName . 
+					$extension;
 				
 		return $template;
 	}
 
 	public function canRespondWith(Response $response) {
 		// TODO: Cache in production mode
-		return file_exists($this->getTemplateFor($response));
+		return Application::active()->findView($this->getTemplateFor($response));
 	}
 
 	protected function render(Response $response) {

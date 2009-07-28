@@ -13,13 +13,12 @@ Library::import('recess.framework.helpers.exceptions.InputTypeCheckException');
  * @author Kris Jordan
  */
 abstract class AssertiveTemplate {
-	protected static $app;
 	
 	/**
 	 * Used to locate AssertiveTemplates 
 	 * @var Paths
 	 */
-	private static $paths;
+	private static $paths = false;
 	
 	/**
 	 * Initialize the AssertiveTemplate helper class by registering
@@ -27,12 +26,8 @@ abstract class AssertiveTemplate {
 	 * 
 	 * @param AbstractView
 	 */
-	public static function init(AbstractView $view) {
-		$response = $view->getResponse();
-		if(self::$app == null) {
-			self::$app = $response->meta->app;
-			self::addPath(self::$app->getViewsDir());
-		}
+	public static function init(AbstractView $view = null) {
+		self::setPathFinder(Application::active()->viewPathFinder());
 	}
 	
 	/**
@@ -47,6 +42,14 @@ abstract class AssertiveTemplate {
 			self::$paths = new PathFinder();
 		}
 		self::$paths->addPath($path);
+	}
+	
+	/**
+	 * Set the PathFinder to use when looking for Assertive Templates
+	 * @param PathFinder $pathFinder
+	 */
+	public static function setPathFinder(PathFinder $pathFinder) {
+		self::$paths = $pathFinder;
 	}
 	
 	protected static $loaded = array();
@@ -92,18 +95,32 @@ abstract class AssertiveTemplate {
 	 * @return Returns the $input, if $input was null and optional returns $default.
 	 */
 	public static function input(&$input, $type, $default = null) {
-		if($input === null && $default !== null) {
+		if($input === NULL && $default !== null) {
 			$input = $default;
 		} else {
 			if($input === null) {
-				throw new MissingRequiredInputException('Missing required input.', 1);
+				/** Hacky for better debuging experience. Analyze stack to find name of required input missing. */
+				$stack = debug_backtrace();
+				if(isset($stack[0])) {
+					$script = explode("\n", file_get_contents($stack[0]['file']));
+					$lineNumber = $stack[0]['line'] - 1;
+					$line = $script[$lineNumber];
+					preg_match('/\s*(\S*?)::input\(/', $line, $matches);
+					if(isset($matches[1])) {
+						preg_match(self::getInputRegex($matches[1]), $line, $inputMatches);
+						if(isset($inputMatches[1])) {
+							throw new MissingRequiredInputException('Missing input "'.$inputMatches[1].'" of type "'.$type.'" in: '.$stack[0]['file'], 1);
+						}
+					}
+				}
+				throw new MissingRequiredInputException('Missing required ' . $type . ' input in :' , 1);
 			}
 		}
 		
 		if(!self::typeCheck($input, $type)) {
 			$passed = gettype($input);
 			if($passed === 'object') {
-				$passed = get_class($value);
+				$passed = get_class($input);
 			}
 			throw new InputTypeCheckException("Input type mismatch, expected: '$type', actual:'$passed'.", 1);			
 		}
@@ -152,6 +169,7 @@ abstract class AssertiveTemplate {
 	 * of an assertive template. Data available: 
 	 *   array[$inputName]['required'] = boolean
 	 *   array[$inputName]['type'] = string type representation
+	 *   array[$inputName]['default'] = string default value
 	 *   
 	 * @param string Part name relative to AssertiveTemplate's paths.
 	 * @param string The class name to look for, i.e. for Part::input 'Part', Layout::input 'Layout'
@@ -163,6 +181,9 @@ abstract class AssertiveTemplate {
 			if(($inputs = Cache::get($cacheKey)) !== false) {
 				self::$loaded[$template] = $inputs;
 			} else {
+				if(self::$paths === false) {
+					self::init();
+				}
 				$templateFile = self::$paths->find($template);
 				if($templateFile === false) {
 					throw new RecessFrameworkException("The file \"$template\" does not exist.", 1);
@@ -177,6 +198,11 @@ abstract class AssertiveTemplate {
 					$name = $matches[1][$key];
 					$input['type'] = $matches[2][$key];
 					$input['required'] = !isset($matches[3][$key]) || $matches[3][$key] === '';
+					if(!$input['required']) {
+						$input['default'] = $matches[3][$key];
+					} else {
+						$input['default'] = null;
+					}
 					$inputs[$name] = $input;
 				}
 
@@ -193,7 +219,7 @@ abstract class AssertiveTemplate {
 	 * @return string The regex.
 	 */
 	private static function getInputRegex($class) {
-		$ws = '(?:\W*)';
+		$ws = '(?:\s*)';
 		$openParen = '\(';
 		$closeParen = '\)';
 		$identifier = '[a-zA-Z_][a-zA-Z_0-9]*';

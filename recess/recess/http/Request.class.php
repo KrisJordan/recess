@@ -46,7 +46,7 @@ class Request {
 	}
 	
 	public static function splitResourceString($resourceString) {
-		$parts = array_filter(split(Library::pathSeparator, $resourceString), array('Request','resourceFilter'));
+		$parts = array_filter(explode(Library::pathSeparator, $resourceString), array('Request','resourceFilter'));
 		if(!empty($parts)) {
 			return array_combine(range(0, count($parts)-1), $parts);
 		} else {

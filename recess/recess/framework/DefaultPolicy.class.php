@@ -120,8 +120,11 @@ class DefaultPolicy implements IPolicy {
 		if($lastDotPosition !== false) {
 			$format = substr($lastPart, $lastDotPosition + 1);
 			if($format !== '') {
-				$request->accepts->forceFormat($format);
-				$request->setResource(substr($request->resource, 0, strrpos($request->resource, Library::dotSeparator)));
+				$mime = MimeTypes::preferredMimeTypeFor($format);
+				if($mime !== false) {
+					$request->accepts->forceFormat($format);
+					$request->setResource(substr($request->resource, 0, strrpos($request->resource, Library::dotSeparator)));
+				}
 			}
 		}
 		

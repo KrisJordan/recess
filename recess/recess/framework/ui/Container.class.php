@@ -13,7 +13,7 @@ class Container extends Control {
 		PartBlock::__construct($part, $this, $name, new ArrayBlock());
 	}
 	
-	public static function make($part = 'default', $name = '') {
+	public static function make($part, $name, $value = '', $label = false) {
 		return new Container($part, $name);
 	}
 	

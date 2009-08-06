@@ -10,7 +10,7 @@ class PartBlockTest extends PHPUnit_Framework_TestCase {
 	protected $optional = 'optional-inputs';
 	
 	function setUp() {
-		Part::addPath($_ENV['dir.test'] . 'recess/framework/helpers/test-parts/');
+		Part::addPath(dirname(__FILE__) . '/test-parts/');
 	}
 	
 	function testDrawZeroArgs() {
@@ -134,7 +134,7 @@ class PartBlockTest extends PHPUnit_Framework_TestCase {
 		
 		ob_start();
 		$block = new PartBlock($this->multi);
-		$block->second($two)->first($one)->third($three)->draw();
+		$block->set('second',$two)->set('first',$one)->set('third',$three)->draw();
 		$content = ob_get_clean();
 		$this->assertEquals('onethreeonethree', $content);
 	}
@@ -158,7 +158,7 @@ class PartBlockTest extends PHPUnit_Framework_TestCase {
 		
 		try {
 			$block = new PartBlock($this->multi, $one);	
-			$block->second($two)->draw($three);
+			$block->set('second',$two)->draw($three);
 			$this->fail('Should throw InputTypeCheckException');
 		} catch(InputTypeCheckException $e) {
 			$this->assertTrue(true);
@@ -174,23 +174,9 @@ class PartBlockTest extends PHPUnit_Framework_TestCase {
 		
 		ob_start();
 		$block = new PartBlock($this->multi, $one);
-		$block->third($three)->draw($two);
+		$block->set('third',$three)->draw($two);
 		$content = ob_get_clean();
 		$this->assertEquals('onethreeonethree', $content);
-	}
-	
-	function testNonExistantInput(){
-		$two = 2;
-		try {
-			$block = new PartBlock($this->multi);
-			$block->two($two);
-			$this->fail('Should throw InputDoesNotExistException');
-		} catch(InputDoesNotExistException $e) {
-			$this->assertTrue(true);
-		} catch(Exception $e) {
-			$this->fail('Should throw InputTypeCheckException, Got: ' . get_class($e));
-		}
-		
 	}
 	
 }

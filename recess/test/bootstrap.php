@@ -14,5 +14,4 @@ $_ENV['url.content'] = $_ENV['url.base'] . 'content/';
 
 require_once($_ENV['dir.recess'] . 'recess/lang/Library.class.php');
 Library::addClassPath($_ENV['dir.recess']);
-
 ?>

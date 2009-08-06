@@ -6,7 +6,7 @@ class AssertiveTemplateTest extends PHPUnit_Framework_TestCase {
 	
 	function setUp() {
 		$this->simple = 'simple.at.php';
-		AssertiveTemplate::addPath($_ENV['dir.test'] . 'recess/framework/helpers/');
+		AssertiveTemplate::addPath(dirname(__FILE__) . '/');
 	}
 	
 	function testGetInputs() {

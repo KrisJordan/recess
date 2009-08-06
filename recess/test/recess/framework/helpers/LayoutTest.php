@@ -8,7 +8,7 @@ class LayoutTest extends PHPUnit_Framework_TestCase {
 	protected $optional = 'optional-inputs';
 	
 	function setUp() {
-		Layout::addPath($_ENV['dir.test'] . 'recess/framework/helpers/test-layouts/');
+		Layout::addPath(dirname(__FILE__) . '/test-layouts/');
 	}
 	
 	function testSimple() {

@@ -11,7 +11,7 @@ class PartTest extends PHPUnit_Framework_TestCase {
 	protected $optional = 'optional-inputs';
 	
 	function setUp() {
-		Part::addPath($_ENV['dir.test'] . 'recess/framework/helpers/test-parts/');
+		Part::addPath(dirname(__FILE__) . '/test-parts/');
 	}
 	
 	function testDrawZeroArgs() {

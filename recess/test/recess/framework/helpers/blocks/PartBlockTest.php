@@ -9,8 +9,8 @@ class PartBlockTest extends PHPUnit_Framework_TestCase {
 	protected $multi = 'multi-input';
 	protected $optional = 'optional-inputs';
 	
-	function setUp() {
-		Part::addPath(dirname(__FILE__) . '/test-parts/');
+	function setUp() { 
+		Part::addPath(dirname(__FILE__) . '/../test-parts/');
 	}
 	
 	function testDrawZeroArgs() {

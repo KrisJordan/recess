@@ -1,6 +1,9 @@
 <?php
 
 Library::import('recess.database.pdo.PdoDataSource');
+Library::import('recess.database.pdo.exceptions.DataSourceCouldNotConnectException');
+Library::import('recess.database.pdo.exceptions.ProviderDoesNotExistException');
+Library::import('recess.database.pdo.PdoDataSet');
 
 /**
  * Unit Tests for recess/sources/db/pdo/PdoDataSource using SQLite provider

@@ -1,6 +1,9 @@
 <?php
 Library::import('recess.framework.helpers.AssertiveTemplate');
-
+Library::import('recess.framework.helpers.exceptions.InputTypeCheckException');
+Library::import('recess.framework.helpers.exceptions.InputDoesNotExistException');
+Library::import('recess.framework.helpers.exceptions.MissingRequiredDrawArgumentException');
+Library::import('recess.framework.helpers.exceptions.MissingRequiredInputException');
 class AssertiveTemplateTest extends PHPUnit_Framework_TestCase {
 	protected $simple = '';
 	

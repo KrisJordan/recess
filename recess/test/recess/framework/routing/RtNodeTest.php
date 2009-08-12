@@ -1,4 +1,5 @@
 <?php
+Library::import('recess.framework.routing.Rt');
 Library::import('recess.framework.routing.RtNode');
 Library::import('recess.framework.routing.Route');
 

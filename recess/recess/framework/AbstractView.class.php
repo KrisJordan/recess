@@ -76,6 +76,9 @@ abstract class AbstractView extends Object {
 		
 		header('HTTP/1.1 ' . ResponseCodes::getMessageForCode($response->code));
 		
+		$format = $response->request->accepts->format();
+		header('Content-Type: ' . MimeTypes::preferredMimeTypeFor($format));
+		
 		foreach($response->headers as $header) {
 			header($header);
 		}

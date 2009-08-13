@@ -15,7 +15,7 @@ final class Recess {
 	 * @package recess
 	 * @static 
 	 */
-	public static function main(Request $request, IPolicy $policy, array $apps, RtNode $routes, array $plugins = array()) {
+	public static function main(Request $request, IPolicy $policy, RtNode $routes, array $plugins = array()) {
 		static $callDepth = 0;
 		static $calls = array();
 		$callDepth++;
@@ -27,7 +27,7 @@ final class Recess {
 
 		$request = $policy->preprocess($request);
 		
-		$controller = $policy->getControllerFor($request, $apps, $routes);
+		$controller = $policy->getControllerFor($request, $routes);
 		
 		$response = $controller->serve($request);
 		
@@ -36,7 +36,7 @@ final class Recess {
 		ob_start();
 
 		$view->respondWith($response);
-
+		
 		if($response instanceof ForwardingResponse) {
 			$forwardRequest = new Request();
 			$forwardRequest->setResource($response->forwardUri);
@@ -44,7 +44,7 @@ final class Recess {
 			if(isset($response->context)) {
 				$forwardRequest->get = $response->context;
 			}
-			
+			$forwardRequest->accepts = $response->request->accepts;
 			$forwardRequest->cookies = $response->request->cookies;
 			$forwardRequest->username = $response->request->username;
 			$forwardRequest->password = $response->request->password;
@@ -55,7 +55,7 @@ final class Recess {
 					$forwardRequest->cookies[$cookie->name] = $cookie->value;
 				}
 			}
-			Recess::main($forwardRequest, $policy, $apps, $routes, $plugins);
+			Recess::main($forwardRequest, $policy, $routes, $plugins);
 		}
 
 		ob_end_flush();

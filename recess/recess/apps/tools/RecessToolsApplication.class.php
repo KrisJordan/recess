@@ -1,5 +1,6 @@
 <?php
 Library::import('recess.framework.Application');
+Library::import('recess.framework.helpers.AssertiveTemplate');
 
 class RecessToolsApplication extends Application {
 	

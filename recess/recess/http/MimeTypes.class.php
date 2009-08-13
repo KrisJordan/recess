@@ -8,7 +8,8 @@ abstract class MimeTypes {
 		// TODO: Cache the MIME Type Data Structure
 		MimeTypes::registerMany(
 			array(
-				array('html', array('text/html', 'application/xhtml+xml')),
+				array('html', 'text/html'),
+				array('xhtml', 'application/xhtml+xml'),
 				array('xml', array('application/xml', 'text/xml', 'application/x-xml')),
 				array('json', array('application/json', 'text/x-json','application/jsonrequest')),
 				array('js', array('text/javascript', 'application/javascript', 'application/x-javascript')),

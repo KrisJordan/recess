@@ -15,7 +15,7 @@ class {{programmaticName}}Application extends Application {
 		$this->controllersPrefix = '{{camelProgrammaticName}}.controllers.';
 		
 		$this->routingPrefix = '{{routesPrefix}}';
-		
+				
 	}
 }
 ?>

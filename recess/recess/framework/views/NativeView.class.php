@@ -3,28 +3,30 @@ Library::import('recess.framework.AbstractView');
 
 class NativeView extends AbstractView {
 	protected function getTemplateFor($response) {
-		// TODO: Cache in production mode
 		$format = $response->request->accepts->format();
-		
-		if($format == 'html' || $format == '') {
-			$extension = '.php';
-		} else {
+
+		if(is_string($format)) {
 			$extension = ".$format.php";
+		} else  {
+			$extension = '.php';
 		}
-		
-		return $response->meta->app->getViewsDir() 
-				. $response->meta->viewsPrefix 
-				. $response->meta->viewName 
-				. $extension;
+
+		$template = $response->meta->viewsPrefix . 
+					$response->meta->viewName . 
+					$extension;
+				
+		return $template;
 	}
-	
+
 	public function canRespondWith(Response $response) {
-		return file_exists($this->getTemplateFor($response));
+		// TODO: Cache in production mode
+		return Application::active()->findView($this->getTemplateFor($response));
 	}
-	
+
 	protected function render(Response $response) {
-		extract($response->data);
-		$viewsDir = $response->meta->app->getViewsDir();
+		$context = $response->data;
+		$context['viewsDir'] = $response->meta->app->getViewsDir();
+		extract($context);
 		include $this->getTemplateFor($response);
 	}
 }

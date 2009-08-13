@@ -522,7 +522,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected function join($leftOrRight, $innerOrOuter, $table, $tablePrimaryKey, $fromTableForeignKey) {
 		if($this->table == $table) {
 			$oldTable = $this->table;
-			$parts = split('__', $this->table);
+			$parts = explode('__', $this->table);
 			$partsCount = count($parts);
 			if($partsCount > 0 && is_int($parts[$partsCount-1])) {
 				$number = $parts[$partsCount - 1] + 1;

@@ -10,7 +10,7 @@ Library::import('recess.apps.tools.models.RecessReflectorProperty');
 Library::import('recess.apps.tools.models.RecessReflectorMethod');
 
 /**
- * !RespondWith Layouts, Json
+ * !RespondsWith Layouts
  * !Prefix code/
  */
 class RecessToolsCodeController extends Controller {
@@ -123,7 +123,6 @@ class RecessToolsCodeController extends Controller {
 	/** !Route GET, class/$fullyQualifiedModel/create */
 	function createTable ($fullyQualifiedModel) {
 		if(!Library::classExists($fullyQualifiedModel)) {
-			echo 'here';exit;
 			return new NotFoundResponse($this->request);
 		}
 

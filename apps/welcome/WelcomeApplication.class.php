@@ -14,6 +14,8 @@ class WelcomeApplication extends Application {
 		
 		$this->routingPrefix = '/';
 		
+		$this->assetUrl = 'recess/recess/apps/tools/public/';
+		
 	}
 }
 ?>

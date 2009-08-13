@@ -1,20 +1,26 @@
 <?php
 /*== Part Inputs ==*/
 // selected: The name of the selected navigation item
-assert(is_string($selected));
+Part::input($selected, 'string');
 /*=================*/
-
-function printNavItem($action, $display, $selectedUrl) {
-	if($selectedUrl == $display) $liClass = ' class="highlight"';
-	else $liClass = '';
-	echo '<li' . $liClass . '>' . Html::anchor(Url::action($action),$display) . '</li>';
-}
 ?>
 <div class="span-19 navigation last">
 	<ul>
-	<?php printNavItem('RecessToolsAppsController::home', 'Apps', $selected) ?>
-	<?php printNavItem('RecessToolsDatabaseController::home', 'Database', $selected) ?>
-	<?php printNavItem('RecessToolsCodeController::home', 'Code', $selected) ?>
-	<?php printNavItem('RecessToolsRoutesController::home', 'Routes', $selected) ?>
+	<?php Part::draw('layouts/navigation-item',
+						'RecessToolsAppsController::home',
+						'Apps',
+						$selected) ?>
+	<?php Part::draw('layouts/navigation-item',
+						'RecessToolsDatabaseController::home',
+						'Database',
+						$selected) ?>
+	<?php Part::draw('layouts/navigation-item',
+						'RecessToolsCodeController::home',
+						'Code',
+						$selected) ?>
+	<?php Part::draw('layouts/navigation-item',
+						'RecessToolsRoutesController::home',
+						'Routes',
+						$selected) ?>
 	</ul>
 </div>

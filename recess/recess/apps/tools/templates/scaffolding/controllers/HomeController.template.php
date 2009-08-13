@@ -2,6 +2,7 @@
 Library::import('recess.framework.controllers.Controller');
 
 /**
+ * !RespondsWith Layouts
  * !Prefix Views: home/, Routes: /
  */
 class {{programmaticName}}HomeController extends Controller {

@@ -1,231 +1,81 @@
 <?php
-Library::import('recess.framework.AbstractHelper');
+Library::import('recess.framework.helpers.AssertiveTemplate');
+Library::import('recess.framework.helpers.Buffer');
 
 /**
- * The Layout helper enables template inheritance with a system of slots
- * filled by blocks. Parent templates define slots that can be filled by 
- * child templates with blocks. Slots and blocks are named with strings.
- * Content in a child template that appears outside of any blocks will
- * implicitly create a 'body' block.
+ * Layout is a style of AssertiveTemplate that allows child templates
+ * to 'extend' parent Layouts. Context is transferred from child to parent
+ * by matching variables that exist in the child and are registered
+ * as an input to the parent. Thus layouts must specify any required and
+ * optional inputs they expect to be passed.
  * 
- * <code>
- * <?php
- * // master.php
- * Layout::slot('foo');
- * echo 'This is the slot\'s default content.';
- * Layout::slotEnd();
+ * Parent layouts require a '.layout.php' extension.
  * 
- * Layout::slot('body');
- * echo 'This is the default body content.';
- * Layout::slotEnd();
- * ?>
- * 
- * <?php
- * // child.php
- * Layout::extend('master');
- * Layout::block('foo');
- * echo 'This overrides the parent\'s foo slot content.';
- * Layout::blockEnd();
- * 
- * echo 'By default this fills the body slot.';
- * ?>
- * </code>
- * @author Kris Jordan
- * @author Joshua Paine
+ * @author Kris
  */
-class Layout extends AbstractHelper {
-	
-	const DEFAULT_BLOCK = 'body';
-	
-	protected static $extendStack = array();
-	
-	protected static $blockStack = array();
-	protected static $blockMap = array();
-	
-	protected static $slotStack = array();
-	
-	protected static $app;
+class Layout extends AssertiveTemplate {
+	private static $parentStack = array();
+	private static $debugTraces = array();
 	
 	/**
-	 * Initialize the Layout helper with a View.
+	 * Outputs a child template. Pass the template name (with extension) and
+	 * an associative array context of variables to be passed to the child.
 	 * 
-	 * @param	AbstractView The view this helper is helping.
+	 * @param string The filename of the template, with extension, relative to AssertiveTemplate paths.
+	 * @param array The associative array of context the child template expects.
+	 * @return boolean Returns true on success.
 	 */
-	public static function init(AbstractView $view) {
-		$response = $view->getResponse();
-		self::$app = $response->meta->app;
-	}
-	
-	/**
-	 * Extend a parent layout. Referenced from the views/ directory in
-	 * the current application.
-	 * 
-	 * @param	string	The layout to extend.
-	 */
-	public static function extend($layout) {
-		if(!empty(self::$extendStack)) {
-			throw new RecessFrameworkException('Nesting extends is not allowed.', 1);
-		}
+	public static function draw($template, $context) {
+		Buffer::to($body);
+		$context = self::includeTemplate($template, $context);
+		Buffer::end();
 		
-		$layout = self::$app->getViewsDir() . $layout;
-		if(strrpos($layout, '.') < strrpos($layout, '/')) {
-			$layout .= '.php';
-		}
-
-		if(!file_exists($layout)) {
-			throw new RecessFrameworkException('Extended layout ('.$layout.') does not exist.', 1);
-		}
-
-		array_push(self::$extendStack, $layout);
-		ob_start();
-	}
-	
-	/**
-	 * Open a block that will fill a slot on a parent template. Any content sent 
-	 * to the output buffer between block/blockEnd will be used to fill the slot.
-	 * 
-	 * @param	string	The name of the slot this block fills.
-	 */
-	public static function block($title) {
-		if(empty(self::$extendStack)) {
-			throw new RecessFrameworkException('Blocks are only valid when extending a layout using Layout::extend()', 1);
-		}
-		
-		if(!empty(self::$blockStack)) {
-			throw new RecessFrameworkException('Nesting blocks is not allowed. You must end a block with Layout::blockEnd() before starting a new block.', 1);
-		}
-		
-		array_push(self::$blockStack, $title);
-		ob_start();
-	}
-	
-	/**
-	 * Mark the end of a slot. Must be called after an opening block().
-	 */
-	public static function blockEnd() {
-		if(empty(self::$blockStack)) {
-			throw new RecessFrameworkException('Block end encountered without a preceding Layout::block() to open the block.', 1);
-		}
-		
-		$blockName = array_pop(self::$blockStack);
-		if(!isset(self::$blockMap[$blockName])) {
-			self::$blockMap[$blockName] = ob_get_clean();
+		if(empty(self::$parentStack)) {
+			echo $body;
+			return true;
 		} else {
-			ob_end_clean();
-		}
-	}
-	
-	/**
- 	 * Helper method for blocks whose content is a single string. Prints 
- 	 * string between a block/blockEnd pair to avoid verbosity in a child
- 	 * layout.
- 	 * 
- 	 * @param string The name of the slot this block fills.
- 	 * @param string The value of the block.
-	 */
-	public static function blockAssign($title, $value) {
-		self::block($title);
-		echo $value;
-		self::blockEnd();
-	}
-
-	/**
-	 * Marks the beging of a slot in a parent template to be optionally
-	 * filled by a child. Any content output between this slot open and
-	 * slotEnd will be used as the default content of a slot should the
-	 * extending template not fill it with a block.
-	 * 
-	 * @param string The name of the slot.
-	 */
-	public static function slot($title) {
-		if(!empty(self::$slotStack)) {
-			throw new RecessFrameworkException('Nesting slots is not allowed. You must end a slot with Layout::slotEnd() before starting a new slot.', 1);
-		}
-		
-		array_push(self::$slotStack, $title);
-		ob_start();
-	}
-	
-	/**
-	 * Marks the end of a slot. In effect this outputs the content of a slot.
-	 */
-	public static function slotEnd() {
-		if(empty(self::$slotStack)) {
-			throw new RecessFrameworkException('Slot end encountered without a preceding Layout::slot() to open the slot.', 1);
-		}
-		
-		$slotName = array_pop(self::$slotStack);
-		if(isset(self::$blockMap[$slotName])) {
-			ob_end_clean();
-			echo self::$blockMap[$slotName];
-			unset(self::$blockMap[$slotName]);
-		} else {
-			ob_end_flush();
-		}
-	}
-	
-	/**
-	 * Helper method for a common scenario of a 'middle'
-	 * template filling some additional information in a slot
-	 * and re-opening the slot for a child to append to. Example:
-	 * 
-	 * <code>
-	 * // master.php
-	 * 	<html>
-	 * 	  <head>
-	 * 		<title>Master<?php Layout::slot('Title') ?><?php Layout::slotEnd(); ?></title>
-	 * 	  </head>
-	 * </html>
-	 * </code>
-	 * 
-	 * <code>
-	 * <?php 
-	 * // section.php
-	 * Layout::extend('master');
-	 * Layout::slotAppend('title', ' > Section');
-	 * ?>
-	 * </code>
-	 * 
-	 * <code>
-	 * <?php
-	 * // page.php
-	 * Layout::extend('section');
-	 * Layout::slotAppend('title', ' > Page');
-	 * ?>
-	 * </code>
-	 * 
-	 * Result is: <title>Master > Section > Page</title>
-	 * 
-	 * @param string The slot to append to.
-	 * @param string The value to append to the slot.
-	 */
-	public static function slotAppend($title, $value) {
-		self::block($title);
-		echo $value;
-		self::slot($title);
-		self::slotEnd();
-		self::blockEnd();
-	}
-	
-	/**
-	 * End a template extension and process the parent. 
-	 * Called automatically by LayoutsView but can be called manually.
-	 */
-	public static function extendEnd() {
-		if(!empty(self::$extendStack)) {
-			if(!isset(self::$blockMap[Layout::DEFAULT_BLOCK])) {
-				self::$blockMap[Layout::DEFAULT_BLOCK] = ob_get_clean();
-			} else {
-				ob_end_clean();
+			if(!isset($context['body'])) {
+				$context['body'] = $body;
 			}
-			
-			$parent = array_pop(self::$extendStack);
-			include($parent);
-			
-			self::extendEnd();	
+			while($parent = array_pop(self::$parentStack)) {
+				try{
+					$parentInputs = self::getInputs($parent, 'Layout');
+				}catch(RecessFrameworkException $e) {
+	//				if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
+						$trace = array_pop(self::$debugTraces);
+						throw new RecessErrorException('Extended layout does not exist.', 0, 0, $trace[0]['file'], $trace[0]['line'], $trace[0]['args']);
+	//				} else {
+	//					throw $e;
+	//				}
+				}
+				$context = array_intersect_key($context, $parentInputs);
+				$context = self::includeTemplate($parent, $context);
+			}
+	//		if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
+				array_pop(self::$debugTraces);
+	//		}
+			return true;
 		}
 	}
 	
+	/**
+	 * Used by child templates so indicate they 'extend' a parent layout which
+	 * is to be included and assume all requested context from a child. Parent
+	 * layouts are required to use a '.layout.php' extension.
+	 * 
+	 * @param string The name of the layout being extended without the '.layout.php' extension.
+	 */
+	public static function extend($assertiveTemplate) {
+		if(strpos($assertiveTemplate,'/layout') !== strlen($assertiveTemplate) - 7) {
+			array_push(self::$parentStack, $assertiveTemplate . '.layout.php');
+		} else {
+			array_push(self::$parentStack, $assertiveTemplate . '.php');
+		}
+		//if(RecessConf::$mode == RecessConf::DEVELOPMENT) {
+			$trace = debug_backtrace();
+			array_pop($trace);
+			array_push(self::$debugTraces, $trace);
+		//}
+	}
 }
-
 ?>

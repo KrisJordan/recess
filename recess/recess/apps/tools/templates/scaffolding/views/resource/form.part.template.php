@@ -1,6 +1,6 @@
 <?php
-assert($form instanceof ModelForm);
-assert(is_string($title));
+Part::input($form, 'ModelForm');
+Part::input($title, 'string');
 ?>
 <?php $form->begin(); ?>
 	<fieldset>

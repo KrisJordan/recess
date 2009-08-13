@@ -1,0 +1,3 @@
+<?php
+Layout::extend('defaults');
+?>

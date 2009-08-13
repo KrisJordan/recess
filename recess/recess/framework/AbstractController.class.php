@@ -7,7 +7,7 @@ Library::import('recess.framework.controllers.annotations.ViewAnnotation');
 Library::import('recess.framework.controllers.annotations.RouteAnnotation');
 Library::import('recess.framework.controllers.annotations.RoutesPrefixAnnotation');
 Library::import('recess.framework.controllers.annotations.PrefixAnnotation');
-Library::import('recess.framework.controllers.annotations.RespondWithAnnotation');
+Library::import('recess.framework.controllers.annotations.RespondsWithAnnotation');
 /**
  * The controller is responsible for interpretting a preprocessed Request,
  * performing some action in response to the Request (usually CRUDS), and

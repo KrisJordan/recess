@@ -28,7 +28,7 @@ class DefaultPolicy implements IPolicy {
 		return $request;
 	}
 	
-	public function getControllerFor(Request &$request, array $applications, RtNode $routes) {
+	public function getControllerFor(Request &$request, RtNode $routes) {
 		$routeResult = $routes->findRouteFor($request);
 		
 		if($routeResult->routeExists) {
@@ -41,6 +41,7 @@ class DefaultPolicy implements IPolicy {
 			throw new RecessResponseException('Resource does not exist.', ResponseCodes::HTTP_NOT_FOUND, get_defined_vars());
 		}
 		
+		Application::activate($request->meta->app);
 		$this->controller = $controller;
 		
 		return $controller;
@@ -56,6 +57,10 @@ class DefaultPolicy implements IPolicy {
 				$response->meta->respondWith[] = $view;
 			}
 			$response->meta->respondWith[] = 'JsonView';
+		}
+		
+		if($response instanceof ForwardingResponse) {
+			return new NativeView();
 		}
 		
 		// Here we select a view that can respond in the desired format
@@ -76,7 +81,17 @@ class DefaultPolicy implements IPolicy {
 			}
 		} while ($format !== false);
 		
-		throw new RecessResponseException('Unable to provide with desired content-type.', ResponseCodes::HTTP_NOT_ACCEPTABLE, array());
+		if(isset($response->meta->viewName)) {
+			if(isset($response->meta->viewsPrefix)) {
+				$view = $response->meta->viewsPrefix . $response->meta->viewName;
+			} else {
+				$view = $response->meta->viewName;
+			}
+			throw new RecessResponseException('Unable to provide desired content-type. Does the view "' . $view . '" exist?', ResponseCodes::HTTP_NOT_ACCEPTABLE, get_defined_vars());
+		} else {
+			throw new RecessResponseException('Unable to provide desired content-type. Does your view exist?', ResponseCodes::HTTP_NOT_ACCEPTABLE, get_defined_vars());
+		}
+		
 	}
 	
 	/////////////////////////////////////////////////////////////////////////
@@ -105,8 +120,11 @@ class DefaultPolicy implements IPolicy {
 		if($lastDotPosition !== false) {
 			$format = substr($lastPart, $lastDotPosition + 1);
 			if($format !== '') {
-				$request->accepts->forceFormat($format);
-				$request->setResource(substr($request->resource, 0, strrpos($request->resource, Library::dotSeparator)));
+				$mime = MimeTypes::preferredMimeTypeFor($format);
+				if($mime !== false) {
+					$request->accepts->forceFormat($format);
+					$request->setResource(substr($request->resource, 0, strrpos($request->resource, Library::dotSeparator)));
+				}
 			}
 		}
 		

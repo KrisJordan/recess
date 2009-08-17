@@ -65,4 +65,28 @@ class EventTest extends PHPUnit_Framework_TestCase {
 		$onSum(1,1,1,1,1,1,1,1,1,1);
 		$this->assertEquals(10, $theSum);
 	}
+	
+	function testVaryingArgNumbers() {
+		$onSum = new Event;
+		$theSum = 0;
+		$onSum->call(function() use (&$theSum) { $theSum = array_sum(func_get_args()); });
+		$onSum(1);
+		$this->assertEquals(1,$theSum);
+		$theSum = 0;
+		$onSum(1,1);
+		$this->assertEquals(2,$theSum);
+		$theSum = 0;
+		$onSum(1,1,1);
+		$this->assertEquals(3,$theSum);
+		$theSum = 0;
+		$onSum(1,1,1,1);
+		$this->assertEquals(4,$theSum);
+		$theSum = 0;
+		$onSum(1,1,1,1,1);
+		$this->assertEquals(5,$theSum);
+		$theSum = 0;
+		$onSum(1,1,1,1,1,1);
+		$this->assertEquals(6,$theSum);
+		$theSum = 0;
+	}
 }

@@ -2,7 +2,7 @@
 namespace recess\core;
 /**
  * Turn callables into delicious Candy.
- * Candy that can be wrapped in the all the decorators you desire.
+ * Candied callables that can be wrapped in the all the decorators you desire.
  * 
  * Warning: Candy is sweet but decadent. When consumed in excess your profiling
  * will fill out in unflattering ways. Programs may also be prone to
@@ -74,7 +74,11 @@ class Candy {
 	 * @return Candy
 	 */
 	function __construct($callable) {
-		$this->callable = $callable;
+		if(is_callable($callable)) {
+			$this->callable = $callable;
+		} else {
+			throw new \Exception('Candy can only be used on callables.');
+		}
 	}
 	
 	/**
@@ -104,15 +108,19 @@ class Candy {
 		// Base case optimization
 		// 	If there are no wrappers, let's have some candy!
 		if(empty($this->wrappers)) {
-			$candy = $this->callable;
-			switch(count($args)) {
-					case 0:	return $candy();
-					case 1:	return $candy($args[0]);
-					case 2: return $candy($args[0],$args[1]);
-					case 3: return $candy($args[0],$args[1],$args[2]);
-					case 4: return $candy($args[0],$args[1],$args[2],$args[3]);
-					case 5: return $candy($args[0],$args[1],$args[2],$args[3],$args[4]);
-					default: return call_user_func_array($candy,$args);
+			$callable = $this->callable;
+			if(is_string($callable) || $callable instanceof \Closure) {
+				switch(count($args)) {
+					case 0:	return $callable();
+					case 1:	return $callable($args[0]);
+					case 2: return $callable($args[0],$args[1]);
+					case 3: return $callable($args[0],$args[1],$args[2]);
+					case 4: return $callable($args[0],$args[1],$args[2],$args[3]);
+					case 5: return $callable($args[0],$args[1],$args[2],$args[3],$args[4]);
+					default: return call_user_func_array($callable,$args);
+				}
+			} else {
+				return call_user_func_array($callable, $args);
 			}
 		} else {
 			$wrappers = $this->wrappers;
@@ -138,20 +146,25 @@ class Candy {
 					array_unshift($args, $unwrap);
 				}
 			} else {
+				// We've reached the candy
 				if($next === false) {
 					array_shift($args);
 				}
 			}
 			
-			switch(count($args)) {
-				case 0:	return $current();
-				case 1:	return $current($args[0]);
-				case 2: return $current($args[0],$args[1]);
-				case 3: return $current($args[0],$args[1],$args[2]);
-				case 4: return $current($args[0],$args[1],$args[2],$args[3]);
-				case 5: return $current($args[0],$args[1],$args[2],$args[3],$args[4]);
-				default: return call_user_func_array($current,$args);
-			}
+			if(is_string($current) || $current instanceof \Closure) {
+				switch(count($args)) {
+					case 0:	return $current();
+					case 1:	return $current($args[0]);
+					case 2: return $current($args[0],$args[1]);
+					case 3: return $current($args[0],$args[1],$args[2]);
+					case 4: return $current($args[0],$args[1],$args[2],$args[3]);
+					case 5: return $current($args[0],$args[1],$args[2],$args[3],$args[4]);
+					default: return call_user_func_array($current,$args);
+				}
+			} else {
+				return call_user_func_array($current, $args);
+			} 
 		};
 		
 		do {

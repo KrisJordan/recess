@@ -73,6 +73,8 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			throw new RecessException('Insert does not use joins.', get_defined_vars());
 		if(	!empty($this->orderBy) ) 
 			throw new RecessException('Insert does not use order by.', get_defined_vars());
+		if(	!empty($this->groupBy) ) 
+			throw new RecessException('Insert does not use group by.', get_defined_vars());
 		if(	isset($this->limit) )
 			throw new RecessException('Insert does not use limit.', get_defined_vars());
 		if(	isset($this->offset) )
@@ -140,6 +142,8 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			throw new RecessException('Delete does not use joins.', get_defined_vars());
 		if(	!empty($this->orderBy) ) 
 			throw new RecessException('Delete does not use order by.', get_defined_vars());
+		if(	!empty($this->groupBy) ) 
+			throw new RecessException('Delete does not use group by.', get_defined_vars());
 		if(	isset($this->limit) )
 			throw new RecessException('Delete does not use limit.', get_defined_vars());
 		if(	isset($this->offset) )
@@ -180,6 +184,8 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			throw new RecessException('Update does not use joins.', get_defined_vars());
 		if(	!empty($this->orderBy) ) 
 			throw new RecessException('Update (in Recess) does not use order by.', get_defined_vars());
+		if(	!empty($this->groupBy) ) 
+			throw new RecessException('Update (in Recess) does not use group by.', get_defined_vars());
 		if(	isset($this->limit) )
 			throw new RecessException('Update (in Recess) does not use limit.', get_defined_vars());
 		if(	isset($this->offset) )
@@ -378,6 +384,7 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	protected $offset;
 	protected $distinct;
 	protected $orderBy = array();
+	protected $groupBy = array();
 	protected $usingAliases = false;
 	
 	/**
@@ -401,6 +408,8 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 		$sql .= $this->whereHelper();
 		
 		$sql .= $this->orderByHelper();
+		
+		$sql .= $this->groupByHelper();
 		
 		$sql .= $this->rangeHelper();
 		
@@ -465,6 +474,27 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			$this->orderBy[] = $this->tableAsPrefix() . '.' . $clause; 
 		} else {
 			$this->orderBy[] = $clause;
+		}
+		return $this; 
+	}
+	
+	/**
+	 * Add an GROUP BY expression to sql string. Example: ->groupBy('name')
+	 *
+	 * @param string $clause
+	 * @return SqlBuilder
+	 */
+	public function groupBy($clause) {
+		if(($spacePos = strpos($clause,' ')) !== false) {
+			$name = substr($clause,0,$spacePos);
+		} else {
+			$name = $clause;
+		}
+		
+		if(isset($this->table) && strpos($clause,'.') === false && strpos($name,'(') === false && !array_key_exists($name, $this->selectAs)) {
+			$this->groupBy[] = $this->tableAsPrefix() . '.' . $clause; 
+		} else {
+			$this->groupBy[] = $clause;
 		}
 		return $this; 
 	}
@@ -636,6 +666,19 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 			$sql = ' ORDER BY ';
 			$first = true;
 			foreach($this->orderBy as $order){
+				if(!$first) { $sql .= ', '; } else { $first = false; }
+				$sql .= $order;
+			}
+		}
+		return $sql;
+	}
+	
+	protected function groupByHelper() {
+		$sql = '';
+		if(!empty($this->groupBy)){
+			$sql = ' GROUP BY ';
+			$first = true;
+			foreach($this->groupBy as $order){
 				if(!$first) { $sql .= ', '; } else { $first = false; }
 				$sql .= $order;
 			}

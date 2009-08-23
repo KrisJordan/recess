@@ -1,5 +1,5 @@
 <?php
-Library::import('recess.lang.IWrapper');
+namespace recess\lang;
 
 /**
  * A Wrapper that will call methods on a class before or after calling the
@@ -53,7 +53,7 @@ class MethodCallWrapper implements IWrapper {
 	 * @return mixed If a value is returned during a call to before that value short-circuits the method call.
 	 */
 	function before($object, &$args) {
-		$reflectedClass = new RecessReflectionClass($object);
+		$reflectedClass = new ReflectionClass($object);
 		foreach($this->callBefore as $method) {
 			$reflectedMethod = $reflectedClass->getMethod($method);
 			$result = $reflectedMethod->invokeArgs($object, $args);
@@ -74,7 +74,7 @@ class MethodCallWrapper implements IWrapper {
 	 * @return mixed Should be of the same type as the wrapped method returns.
 	 */
 	function after($object, $returnValue) {
-		$reflectedClass = new RecessReflectionClass($object);
+		$reflectedClass = new ReflectionClass($object);
 		foreach($this->callAfter as $method) {
 			$reflectedMethod = $reflectedClass->getMethod($method);
 			$result = $reflectedMethod->invoke($object, $returnValue);

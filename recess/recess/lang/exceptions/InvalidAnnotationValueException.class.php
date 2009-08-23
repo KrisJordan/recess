@@ -1,4 +1,6 @@
 <?php
+namespace recess\lang\exceptions;
+use recess\lang\ErrorException;
 /**
  * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008, 2009 Kris Jordan
@@ -6,5 +8,4 @@
  * @license MIT
  * @link http://www.recessframework.org/
  */
-class InvalidAnnotationValueException extends RecessErrorException { }
-?>
+class InvalidAnnotationValueException extends ErrorException { }

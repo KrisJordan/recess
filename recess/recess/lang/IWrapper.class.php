@@ -1,4 +1,6 @@
 <?php
+namespace recess\lang;
+
 /**
  * Implement this interface for classes that need to wrap functionality around a Wrappable method.
  * 

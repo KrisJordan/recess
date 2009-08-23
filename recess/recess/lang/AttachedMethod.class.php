@@ -1,4 +1,5 @@
 <?php
+namespace recess\lang;
 
 /**
  * Data structure for an attached method. Holds a reference

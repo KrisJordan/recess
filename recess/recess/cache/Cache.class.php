@@ -1,4 +1,6 @@
 <?php
+namespace recess\cache;
+
 /**
  * Cache is a low level service offering volatile key-value pair
  * storage. Chain-of-command allows multiple providers to be used.
@@ -166,7 +168,7 @@ class MemcacheCacheProvider implements ICacheProvider {
 	protected $memcache;
 	
 	function __construct($host = 'localhost', $port = 11211) {
-		$this->memcache = new Memcache;
+		$this->memcache = new \Memcache;
 		$this->memcache->pconnect($host, $port);
 	}
 
@@ -231,8 +233,8 @@ class SqliteCacheProvider implements ICacheProvider {
 	const KEY = 2;
 	
 	function __construct() {
-		$this->pdo = new Pdo('sqlite:' . $_ENV['dir.temp'] . 'sqlite-cache.db');
-		$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->pdo = new \Pdo('sqlite:' . $_ENV['dir.temp'] . 'sqlite-cache.db');
+		$this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		
 		$tries = 0;
 		while($tries < 2) {
@@ -241,7 +243,7 @@ class SqliteCacheProvider implements ICacheProvider {
 				$this->getStatement = $this->pdo->prepare('SELECT value,expire FROM cache WHERE key = :key');
 				$this->getManyStatement = $this->pdo->prepare('SELECT value,expire,key FROM cache WHERE key LIKE :key');
 				break;
-			} catch(PDOException $e) {
+			} catch(\PDOException $e) {
 			
 				try {
 					$this->pdo->exec('CREATE TABLE "cache" ("key" TEXT PRIMARY KEY  NOT NULL , "value" TEXT NOT NULL , "expire" INTEGER NOT NULL)');
@@ -292,11 +294,11 @@ class SqliteCacheProvider implements ICacheProvider {
 		if(($starPos = strpos($key,'*')) === false) {
 			// Fetch Single
 			$this->getStatement->execute(array(':key' => $key));
-			$entries = $this->getStatement->fetchAll(PDO::FETCH_NUM);
+			$entries = $this->getStatement->fetchAll(\PDO::FETCH_NUM);
 		} else {
 			// Prefetch With Wildcard
 			$this->getManyStatement->execute(array(':key' => substr($key,0,$starPos+1) . '%'));
-			$entries = $this->getManyStatement->fetchAll(PDO::FETCH_NUM);
+			$entries = $this->getManyStatement->fetchAll(\PDO::FETCH_NUM);
 		}
 		
 		$clearStaleEntries = false;

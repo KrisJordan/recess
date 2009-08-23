@@ -1,6 +1,5 @@
 <?php
-Library::import('recess.lang.IWrapper');
-Library::import('recess.lang.reflection.ReflectionMethod');
+namespace recess\lang;
 
 /**
  * WrappedMethod is used as an attached method provider on a Recess Object.

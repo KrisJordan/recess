@@ -1,6 +1,5 @@
 <?php
-Library::import('recess.lang.Annotation');
-Library::import('recess.lang.WrappedMethod');
+namespace recess\lang;
 
 /**
  * The WrappableAnnotation can be applied to methods in classes deriving

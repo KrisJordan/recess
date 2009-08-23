@@ -1,6 +1,5 @@
 <?php
-Library::import('recess.lang.Annotation');
-Library::import('recess.lang.MethodCallWrapper');
+namespace recess\lang;
 
 /**
  * The Before annotation can be used as a shortcut for registering

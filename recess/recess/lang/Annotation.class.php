@@ -1,6 +1,8 @@
 <?php
-Library::import('recess.lang.exceptions.InvalidAnnotationValueException');
-Library::import('recess.lang.exceptions.UnknownAnnotationException');
+namespace recess\lang;
+
+use recess\lang\exceptions\InvalidAnnotationValueException;
+use recess\lang\exceptions\UnknownAnnotationException;
 
 /**
  * Base class for class, method, and property annotations.
@@ -12,6 +14,15 @@ Library::import('recess.lang.exceptions.UnknownAnnotationException');
  * @link http://www.recessframework.org/
  */
 abstract class Annotation {
+	
+	/** Begin 5.3 Namespace Work-around */
+	static private $registeredAnnotations = array();
+	static public function load() {
+		$fullClass = get_called_class();
+		$class = explode('\\',$fullClass);
+		self::$registeredAnnotations[end($class)] = $fullClass; 
+	}
+	/** End 5.3 Namespace Work-around */
 	
 	protected $errors = array();
 	protected $values = array();
@@ -217,7 +228,7 @@ abstract class Annotation {
 			}
 			$message .= "\n == Errors == \n * ";
 			$message .= implode("\n * ", $this->errors);
-			throw new RecessErrorException($message,0,0,$reflection->getFileName(),$reflection->getStartLine(),array());
+			throw new ErrorException($message,0,0,$reflection->getFileName(),$reflection->getStartLine(),array());
 		}
 		
 		// Map keyed parameters to properties on this annotation
@@ -278,12 +289,11 @@ abstract class Annotation {
 			}
 			
 			$annotationClass = $annotation . 'Annotation';
-			$fullyQualified = Library::getFullyQualifiedClassName($annotationClass);
-			
-			if($annotationClass != $fullyQualified || class_exists($annotationClass,false)) {
-				$annotation = new $annotationClass;
+			if(isset(self::$registeredAnnotations[$annotationClass])) {
+				$annotation = new self::$registeredAnnotations[$annotationClass];
 				$annotation->init($array);
 			} else {
+				print_r(self::$registeredAnnotations);
 				throw new UnknownAnnotationException('Unknown annotation: "' . $annotation . '"',0,0,'',0,get_defined_vars());
 			}
 			

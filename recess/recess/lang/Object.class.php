@@ -1,9 +1,7 @@
 <?php
-Library::import('recess.lang.ClassDescriptor');
-Library::import('recess.lang.AttachedMethod');
-Library::import('recess.lang.WrappableAnnotation');
-Library::import('recess.lang.BeforeAnnotation');
-Library::import('recess.lang.AfterAnnotation');
+namespace recess\lang;
+
+use recess\cache\Cache; // TODO: Remove this dependency with 5.3
 
 /**
  * Object is the base class for extensible classes in the Recess.
@@ -96,10 +94,10 @@ abstract class Object {
 			$object = $attachedMethod->object;
 			$method = $attachedMethod->method;
 			array_unshift($arguments, $this);
-			$reflectedMethod = new ReflectionMethod($object, $method);
+			$reflectedMethod = new \ReflectionMethod($object, $method);
 			return $reflectedMethod->invokeArgs($object, $arguments);
 		} else {
-			throw new RecessException('"' . get_class($this) . '" class does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
+			throw new Exception('"' . get_class($this) . '" class does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
 		}
 	}
 	
@@ -138,7 +136,7 @@ abstract class Object {
 					Cache::set($cache_key, $descriptor);
 					self::$descriptors[$class] = $descriptor;
 				} else {
-					throw new RecessException('ObjectRegistry only retains information on classes derived from Object. Class of type "' . $class . '" given.', get_defined_vars());
+					throw new Exception('ObjectRegistry only retains information on classes derived from Object. Class of type "' . $class . '" given.', get_defined_vars());
 				}
 			} else {
 				self::$descriptors[$class] = $descriptor;
@@ -154,8 +152,8 @@ abstract class Object {
 	 * @param variant $classNameOrInstance - String class name or instance of a Recess Class
 	 * @return array
 	 */
-	final static function getAttachedMethods($classNameOrInstance) {
-		$descriptor = self::getClassDescriptor($classNameOrInstance);
+	final static function getAttachedMethods() {
+		$descriptor = static::getClassDescriptor(get_called_class());
 		return $descriptor->getAttachedMethods();
 	}	
 	
@@ -175,7 +173,7 @@ abstract class Object {
 	 * @param $class string Name of class whose descriptor is being initialized.
 	 * @return ClassDescriptor
 	 */
-	protected static function initClassDescriptor($class) {	return new ClassDescriptor(); }
+	protected static function initClassDescriptor() {	return new ClassDescriptor(); }
 		
 	/**
 	 * Prior to expanding the annotations for a class method this hook is called to give
@@ -189,7 +187,7 @@ abstract class Object {
 	 * @param $annotations Array of annotations found on method.
 	 * @return ClassDescriptor
 	 */
-	protected static function shapeDescriptorWithMethod($class, $method, $descriptor, $annotations) { return $descriptor; }
+	protected static function shapeDescriptorWithMethod($method, $descriptor, $annotations) { return $descriptor; }
 	
 	/**
 	 * Prior to expanding the annotations for a class property this hook is called to give
@@ -203,7 +201,7 @@ abstract class Object {
 	 * @param $annotations Array of annotations found on method.
 	 * @return ClassDescriptor
 	 */
-	protected static function shapeDescriptorWithProperty($class, $property, $descriptor, $annotations) { return $descriptor; }
+	protected static function shapeDescriptorWithProperty($property, $descriptor, $annotations) { return $descriptor; }
 
 	/**
 	 * After all methods and properties of a class have been visited and annotations expanded
@@ -215,7 +213,7 @@ abstract class Object {
 	 * @param $descriptor
 	 * @return ClassDescriptor
 	 */
-	protected static function finalClassDescriptor($class, $descriptor) { return $descriptor; }
+	protected static function finalClassDescriptor($descriptor) { return $descriptor; }
 	
 	/**
 	 * Builds a class' metadata structure (Class Descriptor through reflection 
@@ -227,13 +225,14 @@ abstract class Object {
 	 * @param $class Name of class whose descriptor is being built.
 	 * @return ClassDescriptor
 	 */
-	protected static function buildClassDescriptor($class) {
-		$descriptor = call_user_func(array($class, 'initClassDescriptor'), $class);
+	protected static function buildClassDescriptor() {
+		$class = get_called_class();
+		$descriptor = static::initClassDescriptor();
 
 		try {
-			$reflection = new RecessReflectionClass($class);
-		} catch(ReflectionException $e) {
-			throw new RecessException('Class "' . $class . '" has not been declared.', get_defined_vars());
+			$reflection = new ReflectionClass($class);
+		} catch(\ReflectionException $e) {
+			throw new Exception('Class "' . $class . '" has not been declared.', get_defined_vars());
 		}
 		
 		foreach ($reflection->getAnnotations() as $annotation) {
@@ -242,7 +241,7 @@ abstract class Object {
 		
 		foreach($reflection->getMethods(false) as $method) {
 			$annotations = $method->getAnnotations();
-			$descriptor = call_user_func(array($class, 'shapeDescriptorWithMethod'), $class, $method, $descriptor, $annotations);
+			$descriptor = static::shapeDescriptorWithMethod($method, $descriptor, $annotations);
 			foreach($annotations as $annotation) {
 				$annotation->expandAnnotation($class, $method, $descriptor);
 			}
@@ -250,17 +249,15 @@ abstract class Object {
 		
 		foreach($reflection->getProperties(false) as $property) {
 			$annotations = $property->getAnnotations();
-			$descriptor = call_user_func(array($class, 'shapeDescriptorWithProperty'), $class, $property, $descriptor, $annotations);
+			$descriptor = static::shapeDescriptorWithProperty($property, $descriptor, $annotations);
 			foreach($annotations as $annotation) {
 				$annotation->expandAnnotation($class, $property, $descriptor);
 			}
 		}
 		
-		$descriptor = call_user_func(array($class, 'finalClassDescriptor'), $class, $descriptor);
+		$descriptor = static::finalClassDescriptor($descriptor);
 		
 		return $descriptor;
 	}	
 	
 }
-
-?>

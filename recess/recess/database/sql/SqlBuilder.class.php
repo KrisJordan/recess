@@ -339,6 +339,16 @@ class SqlBuilder implements ISqlConditions, ISqlSelectOptions {
 	public function isNotNull($column)        { return $this->addCondition($column, null, Criterion::IS_NOT_NULL); }
 	
 	/**
+	 * IN to expression for WHERE clause of update, delete, or select statements.
+	 *
+	 * @param string $column
+	 * @param array $value
+	 * @return SqlBuilder
+	 */
+	public function in($column, $value)        { return $this->addCondition($column, $value, Criterion::IN); }
+	
+	
+	/**
 	 * Add a condition to the SqlBuilder statement. Additional logic here to prepend
 	 * a table name and also keep track of which columns have already been assigned conditions
 	 * to ensure we do not use two identical named parameters in PDO.
@@ -703,6 +713,12 @@ class Criterion {
 		if(is_numeric($this->value)) {
 			return $this->value;
 		}
+
+		if(is_array($this->value)) {
+      $hack_value = '('.join(',', $this->value).')';
+      return $hack_value;
+		}		
+		
 		// End workaround
 		
 		if($this->operator == self::ASSIGNMENT) { 

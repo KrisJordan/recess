@@ -1,9 +1,6 @@
 <?php
 namespace recess\lang;
 
-use recess\lang\exceptions\InvalidAnnotationValueException;
-use recess\lang\exceptions\UnknownAnnotationException;
-
 /**
  * Base class for class, method, and property annotations.
  * 
@@ -26,6 +23,8 @@ abstract class Annotation {
 	
 	protected $errors = array();
 	protected $values = array();
+	
+	public $parameters = array();
 	
 	const FOR_CLASS = 1;
 	const FOR_METHOD = 2;
@@ -160,11 +159,6 @@ abstract class Annotation {
 	
 	/* End validation helper methods */
 	
-	
-	function init($parameters) {
-		$this->parameters = array_change_key_case($parameters, CASE_LOWER);
-	}
-	
 	function isAValue($value) {
 		return in_array($value, $this->values);
 	}
@@ -250,6 +244,13 @@ abstract class Annotation {
 		$this->expand($class, $reflection, $descriptor);
 	}
 	
+	/**
+	 * Initialize the parameters of the annotation by lowering key case
+	 * @param $parameters
+	 */
+	function init($parameters) {
+		$this->parameters = array_change_key_case($parameters, CASE_LOWER);
+	}
 	
 	/**
 	 * Given a docstring, returns an array of Recess Annotations.
@@ -285,7 +286,7 @@ abstract class Annotation {
 			
 			@eval('$array = ' . $value);
 			if(!isset($array)) { 
-				throw new InvalidAnnotationValueException('There is an unparseable annotation value: "!' . $annotation . ': ' . $values[$key] . '"',0,0,'',0,array());
+				throw new \Exception('There is an unparseable annotation value: "!' . $annotation . ': ' . $values[$key] . '"');
 			}
 			
 			$annotationClass = $annotation . 'Annotation';
@@ -293,8 +294,7 @@ abstract class Annotation {
 				$annotation = new self::$registeredAnnotations[$annotationClass];
 				$annotation->init($array);
 			} else {
-				print_r(self::$registeredAnnotations);
-				throw new UnknownAnnotationException('Unknown annotation: "' . $annotation . '"',0,0,'',0,get_defined_vars());
+				throw new \Exception('Unknown annotation: "' . $annotation . '" It must be loaded with: "' . $annotation .'"::load()');
 			}
 			
 			$returns[] = $annotation;

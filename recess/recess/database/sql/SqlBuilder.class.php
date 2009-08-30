@@ -697,6 +697,8 @@ class Criterion {
 	
 	const UNDERSCORE = '_';
 	
+	const IN = ' IN ';
+	
 	public function __construct($column, $value, $operator, $pdoLabel = null){
 		$this->column = $column;
 		$this->value = $value;

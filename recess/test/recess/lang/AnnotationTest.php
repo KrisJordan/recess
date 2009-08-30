@@ -71,7 +71,7 @@ class AnnotationTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testInvalidAnnotation() {
-		$docstring = "/** !Foo 'bar */";
+		$docstring = "/** !Dummy 'bar */";
 		try {
 			$annotations = Annotation::parse($docstring);
 			$this->assertTrue(false);

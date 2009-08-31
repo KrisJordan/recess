@@ -12,7 +12,7 @@ class RecessToolsApplication extends Application {
 		
 		$this->viewsDir = $_ENV['dir.recess'] . 'recess/apps/tools/views/';	
 		
-		$this->assetUrl = $_ENV['url.base'] . 'recess/recess/apps/tools/public/';
+		$this->assetUrl = $_ENV['url.assetbase'] . 'recess/recess/apps/tools/public/';
 		
 		$this->codeTemplatesDir = $_ENV['dir.recess'] . 'recess/apps/tools/templates/';
 		

@@ -68,8 +68,8 @@ abstract class RecessConf {
 		$_ENV['dir.temp'] = self::$dataDir . 'temp/';
 		$_ENV['dir.test'] = self::$recessDir . 'test/';
 		
-		if(!isset($_ENV['url.content'])) {
-			$_ENV['url.content'] = $_ENV['url.base'] . 'content/';
+		if(!isset($_ENV['url.assetbase'])) {
+			$_ENV['url.assetbase'] = $_ENV['url.base'];
 		}
 		
 		date_default_timezone_set(self::$defaultTimeZone);

@@ -13,7 +13,7 @@
 define('INDEX_PHP','index.php');
 $pos = strpos($_SERVER['PHP_SELF'], INDEX_PHP);
 $base = substr($_SERVER['PHP_SELF'], 0, $pos + strlen(INDEX_PHP));
-$_ENV['url.content'] = str_replace(INDEX_PHP,'',$base) . 'content/';
+$_ENV['url.assetbase'] = str_replace(INDEX_PHP,'',$base);
 $_SERVER['PHP_SELF'] = $base . '/bootstrap.php';
 
 $pos = strpos($_SERVER['REQUEST_URI'], INDEX_PHP);

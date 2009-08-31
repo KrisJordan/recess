@@ -1,8 +1,7 @@
 <?php
-use made\up\space;
 use recess\lang\Annotation;
 
-require_once 'DummyAnnotation.class.php';
+require_once __DIR__ . '/DummyAnnotation.class.php';
 use made\up\space\DummyAnnotation;
 
 class AnnotationTest extends PHPUnit_Framework_TestCase {

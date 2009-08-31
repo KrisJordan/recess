@@ -48,15 +48,13 @@ class ClassDescriptor {
 	/**
 	 * Attach a method to a class. The result of this static method is the ability to
 	 * call, on any instance of $attachOnClassName, a method named $attachedMethodAlias
-	 * which delegates that method call to $providerInstance's $providerMethodName.
+	 * which delegates that method call to $callable.
 	 *
-	 * @param string $attachOnClassName
 	 * @param string $attachedMethodAlias
-	 * @param object $providerInstance
-	 * @param string $providerMethodName
+	 * @param callable $callable
 	 */
-	function attachMethod($attachOnClassName, $attachedMethodAlias, $providerInstance, $providerMethodName) {
-		$attachedMethod = new AttachedMethod($providerInstance, $providerMethodName, $attachedMethodAlias);
+	function attachMethod($attachedMethodAlias, $callable) {
+		$attachedMethod = new AttachedMethod($attachedMethodAlias, $callable);
 		$this->addAttachedMethod($attachedMethodAlias, $attachedMethod);
 	}
 	

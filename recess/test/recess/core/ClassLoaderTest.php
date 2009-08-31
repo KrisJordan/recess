@@ -23,6 +23,7 @@ class ClassLoaderTest extends PHPUnit_Framework_TestCase {
 			function($load,$class) use (&$loadedCount) {
 				if($load($class)) {
 					$loadedCount += 1;
+					return true;
 				} else {
 					$loadedCount -= 1;
 				}
@@ -48,12 +49,14 @@ class ClassLoaderTest extends PHPUnit_Framework_TestCase {
 			function($load,$class) use (&$loadedCount) {
 				if($load($class)) {
 					$loadedCount += 1;
+					return true;
 				} else {
 					$loadedCount -= 1;
 				}
 			});
 		ClassLoader::load('ClassLoaderTest');
-		$this->assertEquals(1,$loadedCount);
+		ClassLoader::load('ClassLoaderTest');
+		$this->assertEquals(2,$loadedCount);
 	}
 	
 }

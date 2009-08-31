@@ -1,5 +1,6 @@
 <?php
 namespace made\up\space;
+
 use recess\lang\Annotation;
 class DummyAnnotation extends Annotation {
 	/* Begin abstract methods */
@@ -28,7 +29,7 @@ class DummyAnnotation extends Annotation {
 	 * @return integer
 	 */
 	public function isFor() {
-		return Annotation::FOR_CLASS;
+		return Annotation::FOR_CLASS | Annotation::FOR_METHOD | Annotation::FOR_PROPERTY;
 	}
 	
 	/**
@@ -53,6 +54,6 @@ class DummyAnnotation extends Annotation {
 	 * @param ClassDescriptor $descriptor The ClassDescriptor being manipulated.
 	 */
 	protected function expand($class, $reflection, $descriptor) {
-		
+		return $descriptor;
 	}
 }

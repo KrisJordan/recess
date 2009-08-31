@@ -1,9 +1,6 @@
 <?php
 namespace recess\lang;
 
-use recess\lang\exceptions\InvalidAnnotationValueException;
-use recess\lang\exceptions\UnknownAnnotationException;
-
 /**
  * Recess PHP Framework reflection for class which introduces annotations.
  * Annotations follow the following syntax:
@@ -54,10 +51,8 @@ class ReflectionClass extends \ReflectionClass {
 			$returns = array();
 			try {
 				$returns = Annotation::parse($docstring);
-			} catch(InvalidAnnotationValueException $e) {			
-				throw new InvalidAnnotationValueException('In class "' . $this->name . '".' . $e->getMessage(),0,0,$this->getFileName(),$this->getStartLine(),array());
-			} catch(UnknownAnnotationException $e) {
-				throw new UnknownAnnotationException('In class "' . $this->name . '".' . $e->getMessage(),0,0,$this->getFileName(),$this->getStartLine(),array());
+			} catch(\Exception $e) {			
+				throw new ErrorException('In class "' . $this->name . '".' . $e->getMessage(),0,0,$this->getFileName(),$this->getStartLine(),array());
 			}
 		}
 		return $returns;

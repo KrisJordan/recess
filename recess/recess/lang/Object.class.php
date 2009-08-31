@@ -1,7 +1,10 @@
 <?php
 namespace recess\lang;
 
-use recess\cache\Cache; // TODO: Remove this dependency with 5.3
+use recess\lang\ReflectionClass;
+
+// TODO: Compilation Step
+// use recess\cache\Cache; 
 
 /**
  * Object is the base class for extensible classes in the Recess.
@@ -50,7 +53,7 @@ use recess\cache\Cache; // TODO: Remove this dependency with 5.3
  * @link http://www.recessframework.org/
  */
 abstract class Object {
-	
+		
 	protected static $descriptors = array();
 	
 	/**
@@ -58,13 +61,11 @@ abstract class Object {
 	 * call, on any instance of $attachOnClassName, a method named $attachedMethodAlias
 	 * which delegates that method call to $providerInstance's $providerMethodName.
 	 *
-	 * @param string $attachOnClassName
 	 * @param string $attachedMethodAlias
-	 * @param object $providerInstance
-	 * @param string $providerMethodName
+	 * @param callable $callable
 	 */
-	static function attachMethod($attachOnClassName, $attachedMethodAlias, $providerInstance, $providerMethodName) {
-		self::getClassDescriptor($attachOnClassName)->attachMethod($attachOnClassName, $attachedMethodAlias, $providerInstance, $providerMethodName);
+	static function attachMethod($attachedMethodAlias, $callable) {
+		static::getClassDescriptor()->attachMethod($attachedMethodAlias, $callable);
 	}
 	
 	/**
@@ -76,7 +77,7 @@ abstract class Object {
 	 * @param IWrapper $wrapper
 	 */
 	static function wrapMethod($wrapOnClassName, $wrappableMethodName, IWrapper $wrapper) {
-		self::getClassDescriptor($wrapOnClassName)->addWrapper($wrappableMethodName, $wrapper);
+		static::getClassDescriptor($wrapOnClassName)->addWrapper($wrappableMethodName, $wrapper);
 	}
 	
 	/**
@@ -87,21 +88,18 @@ abstract class Object {
 	 * @return variant
 	 */
 	final function __call($name, $arguments) {
-		$classDescriptor = self::getClassDescriptor($this);
+		$classDescriptor = static::getClassDescriptor($this);
 		
 		$attachedMethod = $classDescriptor->getAttachedMethod($name);
 		if($attachedMethod !== false) {
-			$object = $attachedMethod->object;
-			$method = $attachedMethod->method;
 			array_unshift($arguments, $this);
-			$reflectedMethod = new \ReflectionMethod($object, $method);
-			return $reflectedMethod->invokeArgs($object, $arguments);
+			return call_user_func_array($attachedMethod->callable, $arguments);
 		} else {
-			throw new Exception('"' . get_class($this) . '" class does not contain a method or an attached method named "' . $name . '".', get_defined_vars());
+			throw new \Exception('"' . get_class($this) . '" class does not contain a method or an attached method named "' . $name . '".');
 		}
 	}
 	
-	const RECESS_CLASS_KEY_PREFIX = 'Object::desc::';
+	// const RECESS_CLASS_KEY_PREFIX = 'Object::desc::';
 
 	/**
 	 * Return the ObjectInfo for provided Object instance.
@@ -109,7 +107,11 @@ abstract class Object {
 	 * @param variant $classNameOrInstance - String Class Name or Instance of Recess Class
 	 * @return ClassDescriptor
 	 */
-	final static protected function getClassDescriptor($classNameOrInstance) {
+	final static function getClassDescriptor($classNameOrInstance = false) {
+		if($classNameOrInstance == false) {
+			$classNameOrInstance = get_called_class();
+		}
+		
 		if($classNameOrInstance instanceof Object) {
 			$class = get_class($classNameOrInstance);
 			$instance = $classNameOrInstance;
@@ -126,21 +128,21 @@ abstract class Object {
 		}
 		
 		if(!isset(self::$descriptors[$class])) {		
-			$cache_key = self::RECESS_CLASS_KEY_PREFIX . $class;
-			$descriptor = Cache::get($cache_key);
+			// $cache_key = self::RECESS_CLASS_KEY_PREFIX . $class;
+			$descriptor = false; // Cache::get($cache_key);
 			
-			if($descriptor === false) {				
+			if($descriptor === false) {
 				if($instance instanceof Object) {
-					$descriptor = call_user_func(array($class, 'buildClassDescriptor'), $class);
+					$descriptor = call_user_func(array($class, 'buildClassDescriptor'));
 					
-					Cache::set($cache_key, $descriptor);
+					// Cache::set($cache_key, $descriptor);
 					self::$descriptors[$class] = $descriptor;
 				} else {
-					throw new Exception('ObjectRegistry only retains information on classes derived from Object. Class of type "' . $class . '" given.', get_defined_vars());
+					throw new Exception('Class descriptors only exist on classes derived from recess\lang\Object. Class of type "' . $class . '" given.', get_defined_vars());
 				}
-			} else {
+			} /* else {
 				self::$descriptors[$class] = $descriptor;
-			}
+			} */
 		}
 		
 		return self::$descriptors[$class];
@@ -153,16 +155,8 @@ abstract class Object {
 	 * @return array
 	 */
 	final static function getAttachedMethods() {
-		$descriptor = static::getClassDescriptor(get_called_class());
-		return $descriptor->getAttachedMethods();
+		return static::getClassDescriptor(get_called_class())->getAttachedMethods();
 	}	
-	
-	/**
-	 * Clear the descriptors cache.
-	 */
-	final static function clearDescriptors() {
-		self::$descriptors = array();
-	}
 	
 	/**
 	 * Initialize a class' descriptor. Override to return a subclass specific descriptor.

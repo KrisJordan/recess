@@ -755,15 +755,14 @@ class Criterion {
 	
 	public function getQueryParameter() {
 		// Begin workaround for PDO's poor numeric binding
+		if(is_array($this->value)) {
+	      $value = '('.implode(',', $this->value).')';
+	      return $value;
+		}
+		
 		if(is_numeric($this->value)) {
 			return $this->value;
 		}
-
-		if(is_array($this->value)) {
-      $hack_value = '('.join(',', $this->value).')';
-      return $hack_value;
-		}		
-		
 		// End workaround
 		
 		if($this->operator == self::ASSIGNMENT) { 

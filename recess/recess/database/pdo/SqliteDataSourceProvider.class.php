@@ -222,12 +222,12 @@ class SqliteDataSourceProvider implements IPdoDataSourceProvider {
 		$arguments = $builder->getPdoArguments();
 		foreach($arguments as &$argument) {
 			// Begin workaround for PDO's poor numeric binding
-			$queryParameter = $argument->getQueryParameter();
-			if(is_numeric($queryParameter)) { continue; }
+			$param = $argument->getQueryParameter();
+			if(is_numeric($param)) { continue; }
+			if(is_string($param) && strlen($param) > 0 && substr($param,0,1) !== ':') { continue; }
 			// End Workaround
 			
 			// Ignore parameters that aren't used in this $action (i.e. assignments in select)
-			$param = $argument->getQueryParameter();
 			if(''===$param || strpos($sql, $param) === false) { continue; } 
 			$statement->bindValue($param, $argument->value);
 		}

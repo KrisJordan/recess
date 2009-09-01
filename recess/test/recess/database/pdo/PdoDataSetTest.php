@@ -164,6 +164,13 @@ abstract class PdoDataSetTest extends PHPUnit_Extensions_Database_TestCase {
 		$results2 = $results2->equal('first_name','Barack');
 		$this->assertNotEquals(count($results),count($results2));
 	}
+	
+	
+	function testSelectIn() {
+		$results = $this->source->select()->from('people')->in('id', array(1, 2, 3, 10));
+		$this->assertEquals(3, count($results));
+	}
+	
 }
 
 ?>

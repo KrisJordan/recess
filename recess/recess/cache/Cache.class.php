@@ -237,7 +237,6 @@ class SqliteCacheProvider implements ICacheProvider {
 		$tries = 0;
 		while($tries < 2) {
 			try {
-				$tries++;
 				$this->setStatement = $this->pdo->prepare('INSERT OR REPLACE INTO cache (key,value,expire) values (:key,:value,:expire)');
 				$this->getStatement = $this->pdo->prepare('SELECT value,expire FROM cache WHERE key = :key');
 				$this->getManyStatement = $this->pdo->prepare('SELECT value,expire,key FROM cache WHERE key LIKE :key');
@@ -248,10 +247,11 @@ class SqliteCacheProvider implements ICacheProvider {
 					$this->pdo->exec('CREATE TABLE "cache" ("key" TEXT PRIMARY KEY  NOT NULL , "value" TEXT NOT NULL , "expire" INTEGER NOT NULL)');
 					$this->pdo->exec('CREATE INDEX "expiration" ON "cache" ("expire" ASC)');
 				} catch(PDOException $e) {
-					if($tries == 2) {
-						die('Could not create cache table.');
+					if($tries == 1) {
+						die('Could not create cache table');
 					}
 					sleep(1);
+					$tries++;
 					continue;
 				}
 			}

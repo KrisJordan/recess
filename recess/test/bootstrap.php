@@ -10,7 +10,6 @@ $_ENV['dir.plugins'] = $_ENV['dir.bootstrap'] . 'plugins/';
 $_ENV['dir.apps'] = $_ENV['dir.bootstrap'] . 'apps/';
 $_ENV['dir.test'] = $_ENV['dir.bootstrap'] . 'recess/test/';
 $_ENV['dir.temp'] = $_ENV['dir.bootstrap'] . 'data/temp/';
-$_ENV['url.content'] = $_ENV['url.base'] . 'content/';
 
 require_once($_ENV['dir.recess'] . 'recess/lang/Library.class.php');
 Library::addClassPath($_ENV['dir.recess']);

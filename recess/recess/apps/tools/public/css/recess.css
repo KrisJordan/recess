@@ -33,3 +33,10 @@ thead { background-color: #eef; font-size: 1.2em; }
 .navigation .highlight { background: #0b2c9e; color: white; }
 .highlight li { }
 .highlight a { color: white; margin: 1em; text-decoration: none;}
+
+.class-info h5 { font-weight: normal; font-size: 1.5em; margin: 0; }
+.class-info .doc-comment { margin: 0.75em 0 1em 1em; }
+.class-info .doc-comment .doc-tag { color: green; }
+.class-info .doc-comment .annotation { color: darkblue; }
+.class-info .doc-comment pre { background: #f9f9ff; color: black; border: 1px solid #ccc; padding: 1em; }
+.class-info .doc-comment pre br { display: none; }

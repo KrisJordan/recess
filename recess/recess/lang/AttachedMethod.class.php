@@ -58,5 +58,3 @@ class AttachedMethod {
     function getNumberOfParameters() { return $this->getReflectionObject()->getNumberOfParameters() - 1; }
     function getNumberOfRequiredParameters() { return $this->getReflectionObject()->getNumberOfRequiredParameters() - 1; }
 }
-
-?>

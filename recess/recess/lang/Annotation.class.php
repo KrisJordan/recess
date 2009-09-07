@@ -303,4 +303,3 @@ abstract class Annotation {
 		return $returns;
 	}
 }
-?>

@@ -3,6 +3,7 @@ require_once 'PHPUnit/Framework.php';
 require_once 'recess/lang/AnnotationTest.php';
 require_once 'recess/lang/AttachedMethodTest.php';
 require_once 'recess/lang/ReflectionMethodTest.php';
+require_once 'recess/lang/ReflectionClassTest.php';
 require_once 'recess/lang/ObjectTest.php';
 
 class RecessLangAllTests
@@ -13,6 +14,7 @@ class RecessLangAllTests
 
         $suite->addTestSuite('AnnotationTest');
         $suite->addTestSuite('AttachedMethodTest');
+        $suite->addTestSuite('ReflectionClassTest');
         $suite->addTestSuite('ReflectionMethodTest');
  		$suite->addTestSuite('ObjectTest');
  		

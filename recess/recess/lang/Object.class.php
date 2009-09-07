@@ -154,8 +154,8 @@ abstract class Object {
 	 * @param variant $classNameOrInstance - String class name or instance of a Recess Class
 	 * @return array
 	 */
-	final static function getAttachedMethods() {
-		return static::getClassDescriptor(get_called_class())->getAttachedMethods();
+	final static function getAttachedMethods($classname = false) {
+		return static::getClassDescriptor($classname ?: get_called_class())->getAttachedMethods();
 	}	
 	
 	/**

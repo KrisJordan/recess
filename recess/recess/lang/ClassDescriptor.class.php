@@ -2,11 +2,15 @@
 namespace recess\lang;
 
 /**
- * Recess PHP Framework class info object that stores additional
- * state about a Object. This additional state includes
- * attached methods or named public properties.
+ * Recess Object class info data structure that stores
+ * meta-data and state for subclasses of Object. This additional 
+ * state includes attached methods, wrapped methods, etc.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
+ * @license MIT
+ * @link http://www.recessframework.org/
  */
 class ClassDescriptor {
 	

@@ -2,6 +2,9 @@
 namespace recess\lang;
 
 /**
+ * Extends PHP's built-in ReflectionMethod to introduce two new
+ * methods: getAnnotations and isAttached.
+ * 
  * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008, 2009 Kris Jordan
  * @package Recess PHP Framework
@@ -9,6 +12,13 @@ namespace recess\lang;
  * @link http://www.recessframework.org/
  */
 class ReflectionMethod extends \ReflectionMethod {
+	
+	/**
+	 * Returns an array of annotations, throws an ErrorException if annotation
+	 * cannot be parsed or has not been loaded.
+	 * 
+	 * @return array of Annotations
+	 */
 	function getAnnotations() {
 		$docstring = $this->getDocComment();
 		if($docstring == '') return array();
@@ -23,8 +33,12 @@ class ReflectionMethod extends \ReflectionMethod {
 		return $returns;
 	}
 	
+	/**
+	 * Is this method a dynamically attached method?
+	 * 
+	 * @return bool
+	 */
 	function isAttached() {
 		return false;
 	}
 }
-?>

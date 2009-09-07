@@ -2,14 +2,23 @@
 namespace recess\lang;
 
 /**
+ * Extends PHP's built-in ReflectionProperty to introduce a new
+ * method for extracting the annotations from a property.
+ * 
  * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008, 2009 Kris Jordan
  * @package Recess PHP Framework
  * @license MIT
  * @link http://www.recessframework.org/
- * @todo Add custom getFileName() and getStartLine() methods
  */
 class ReflectionProperty extends \ReflectionProperty {
+	
+	/**
+	 * Returns an array of parsed annotations. Will throw an ErrorException
+	 * if annotations cannot be parsed or have not been loaded.
+	 * 
+	 * @return array of Annotations
+	 */
 	function getAnnotations() {
 		$docstring = $this->getDocComment();
 		if($docstring == '') return array();
@@ -24,5 +33,3 @@ class ReflectionProperty extends \ReflectionProperty {
 		return $returns;
 	}
 }
-
-?>

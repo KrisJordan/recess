@@ -82,7 +82,7 @@ foreach($methods as $method) {
 }
 
 if(!empty($attachedMethods)) {
-	printAttachedMethods($attachedMethods);
+	printAttachedMethods($attachedMethods, $reflection);
 }
 
 if(!empty($instanceMethods)) {
@@ -209,13 +209,20 @@ function printMethod($method, $reflectionMethod=NULL) {
 ?>
 
 <?php
-function printAttachedMethods($methods) { ?>
+function printAttachedMethods($methods, $reflectedClass="") { ?>
 	<h4>Attached Methods</h4>
 	<ul class="attached-methods">
 	<?php
 	sort($methods);
 	foreach($methods as $method) {
-		$reflectionMethod = $method->object->reflectedMethod;
+		$object = $method->object;
+		if($object instanceof WrappedMethod) {
+			$reflectionMethod = $reflectedClass->getMethod($object->method);
+		} else {
+			$reflectionMethod = new ReflectionMethod($method->object, $method->method);
+//			print_r($method);exit;
+//			$reflectionMethod = $method->object->reflectedMethod;
+		}
 		printMethod($method, $reflectionMethod);
 	}
 	?>

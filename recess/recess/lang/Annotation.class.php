@@ -2,7 +2,8 @@
 namespace recess\lang;
 
 /**
- * Base class for class, method, and property annotations.
+ * Base class for class, method, and property Recess Annotations.
+ * New Annotations can be introduced by extending this abstract class.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
  * @copyright 2008, 2009 Kris Jordan
@@ -12,19 +13,12 @@ namespace recess\lang;
  */
 abstract class Annotation {
 	
-	/** Begin 5.3 Namespace Work-around */
-	static private $registeredAnnotations = array();
-	static public function load() {
-		$fullClass = get_called_class();
-		$class = explode('\\',$fullClass);
-		self::$registeredAnnotations[end($class)] = $fullClass; 
-	}
-	/** End 5.3 Namespace Work-around */
-	
 	protected $errors = array();
 	protected $values = array();
 	
 	public $parameters = array();
+	
+	static protected $registeredAnnotations = array();
 	
 	const FOR_CLASS = 1;
 	const FOR_METHOD = 2;
@@ -81,37 +75,48 @@ abstract class Annotation {
 	/* Begin validation helper methods */
 	
 	protected function acceptedKeys($keys) {
+		$passed = true;
 		foreach($this->parameters as $key => $value) {
 			if (is_string($key) && !in_array($key, $keys)) {
 				$this->errors[] = "Invalid parameter: \"$key\".";
+				$passed = false;
 			}
 		}
+		return $passed;
 	}
 	
 	protected function requiredKeys($keys) {
+		$passed = true;
 		foreach($keys as $key) {
 			if(!array_key_exists($key, $this->parameters)) {
 				$this->errors[] = get_class($this) . " requires a '$key' parameter.";
+				$passed = false;
 			}
 		}
+		return $passed;
 	}
 	
 	protected function acceptedKeylessValues($values) {
+		$passed = true;
 		foreach($this->parameters as $key => $value) {
 			if(!is_string($key) && !in_array($value, $values)) {
 				$this->errors[] = "Unknown parameter: \"$value\".";
+				$passed = false;
 			}
 		}
+		return $passed;
 	}
 	
 	protected function acceptedIndexedValues($index, $values) {
 		if(!in_array($this->parameters[$index],$values)) {
 			$this->errors[] = "Parameter $index is set to \"" . $this->parameters[$key] . "\". Valid values: " . implode(', ', $values) . '.';
+			return false;
 		}
+		return true;
 	}
 	
 	protected function acceptedValuesForKey($key, $values, $case = null) {
-		if(!isset($this->parameters[$key])) { return; }
+		if(!isset($this->parameters[$key])) { return true; }
 		
 		if($case === null) {
 			$value = $this->parameters[$key];
@@ -120,45 +125,62 @@ abstract class Annotation {
 		} else if($case === CASE_UPPER) {
 			$value = strtoupper($this->parameters[$key]);
 		}
+		
 		if(!in_array($value, $values)) {
 			$this->errors[] = 'The "' . $key . '" parameter is set to "' . $this->parameters[$key] . '". Valid values: ' . implode(', ', $values) . '.';
+			return false;
 		}
+		
+		return true;
 	}
 	
 	protected function acceptsNoKeylessValues() {
-		$this->acceptedKeylessValues(array());
+		return $this->acceptedKeylessValues(array());
 	}
 	
 	protected function acceptsNoKeyedValues() {
-		$this->acceptedKeys(array());
+		return $this->acceptedKeys(array());
 	}
 	
 	protected function validOnSubclassesOf($annotatedClass, $baseClass) {
 		if( !is_subclass_of($annotatedClass, $baseClass) ) {
 			$this->errors[] = get_class($this) . " is only valid on objects of type $baseClass.";
+			return false;
 		}
+		return true;
 	}
 	
 	protected function minimumParameterCount($count) {
 		if( ! (count($this->parameters) >= $count) ) {
 			$this->errors[] = get_class($this) . " takes at least $count parameters.";
+			return false;
 		}
+		return true;
 	}
 	
 	protected function maximumParameterCount($count) {
 		if( ! (count($this->parameters) <= $count) ) {
 			$this->errors[] = get_class($this) . " takes at most $count parameters.";
+			return false;
 		}
+		return true;
 	}
 	
 	protected function exactParameterCount($count) {
 		if ( count($this->parameters) != $count ) {
 			$this->errors[] = get_class($this) . " requires exactly $count parameters.";
+			return false;
 		}
+		return true;
 	}
-	
 	/* End validation helper methods */
 	
+	/**
+	 * Is a value in the array of values?
+	 * 
+	 * @param varies $value
+	 * @return bool
+	 */
 	function isAValue($value) {
 		return in_array($value, $this->values);
 	}
@@ -178,7 +200,18 @@ abstract class Annotation {
 		return null;
 	}
 	
-	
+	/**
+	 * The strategy for realizing a Recess Annotation is driven
+	 * by this method. The user experience of diagnostics is defined
+	 * here, as well, by checking the correctness of an Annotation
+	 * and giving annotation implementors a mechanism for providing 
+	 * feedback on the correct usage of an annotation.
+	 * 
+	 * @param string $class The classname this annotation appears on.
+	 * @param varies $reflection The Reflection object the annotation corresponds to.
+	 * @param ClassDescriptor $descriptor the class descriptor.
+	 * @return ClassDescriptor 
+	 */
 	function expandAnnotation($class, $reflection, $descriptor) {		
 		// First check to ensure this annotation is allowed
 		// to apply to this type of PHP construct (class, method, property)
@@ -211,9 +244,9 @@ abstract class Annotation {
 		
 		// Throw Exception if Annotation Errors Exist
 		if(!empty($this->errors)) {
-			if($reflection instanceof ReflectionProperty) {
+			if($reflection instanceof \ReflectionProperty) {
 				$message = 'Invalid ' . get_class($this) . ' on property "' . $reflection->getName() . '". ';
-				$reflection = new ReflectionClass($class);
+				$reflection = new \ReflectionClass($class);
 			} else {
 				$message = 'Invalid ' . get_class($this) . ' on ' . $annotationIsOnType . ' "' . $reflection->getName() . '". ';
 			}
@@ -222,7 +255,7 @@ abstract class Annotation {
 			}
 			$message .= "\n == Errors == \n * ";
 			$message .= implode("\n * ", $this->errors);
-			throw new ErrorException($message,0,0,$reflection->getFileName(),$reflection->getStartLine(),array());
+			throw new \ErrorException($message,0,0,$reflection->getFileName(),$reflection->getStartLine(),array());
 		}
 		
 		// Map keyed parameters to properties on this annotation
@@ -242,6 +275,8 @@ abstract class Annotation {
 		// Annotation developers can implement glorious new
 		// functionalities.
 		$this->expand($class, $reflection, $descriptor);
+		
+		return $descriptor;
 	}
 	
 	/**
@@ -253,9 +288,24 @@ abstract class Annotation {
 	}
 	
 	/**
-	 * Given a docstring, returns an array of Recess Annotations.
-	 * @param $docstring
-	 * @return unknown_type
+	 * To register an annotation this static method must be called.
+	 * This allows annotations to use a flat namespace even when the
+	 * annotations themselves are distributed across many different
+	 * namespaces.
+	 */
+	static public function load() {
+		$fullClass = get_called_class();
+		$class = explode('\\',$fullClass);
+		self::$registeredAnnotations[end($class)] = $fullClass; 
+	}
+	
+	/**
+	 * Given a docstring, returns an array of Recess Annotations. Throws
+	 * an exception if the docstring cannot be parsed or if an annotation
+	 * has not been loaded yet.
+	 * 
+	 * @param $docstring String.
+	 * @return array of Annotations
 	 */
 	static function parse($docstring) {
 		preg_match_all('%(?:\s|\*)*!(\S+)[^\n\r\S]*(?:(.*?)(?:\*/)|(.*))%', $docstring, $result, PREG_PATTERN_ORDER);

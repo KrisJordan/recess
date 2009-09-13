@@ -42,6 +42,7 @@ class InflectorTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('To English', Inflector::toEnglish('toEnglish'));
 		$this->assertEquals('To English', Inflector::toEnglish('ToEnglish'));
 		$this->assertEquals('To English', Inflector::toEnglish('to_english'));
+		$this->assertEquals('To English', Inflector::toEnglish('_____to______english____'));
 	}
 	
 }

@@ -1,5 +1,5 @@
 <?php
-namespace recess\core;
+namespace recess\lang;
 /**
  * Turn callables into delicious Candy.
  * Candied callables that can be wrapped in the all the decorators you desire.

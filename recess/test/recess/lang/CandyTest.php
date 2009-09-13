@@ -1,8 +1,8 @@
 <?php
 require_once 'PHPUnit/Framework.php';
 
-include_once __DIR__ . '/../../../recess/core/Candy.class.php';
-use recess\core\Candy;
+include_once __DIR__ . '/../../../recess/lang/Candy.class.php';
+use recess\lang\Candy;
 
 class CandyTest extends PHPUnit_Framework_TestCase {
 	

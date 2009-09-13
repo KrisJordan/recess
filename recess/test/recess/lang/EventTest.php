@@ -1,8 +1,8 @@
 <?php
 require_once 'PHPUnit/Framework.php';
 
-include_once __DIR__ . '/../../../recess/core/Event.class.php';
-use recess\core\Event;
+include_once __DIR__ . '/../../../recess/lang/Event.class.php';
+use recess\lang\Event;
 
 class EventTest extends PHPUnit_Framework_TestCase {
 	

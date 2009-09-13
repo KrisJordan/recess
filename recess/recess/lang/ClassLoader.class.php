@@ -1,5 +1,5 @@
 <?php
-namespace recess\core;
+namespace recess\lang;
 
 require __DIR__.'/Event.class.php';
 require __DIR__.'/Candy.class.php';

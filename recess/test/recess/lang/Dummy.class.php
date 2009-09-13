@@ -1,5 +1,5 @@
 <?php
-namespace recess\core;
+namespace recess\lang;
 
 class Dummy {
 	function helloWorld() { return 'hello world'; }

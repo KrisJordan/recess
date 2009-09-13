@@ -1,5 +1,5 @@
 <?php
-namespace recess\core;
+namespace recess\lang;
 /**
  * When something important happens, let others know with an Event.
  * 

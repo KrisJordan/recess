@@ -1,5 +1,8 @@
 <?php
 require_once 'PHPUnit/Framework.php';
+require_once 'recess/lang/CandyTest.php';
+require_once 'recess/lang/EventTest.php';
+require_once 'recess/lang/ClassLoaderTest.php';
 require_once 'recess/lang/AnnotationTest.php';
 require_once 'recess/lang/AttachedMethodTest.php';
 require_once 'recess/lang/ReflectionMethodTest.php';
@@ -12,6 +15,10 @@ class RecessLangAllTests
     {
         $suite = new PHPUnit_Framework_TestSuite('recess\lang');
 
+        $suite->addTestSuite('EventTest');
+        $suite->addTestSuite('CandyTest');
+        $suite->addTestSuite('ClassLoaderTest');
+        
         $suite->addTestSuite('AnnotationTest');
         $suite->addTestSuite('AttachedMethodTest');
         $suite->addTestSuite('ReflectionClassTest');

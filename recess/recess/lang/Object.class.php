@@ -57,27 +57,26 @@ abstract class Object {
 	protected static $descriptors = array();
 	
 	/**
-	 * Attach a method to a class. The result of this static method is the ability to
-	 * call, on any instance of $attachOnClassName, a method named $attachedMethodAlias
-	 * which delegates that method call to $providerInstance's $providerMethodName.
+	 * Attach a callable to a class. The result of this static method is the ability to
+	 * call a 'method' named $alias which delegates that method call to $callable where 
+	 * the first object is a reference to the object it was called on ($self).
 	 *
-	 * @param string $attachedMethodAlias
-	 * @param callable $callable
+	 * @param string $alias
+	 * @param callable $callable: (Object,...) -> Any
+	 * @return callable $callable Returns the callable for further chaining.
 	 */
-	static function attachMethod($attachedMethodAlias, $callable) {
-		static::getClassDescriptor()->attachMethod($attachedMethodAlias, $callable);
+	static function attach($alias, $callable) {
+		return static::getClassDescriptor()->attachMethod($alias, $callable);
 	}
-	
+		
 	/**
-	 * Wrap a method on a class. The result of this static method is the provided IWrapper
-	 * implementation will be called before and after the wrapped method.
+	 * Returns an attached method with name $alias.
 	 * 
-	 * @param string $wrapOnClassName
-	 * @param string $wrappableMethodName
-	 * @param IWrapper $wrapper
+	 * @param $alias
+	 * @return callable
 	 */
-	static function wrapMethod($wrapOnClassName, $wrappableMethodName, IWrapper $wrapper) {
-		static::getClassDescriptor($wrapOnClassName)->addWrapper($wrappableMethodName, $wrapper);
+	static function attached($alias) {
+		return static::getClassDescriptor()->attached($alias);
 	}
 	
 	/**
@@ -105,36 +104,26 @@ abstract class Object {
 	 * Return the ObjectInfo for provided Object instance.
 	 *
 	 * @param variant $classNameOrInstance - String Class Name or Instance of Recess Class
-	 * @return ClassDescriptor
+	 * @return recess\lang\ClassDescriptor
 	 */
 	final static function getClassDescriptor($classNameOrInstance = false) {
 		if($classNameOrInstance == false) {
 			$classNameOrInstance = get_called_class();
 		}
 		
-		if($classNameOrInstance instanceof Object) {
-			$class = get_class($classNameOrInstance);
-			$instance = $classNameOrInstance;
-		} else {
+		if(is_string($classNameOrInstance)) {
 			$class = $classNameOrInstance;
-			if(class_exists($class, true)) {
-				$reflectionClass = new ReflectionClass($class);
-				if(!$reflectionClass->isAbstract()) {	
-					$instance = new $class;
-				} else {
-					return new ClassDescriptor();
-				}
-			}
+		} else {
+			$class = get_class($classNameOrInstance);
 		}
 		
-		if(!isset(self::$descriptors[$class])) {		
+		if(!isset(self::$descriptors[$class])) {
 			// $cache_key = self::RECESS_CLASS_KEY_PREFIX . $class;
 			$descriptor = false; // Cache::get($cache_key);
 			
 			if($descriptor === false) {
-				if($instance instanceof Object) {
-					$descriptor = call_user_func(array($class, 'buildClassDescriptor'));
-					
+				if(is_subclass_of($class,'recess\lang\Object')) {
+					$descriptor = $class::buildClassDescriptor();
 					// Cache::set($cache_key, $descriptor);
 					self::$descriptors[$class] = $descriptor;
 				} else {
@@ -252,6 +241,21 @@ abstract class Object {
 		$descriptor = static::finalClassDescriptor($descriptor);
 		
 		return $descriptor;
-	}	
+	}
+	
+	/**
+	 * Clears a class' descriptor. So far there have only been 
+	 * two needs for this:
+	 *  1. For testing purposes and 
+	 *  2. When some cached external dependency changes 
+	 *  	(i.e. after a database table has been created a model's 
+	 *  	descriptor should be cleared for the given run)
+	 */
+	public static function clearClassDescriptor() {
+		$class = get_called_class();
+		if(isset(self::$descriptors[$class])) {
+			unset(self::$descriptors[$class]);
+		}
+	}
 	
 }

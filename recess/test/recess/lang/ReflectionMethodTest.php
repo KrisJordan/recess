@@ -6,7 +6,7 @@ require_once __DIR__ . '/DummyAnnotation.class.php';
 use made\up\space\DummyAnnotation;
 
 class ReflectionMethodTest extends PHPUnit_Framework_TestCase {
-	
+
 	function testBasic() {
 		DummyAnnotation::load();
 		$reflectionMethod = new ReflectionMethod('AClass','aMethod');

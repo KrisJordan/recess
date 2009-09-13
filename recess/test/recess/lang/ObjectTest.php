@@ -7,26 +7,30 @@ DummyAnnotation::load();
 
 class ObjectTest extends PHPUnit_Framework_TestCase {
 	
+	function setUp() {
+		AnObject::clearClassDescriptor();
+	}
+	
 	function testConstruct() {
 		$anObject = new AnObject();
 		$this->assertType('recess\lang\Object',$anObject);
 	}
 	
-	function testAttachMethod() {
+	function testAttach() {
 		$provider = new IsTrueProvider();
-		AnObject::attachMethod('returnTrue',array($provider,'returnTrue'));
+		AnObject::attach('returnTrue',array($provider,'returnTrue'));
 		$anObject = new AnObject();
 		$this->assertTrue($anObject->returnTrue());
 	}
 	
 	function testAttachPlainFunction() {
-		AnObject::attachMethod('returnTrue','returnTruePlain');
+		AnObject::attach('returnTrue','returnTruePlain');
 		$anObject = new AnObject();
 		$this->assertTrue($anObject->returnTrue());
 	}
 	
 	function testRenamePlainFunction() {
-		AnObject::attachMethod('trueOrNotTrue','returnTruePlain');
+		AnObject::attach('trueOrNotTrue','returnTruePlain');
 		$anObject = new AnObject();
 		$this->assertTrue($anObject->trueOrNotTrue());
 		try {
@@ -38,7 +42,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testAttachLambda() {
-		AnObject::attachMethod('returnTrue', function ($self) { return $self instanceof AnObject; });
+		AnObject::attach('returnTrue', function ($self) { return $self instanceof AnObject; });
 		$anObject = new AnObject();
 		$this->assertTrue($anObject->returnTrue());
 	}
@@ -47,11 +51,21 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 		$attachedMethods = AnObject::getAttachedMethods();
 		$this->assertEquals(0,count($attachedMethods));
 		
-		AnObject::attachMethod('returnTrue', function ($self) { return $self instanceof AnObject; });
+		AnObject::attach('returnTrue', function ($self) { return $self instanceof AnObject; });
 		$anObject = new AnObject();
 		$attachedMethods = AnObject::getAttachedMethods();
 		$this->assertEquals(1, count($attachedMethods));
 		$this->assertType('recess\lang\AttachedMethod',$attachedMethods['returnTrue']);
+	}
+	
+	function testClearIndividualDescriptor() {
+		$originalDescriptor = clone AnObject::getClassDescriptor();
+		
+		AnObject::attach('returnTrue','returnTruePlain');
+		$this->assertNotEquals($originalDescriptor,AnObject::getClassDescriptor());
+		
+		AnObject::clearClassDescriptor();
+		$this->assertEquals($originalDescriptor,AnObject::getClassDescriptor());
 	}
 	
 	function testGetDescriptorAbstract() {

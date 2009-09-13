@@ -2,16 +2,19 @@
 namespace recess\lang;
 
 /**
- * Recess PHP Framework class info object that stores additional
- * state about a Object. This additional state includes
- * attached methods or named public properties.
+ * Recess Object class info data structure that stores
+ * meta-data and state for subclasses of Object. This additional 
+ * state includes attached methods, wrapped methods, etc.
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
+ * @copyright 2008, 2009 Kris Jordan
+ * @package Recess PHP Framework
+ * @license MIT
+ * @link http://www.recessframework.org/
  */
 class ClassDescriptor {
 	
 	protected $attachedMethods = array();
-	protected $wrappedMethods = array();
 	
 	/**
 	 * Return a RecessAttachedMethod for given name, or return false.
@@ -22,6 +25,19 @@ class ClassDescriptor {
 	function getAttachedMethod($methodName) {
 		if(isset($this->attachedMethods[$methodName]))
 			return $this->attachedMethods[$methodName];
+		else
+			return false;
+	}
+	
+	/**
+	 * Return a RecessAttachedMethod for given name, or return false.
+	 *
+	 * @param string $methodName Method name.
+	 * @return RecessAttachedMethod on success, false on failure.
+	 */
+	function attached($methodName) {
+		if(isset($this->attachedMethods[$methodName]))
+			return $this->attachedMethods[$methodName]->callable;
 		else
 			return false;
 	}
@@ -56,32 +72,7 @@ class ClassDescriptor {
 	function attachMethod($attachedMethodAlias, $callable) {
 		$attachedMethod = new AttachedMethod($attachedMethodAlias, $callable);
 		$this->addAttachedMethod($attachedMethodAlias, $attachedMethod);
+		return $callable;
 	}
 	
-	/**
-	 * Add a Wrapper to a WrappedMethod on this class descriptor.
-	 * 
-	 * @param string $methodName
-	 * @param IWrapper $wrapper
-	 */
-	function addWrapper($methodName, IWrapper $wrapper) {
-		if(!isset($this->wrappedMethods[$methodName])) {
-			$this->wrappedMethods[$methodName] = new WrappedMethod();			
-		}
-		$this->wrappedMethods[$methodName]->addWrapper($wrapper);
-	}
-	
-	/**
-	 * Register a WrappedMethod on this class descriptor.
-	 * 
-	 * @param string $methodName
-	 * @param WrappedMethod $wrappedMethod
-	 */
-	function addWrappedMethod($methodName, WrappedMethod $wrappedMethod) {
-		if(isset($this->wrappedMethods[$methodName])) {
-			$this->wrappedMethods[$methodName] = $wrappedMethod->assume($this->wrappedMethods[$methodName]);
-		} else {
-			$this->wrappedMethods[$methodName] = $wrappedMethod;
-		}
-	}
 }

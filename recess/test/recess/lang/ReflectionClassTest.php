@@ -32,7 +32,7 @@ class ReflectionClassTest extends PHPUnit_Framework_TestCase {
 	
 	function testGetAttachedMethods() {
 		DummyAnnotation::load();
-		ReflectionClassObject::attachMethod('aMethod',function($self){return true;});
+		ReflectionClassObject::attach('aMethod',function($self){return true;});
 		$childClass = new ReflectionClass('ReflectionClassObject');
 		$parentClass = new ReflectionClass('recess\lang\Object');
 		$this->assertEquals(2, count($childClass->getMethods())-count($parentClass->getMethods()));		

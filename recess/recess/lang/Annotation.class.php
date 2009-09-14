@@ -57,7 +57,16 @@ abstract class Annotation {
 	 * 
 	 * @param $class The classname the annotation is on.
 	 */
-	abstract protected function validate($class);
+	abstract public function validate($class);
+	
+	/**
+	 * Return any errors that occurred during the validation of an annotation.
+	 * 
+	 * @return array
+	 */
+	function getErrors() {
+		return $this->errors;
+	}
 	
 	/**
 	 * The expansion step of an annotation gives it an opportunity to manipulate
@@ -74,51 +83,85 @@ abstract class Annotation {
 	
 	/* Begin validation helper methods */
 	
+	/**
+	 * Assert the keys which are acceptable for the annotation's values.
+	 * Keys are always converted to lower case.
+	 * If any keys are used other than these keys an error is added to the
+	 * errors array. 
+	 * 
+	 * @param array $keys
+	 */
 	protected function acceptedKeys($keys) {
-		$passed = true;
+		$keys = array_map('strtolower',$keys);
 		foreach($this->parameters as $key => $value) {
 			if (is_string($key) && !in_array($key, $keys)) {
 				$this->errors[] = "Invalid parameter: \"$key\".";
-				$passed = false;
 			}
 		}
-		return $passed;
 	}
 	
+	/**
+	 * Assert keys that are required. Keys are always converted to lower case.
+	 * If an annotation lacks a required key an error is added to the errors array. 
+	 * 
+	 * @param array $keys
+	 */
 	protected function requiredKeys($keys) {
-		$passed = true;
+		$keys = array_map('strtolower',$keys);
 		foreach($keys as $key) {
 			if(!array_key_exists($key, $this->parameters)) {
 				$this->errors[] = get_class($this) . " requires a '$key' parameter.";
-				$passed = false;
 			}
 		}
-		return $passed;
 	}
 	
+	/**
+	 * Assert acceptable values without keys. The case of values are not converted
+	 * to lowercase like keys are. If a keyless value is not in the provided array
+	 * an error is added to the errors array. 
+	 * 
+	 * @param array $values
+	 */
 	protected function acceptedKeylessValues($values) {
-		$passed = true;
 		foreach($this->parameters as $key => $value) {
 			if(!is_string($key) && !in_array($value, $values)) {
 				$this->errors[] = "Unknown parameter: \"$value\".";
-				$passed = false;
 			}
 		}
-		return $passed;
 	}
 	
+	/**
+	 * Assert acceptable values for a specific indexed element in the values array.
+	 * For example, in the !Route annotation the first value must be an HTTP method.
+	 * Will add an error to the errors arrary if the indexed value is not in the values
+	 * array.
+	 * 
+	 * @param int $index
+	 * @param array $values
+	 */
 	protected function acceptedIndexedValues($index, $values) {
-		if(!in_array($this->parameters[$index],$values)) {
-			$this->errors[] = "Parameter $index is set to \"" . $this->parameters[$key] . "\". Valid values: " . implode(', ', $values) . '.';
-			return false;
+		if(!isset($this->parameters[$index]) || !in_array($this->parameters[$index],$values)) {
+			$this->errors[] = "Parameter $index is set to \"" . $this->parameters[$index] . "\". Valid values: " . implode(', ', $values) . '.';
 		}
-		return true;
 	}
 	
-	protected function acceptedValuesForKey($key, $values, $case = null) {
-		if(!isset($this->parameters[$key])) { return true; }
+	/**
+	 * Assert acceptable values for a keyed parameter. Can also optionally specify a case
+	 * constant (CASE_LOWER || CASE_UPPER) that will force the in-code value to 
+	 * become uppercase or lowercase for comparison to the provided $values array.
+	 * Key, as always, is forced lowercase. Will add an error to errors array
+	 * if value provided is not in values array.
+	 * 
+	 * @param string $key
+	 * @param array $values
+	 * @param int $case CASE_LOWER or CASE_UPPER, optional
+	 */
+	protected function acceptedValuesForKey($key, $values, $case = false) {
+		$key = strtolower($key);
 		
-		if($case === null) {
+		if(!isset($this->parameters[$key])) { return; }
+		
+		if($case === false) {
 			$value = $this->parameters[$key];
 		} else if($case === CASE_LOWER) {
 			$value = strtolower($this->parameters[$key]);
@@ -128,50 +171,67 @@ abstract class Annotation {
 		
 		if(!in_array($value, $values)) {
 			$this->errors[] = 'The "' . $key . '" parameter is set to "' . $this->parameters[$key] . '". Valid values: ' . implode(', ', $values) . '.';
-			return false;
 		}
-		
-		return true;
 	}
 	
+	/**
+	 * Assert that an annotation only accepts keyed values.
+	 */
 	protected function acceptsNoKeylessValues() {
-		return $this->acceptedKeylessValues(array());
+		$this->acceptedKeylessValues(array());
 	}
 	
+	/**
+	 * Assert that an annotation only accepts keyless values.
+	 */
 	protected function acceptsNoKeyedValues() {
-		return $this->acceptedKeys(array());
+		$this->acceptedKeys(array());
 	}
 	
+	/**
+	 * Assert that an annotation is only valid on a certain portion of the
+	 * class hierarchy.
+	 * 
+	 * @param string $annotatedClass 
+	 * @param string $baseClass
+	 */
 	protected function validOnSubclassesOf($annotatedClass, $baseClass) {
 		if( !is_subclass_of($annotatedClass, $baseClass) ) {
 			$this->errors[] = get_class($this) . " is only valid on objects of type $baseClass.";
-			return false;
 		}
-		return true;
 	}
 	
+	/**
+	 * Assert that an annotation requires at least N parameters.
+	 * 
+	 * @param int $count
+	 */
 	protected function minimumParameterCount($count) {
 		if( ! (count($this->parameters) >= $count) ) {
 			$this->errors[] = get_class($this) . " takes at least $count parameters.";
-			return false;
 		}
-		return true;
 	}
 	
+	/**
+	 * Assert that an annotation can have at most N parameters.
+	 * 
+	 * @param int $count
+	 */
 	protected function maximumParameterCount($count) {
 		if( ! (count($this->parameters) <= $count) ) {
 			$this->errors[] = get_class($this) . " takes at most $count parameters.";
-			return false;
 		}
-		return true;
 	}
 	
+	/**
+	 * Assert that an annotation requires exactly N parameters.
+	 * 
+	 * @param int $count
+	 */
 	protected function exactParameterCount($count) {
 		if ( count($this->parameters) != $count ) {
 			$this->errors[] = get_class($this) . " requires exactly $count parameters.";
-			return false;
 		}
-		return true;
 	}
 	/* End validation helper methods */
 	
@@ -182,22 +242,24 @@ abstract class Annotation {
 	 * @return bool
 	 */
 	function isAValue($value) {
-		return in_array($value, $this->values);
+		return in_array($value, array_merge($this->parameters, $this->values));
 	}
 	
 	/**
 	 * Mask other values to return the first not contained in the array.
+	 * Example use: Column annotation uses this to find the type as distinct from 
+	 * 	other static modifiers (PrimaryKey and AutoIncrement)
 	 * 
-	 * @param $values
+	 * @param array $values
 	 * @return value not in the array of other values
 	 */
 	function valueNotIn($values) {
-		foreach($this->values as $value) {
-			if(!in_array($value, $values)) {
-				return $value;
+		foreach(array_merge($this->parameters, $this->values) as $parameter) {
+			if(!in_array($parameter, $values)) {
+				return $parameter;
 			}
 		}
-		return null;
+		return false;
 	}
 	
 	/**
@@ -255,7 +317,7 @@ abstract class Annotation {
 			}
 			$message .= "\n == Errors == \n * ";
 			$message .= implode("\n * ", $this->errors);
-			throw new \ErrorException($message,0,0,$reflection->getFileName(),$reflection->getStartLine(),array());
+			throw new \ErrorException($message,0,0,$reflection->getFileName(),$reflection->getStartLine());
 		}
 		
 		// Map keyed parameters to properties on this annotation

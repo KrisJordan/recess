@@ -27,7 +27,7 @@ class ReflectionProperty extends \ReflectionProperty {
 			try {
 				$returns = Annotation::parse($docstring);
 			} catch(\Exception $e) {			
-				throw new ErrorException('In class "' . $this->getDeclaringClass()->name . '" on property "'. $this->name .'".' . $e->getMessage(),0,0,$this->getFileName(),$this->getStartLine(),array());
+				throw new \ErrorException('In class "' . $this->getDeclaringClass()->name . '" on property "'. $this->name .'".' . $e->getMessage(),0,0,$this->getFileName(),$this->getStartLine());
 			}
 		}
 		return $returns;

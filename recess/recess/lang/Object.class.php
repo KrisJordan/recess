@@ -66,7 +66,7 @@ abstract class Object {
 	 * @return callable $callable Returns the callable for further chaining.
 	 */
 	static function attach($alias, $callable) {
-		return static::getClassDescriptor()->attachMethod($alias, $callable);
+		return static::getClassDescriptor()->attach($alias, $callable);
 	}
 		
 	/**
@@ -86,10 +86,8 @@ abstract class Object {
 	 * @param array $arguments
 	 * @return variant
 	 */
-	final function __call($name, $arguments) {
-		$classDescriptor = static::getClassDescriptor($this);
-		
-		$attachedMethod = $classDescriptor->getAttachedMethod($name);
+	final function __call($name, $arguments) {		
+		$attachedMethod = static::getClassDescriptor($this)->getAttachedMethod($name);
 		if($attachedMethod !== false) {
 			array_unshift($arguments, $this);
 			return call_user_func_array($attachedMethod->callable, $arguments);
@@ -127,7 +125,7 @@ abstract class Object {
 					// Cache::set($cache_key, $descriptor);
 					self::$descriptors[$class] = $descriptor;
 				} else {
-					throw new Exception('Class descriptors only exist on classes derived from recess\lang\Object. Class of type "' . $class . '" given.', get_defined_vars());
+					throw new \Exception('Class descriptors only exist on classes derived from recess\lang\Object. Class of type "' . $class . '" given.');
 				}
 			} /* else {
 				self::$descriptors[$class] = $descriptor;
@@ -215,7 +213,7 @@ abstract class Object {
 		try {
 			$reflection = new ReflectionClass($class);
 		} catch(\ReflectionException $e) {
-			throw new Exception('Class "' . $class . '" has not been declared.', get_defined_vars());
+			throw new \Exception('Class "' . $class . '" has not been declared.');
 		}
 		
 		foreach ($reflection->getAnnotations() as $annotation) {

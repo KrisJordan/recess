@@ -17,20 +17,21 @@ class ClassDescriptor {
 	protected $attachedMethods = array();
 	
 	/**
-	 * Return a RecessAttachedMethod for given name, or return false.
+	 * Attach a method to a class. The result of this static method is the ability to
+	 * call, on any instance of $attachOnClassName, a method named $attachedMethodAlias
+	 * which delegates that method call to $callable.
 	 *
-	 * @param string $methodName Method name.
-	 * @return RecessAttachedMethod on success, false on failure.
+	 * @param string $attachedMethodAlias
+	 * @param callable $callable
 	 */
-	function getAttachedMethod($methodName) {
-		if(isset($this->attachedMethods[$methodName]))
-			return $this->attachedMethods[$methodName];
-		else
-			return false;
+	function attach($alias, $callable) {
+		$attachedMethod = new AttachedMethod($alias, $callable);
+		$this->attachedMethods[$alias] = $attachedMethod;
+		return $callable;
 	}
 	
 	/**
-	 * Return a RecessAttachedMethod for given name, or return false.
+	 * Return the callable of an attached method for given name or false.
 	 *
 	 * @param string $methodName Method name.
 	 * @return RecessAttachedMethod on success, false on failure.
@@ -43,6 +44,19 @@ class ClassDescriptor {
 	}
 	
 	/**
+	 * Return a RecessAttachedMethod for given name or false.
+	 *
+	 * @param string $methodName Method name.
+	 * @return RecessAttachedMethod on success, false on failure.
+	 */
+	function getAttachedMethod($methodName) {
+		if(isset($this->attachedMethods[$methodName]))
+			return $this->attachedMethods[$methodName];
+		else
+			return false;
+	}
+	
+	/**
 	 * Return all attached methods.
 	 *
 	 * @return array(AttachedMethod)
@@ -50,29 +64,5 @@ class ClassDescriptor {
 	function getAttachedMethods() {
 		return $this->attachedMethods;
 	}
-	
-	/**
-	 * Add an attached method with given methodName alias.
-	 *
-	 * @param string $methodName
-	 * @param AttachedMethod $attachedMethod
-	 */
-	function addAttachedMethod($methodName, AttachedMethod $attachedMethod) {
-		$this->attachedMethods[$methodName] = $attachedMethod;
-	}
-	
-	/**
-	 * Attach a method to a class. The result of this static method is the ability to
-	 * call, on any instance of $attachOnClassName, a method named $attachedMethodAlias
-	 * which delegates that method call to $callable.
-	 *
-	 * @param string $attachedMethodAlias
-	 * @param callable $callable
-	 */
-	function attachMethod($attachedMethodAlias, $callable) {
-		$attachedMethod = new AttachedMethod($attachedMethodAlias, $callable);
-		$this->addAttachedMethod($attachedMethodAlias, $attachedMethod);
-		return $callable;
-	}
-	
+
 }

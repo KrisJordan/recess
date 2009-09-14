@@ -23,6 +23,16 @@ class ObjectTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($anObject->returnTrue());
 	}
 	
+	function testAttached() {
+		$this->assertFalse(AnObject::attached('returnTrue'));
+		$provider = new IsTrueProvider();
+		$callable = array($provider,'returnTrue');
+		AnObject::attach('returnTrue',$callable);
+		$anObject = new AnObject();
+		$this->assertTrue($anObject->returnTrue());
+		$this->assertEquals($callable,AnObject::attached('returnTrue'));
+	}
+	
 	function testAttachPlainFunction() {
 		AnObject::attach('returnTrue','returnTruePlain');
 		$anObject = new AnObject();

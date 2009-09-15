@@ -1,5 +1,5 @@
 <?php 
-Layout::extend('master');
+Layout::extend('layouts/master');
 $title = 'Welcome to Recess!';
 ?>
 <div class="span-24 last">

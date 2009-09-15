@@ -373,10 +373,12 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 						$criterion->value = $criterion->value == true ? 1 : 0;
 						break;
 					case RecessType::INTEGER:
-						if(!is_numeric($criterion->value)) {
-							$criterion->value = null;
-						} else {
+						if(is_array($criterion->value)) {
+							break;
+						} else if (is_numeric($criterion->value)) {
 							$criterion->value = (int)$criterion->value;
+						} else {
+							$criterion->value = null;
 						}
 						break;
 					case RecessType::FLOAT:
@@ -393,11 +395,12 @@ class MysqlDataSourceProvider implements IPdoDataSourceProvider {
 		$arguments = $builder->getPdoArguments();
 		foreach($arguments as &$argument) {
 			// Begin workaround for PDO's poor numeric binding
-			$queryParameter = $argument->getQueryParameter();
-			if(is_numeric($queryParameter)) { continue; } 
-			// End Workaround
-			// Ignore parameters that aren't used in this $action (i.e. assignments in select)
 			$param = $argument->getQueryParameter();
+			if(is_numeric($param)) { continue; }
+			if(is_string($param) && strlen($param) > 0 && substr($param,0,1) !== ':') { continue; }
+			// End Workaround
+			
+			// Ignore parameters that aren't used in this $action (i.e. assignments in select)
 			if(''===$param || strpos($sql, $param) === false) { continue; } 
 			$statement->bindValue($param, $argument->value);
 		}

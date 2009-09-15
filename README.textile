@@ -13,8 +13,8 @@ h2. Installation Process
 # Unzip contents into your web documents path (i.e. public_html)
 # On a development machine make these directories writeable by PHP:
 ## apps/
-## recess/temp/
-## recess/sqlite/
+## data/temp/
+## data/sqlite/
 # Open recess-conf.php and set RecessConf::$defaultDatabase
 ## If using MySQL: Uncomment the 'mysql:...' line and fill in DBNAME/USER/PASS
 ## If using Sqlite: Uncomment the 'sqlite:...' line and name the database

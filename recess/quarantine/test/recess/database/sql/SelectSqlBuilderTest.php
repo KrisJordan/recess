@@ -48,6 +48,12 @@ class SelectSqlBuilderTest extends PHPUnit_Framework_TestCase  {
 		$this->assertEquals($this->builder->select(), $expected);
 	}
 	
+	function testWhereIn() {
+		$this->builder->from('table')->in('id', array(1, 2, 3, 4));
+		$expected = 'SELECT * FROM `table` WHERE `table`.`id` IN (1,2,3,4)';
+		$this->assertEquals($this->builder->select(), $expected);
+	}
+	
 	function testOrderByFail() {
 		$this->builder->orderBy('name ASC');
 		try {

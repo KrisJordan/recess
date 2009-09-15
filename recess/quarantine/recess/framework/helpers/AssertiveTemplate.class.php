@@ -65,7 +65,7 @@ abstract class AssertiveTemplate {
 	public static function includeTemplate($__assertive_template__, $context) {
 		$__assertive_template__ = self::$paths->find($__assertive_template__);
 		if($__assertive_template__ === false) {
-			throw new Exception('Could not locate AssertiveTemplate: ' . $templateFile);
+			throw new Exception('Could not locate AssertiveTemplate: ' . $__assertive_template__);
 		}
 		// Unset 'context' if it isn't a key in $context
 		if(isset($context['context'])) {

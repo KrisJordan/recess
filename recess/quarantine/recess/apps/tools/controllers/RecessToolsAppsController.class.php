@@ -99,10 +99,8 @@ class RecessToolsAppsController extends Controller {
 		$this->messages[] = $this->tryGeneratingFile('Home Template', $this->application->codeTemplatesDir . 'scaffolding/views/home/index.template.php', $appDir . '/views/home/index.html.php', $appReplacements);
 		$this->messages[] = $this->tryGeneratingFile('Master Layout', $this->application->codeTemplatesDir . 'scaffolding/views/master.layout.template.php', $appDir . '/views/layouts/master.layout.php', $appReplacements);
 		
-		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public', 'public');
-		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public/css', 'css');
-		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public/js', 'javascript');
-		$this->messages[] = $this->tryCreatingDirectory($appDir . '/public/img', 'images');
+		$scaffolding_dir = $this->application->codeTemplatesDir . 'scaffolding';
+		$this->messages[] = $this->tryCopyDirectory($scaffolding_dir . '/public', $appDir . '/public');
 	}
 	
 	private function tryCreatingDirectory($path, $name) {
@@ -113,6 +111,33 @@ class RecessToolsAppsController extends Controller {
 			$message .= 'ok.';
 		} catch (Exception $e) {
 			if(file_exists($path)) $message .= ' already exists.';
+			else $message .= 'failed.';
+		}
+		return $message;
+	}
+	
+	/**
+	 * Copy all files and directories (recursive) to another directory
+	 */
+	private function tryCopyDirectory($src, $dst) {
+		$message = '';
+		try { 
+			$message = 'Copying ' . $src . ' dir to ' . $dst . ' ... ';
+			$dir = opendir($src); 
+			mkdir($dst); 
+			while(false !== ( $file = readdir($dir))) {
+				if (( $file != '.' ) && ( $file != '..' )) {
+					if ( is_dir($src . '/' . $file) ) {
+						self::tryCopyDirectory($src . '/' . $file,$dst . '/' . $file);
+					} else {
+						copy($src . '/' . $file,$dst . '/' . $file);
+					}
+				}
+			}
+			closedir($dir);
+		} catch (Exception $e) {
+			if(file_exists($dst)) $message .= ' already exists.';
+			else if(!is_dir($src)) $message .= ', source directory does not exist.';
 			else $message .= 'failed.';
 		}
 		return $message;

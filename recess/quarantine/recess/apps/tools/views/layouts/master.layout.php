@@ -27,7 +27,7 @@ Layout::input($scripts, 'Block', new HtmlBlock());
 			}
 		</script>
 		<?php echo $scripts ?>
-		<title>Recess Tools!<?php echo $title; ?></title>
+		<title>Recess Tools! - <?php echo $title; ?></title>
 	</head>
 	<body>
 	<div class="container">

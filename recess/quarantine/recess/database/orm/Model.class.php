@@ -491,6 +491,13 @@ abstract class Model extends Object implements ISqlConditions {
 	 */
 	function isNotNull($column) { return $this->select()->isNotNull($column); }
 	
+	/**
+	 * SQL IN criteria
+	 * @param string $column Column name
+	 * @param array $values An array of values to test
+	 * @return PdoDataSet
+	 */
+	function in($column, $values) { return $this->select()->in($column,$values); }
 }
 
 /**

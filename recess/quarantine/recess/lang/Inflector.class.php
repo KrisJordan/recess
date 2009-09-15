@@ -64,7 +64,9 @@ class Inflector {
 	 * @return string in ProperCapsForm
 	 */
 	public static function toProperCaps($word) {
-		return ucfirst(self::toCamelCaps($word));
+		$word = explode('_', trim($word, '_'));
+		$word = array_map('ucfirst', $word);
+		return implode('', $word);
 	}
 	
 	/**
@@ -77,13 +79,7 @@ class Inflector {
 	 * @return string camelCapsForm
 	 */
 	public static function toCamelCaps($word) {
-		$word = preg_replace_callback(
-			'/_([a-z])/', 
-			create_function(
-	            '$matches',
-	            'return ucfirst($matches[1]);'
-	        ),
-			$word);
+		$word = self::toProperCaps($word);
 		$word[0] = strtolower($word[0]);
 		return $word;
 	}
@@ -95,15 +91,17 @@ class Inflector {
 	 * @return string underscores_form
 	 */
 	public static function toUnderscores($word) {
-		$word[0] = strtolower($word[0]);
-		$word = preg_replace_callback(
-					'/([A-Z])/', 
-					create_function(
-			            '$matches',
-			            'return \'_\' . strtolower($matches[0]);'
-			        ),
-					$word);
-		return $word;
+		return strtolower(
+			preg_replace('/_+/', '_',
+				trim(
+					preg_replace(
+						'/[A-Z]/',
+						"_\\0",
+						$word
+					),
+				'_')
+			)
+		);
 	}
 	
 	/**
@@ -113,14 +111,10 @@ class Inflector {
 	 * @return string in English Form
 	 */
 	public static function toEnglish($word) {
-		$word = preg_replace_callback(
-					'/(?:(^.)|_([a-z])|([A-Z]))/', 
-					create_function(
-			            '$matches',
-			            'return \' \' . strtoupper(array_pop($matches));'
-			        ),
-					$word);
-		return substr($word, 1);
+		$word = Inflector::toUnderscores($word);
+		$word = explode('_', $word);
+		$word = array_map('ucfirst', $word);
+		return implode(' ', $word);
 	}
 }
 

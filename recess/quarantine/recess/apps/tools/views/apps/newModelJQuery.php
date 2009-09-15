@@ -1,6 +1,6 @@
 <script language="javascript">
 	window.onload = function() {
-		dp.SyntaxHighlighter.ClipboardSwf = '<?php echo $_ENV['url.content']; ?>flash/clipboard.swf';
+		dp.SyntaxHighlighter.ClipboardSwf = '<?php echo $_ENV['url.assetbase']; ?>flash/clipboard.swf';
 		dp.SyntaxHighlighter.HighlightAll('code');
 		
 		function addField() {

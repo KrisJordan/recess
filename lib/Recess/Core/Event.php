@@ -1,5 +1,6 @@
 <?php
-namespace recess\lang;
+namespace Recess\Core;
+
 /**
  * When something important happens, let others know with an Event.
  * 
@@ -13,7 +14,7 @@ namespace recess\lang;
  * One Callback, With No Arguments
  * -------------------------------
  * $onLoad = new Event();
- * $onLoad->call(function() { echo 'Event triggered!'; });
+ * $onLoad->callback(function() { echo 'Event triggered!'; });
  * echo 'Calling onLoad...';
  * $onLoad();
  * // Output: Calling onLoad... Event triggered!
@@ -21,8 +22,8 @@ namespace recess\lang;
  * Many Callbacks
  * --------------
  * $onLoad = new Event();
- * $onLoad->call(function() { echo 'First callback. '; })
- *        ->call(function() { echo 'Second callback.'; });
+ * $onLoad->callback(function() { echo 'First callback. '; })
+ *        ->callback(function() { echo 'Second callback.'; });
  * $onLoad();
  * // Output: First callback. Second callback.
  * // Note: Though callables are called FIFO, this is not a behavior that
@@ -31,14 +32,14 @@ namespace recess\lang;
  * Using Arguments
  * ---------------
  * $onSavePerson = new Event();
- * $onSavePerson->call(function($person) { echo 'Saving '.$person->name.'!'; });
+ * $onSavePerson->callback(function($person) { echo 'Saving '.$person->name.'!'; });
  * $aPerson = new Person('Kris');
  * $onSavePerson($aPerson);
  * // Output: Saving Kris!
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
  * @since Recess 5.3
- * @copyright RecessFramework.org 2009
+ * @copyright RecessFramework.org 2009, 2010
  * @license MIT
  */
 class Event {
@@ -51,8 +52,11 @@ class Event {
 	 * @param $callable Callable to be called when event occurs.
 	 * @return Event
 	 */
-	function call($callable) {
-		$this->callbacks[] = $callable;
+	function callback($callback) {
+		if(!is_callable($callback)) {
+			throw new \Exception("Event's constructor requires an is_callable value.");
+		}
+		$this->callbacks[] = $callback;
 		return $this;
 	}
 	
@@ -71,25 +75,30 @@ class Event {
 	function __invoke() {
 		if(!empty($this->callbacks)) {
 			$args = func_get_args();
-			$count = count($args);
-			switch($count) {
-				case 0: 
-					foreach($this->callbacks as $closure) {$closure();} break;
-				case 1: 
-					foreach($this->callbacks as $closure) {$closure($args[0]);} break;
-				case 2: 
-					foreach($this->callbacks as $closure) {$closure($args[0], $args[1]);} break;
-				case 3: 
-					foreach($this->callbacks as $closure) {$closure($args[0], $args[1], $args[2]);} break;
-				case 4: 
-					foreach($this->callbacks as $closure) {$closure($args[0], $args[1], $args[2], $args[3]);} break;
-				case 5: 
-					foreach($this->callbacks as $closure) {$closure($args[0], $args[1], $args[2], $args[3], $args[4]);} break;
-				default:
-					foreach($this->callbacks as $closure) {
-						call_user_func_array($closure, $args);
-					}
+			foreach($this->callbacks as $callback) {
+				call_user_func_array($callback, $args);
 			}
 		}
+		return $this;
+	}
+	
+	/**
+	 * Helper method alias for __invoke() that can be chained.
+	 * 
+	 * @see Event::__invoke
+	 * @return any
+	 */
+	function call() {
+		return call_user_func_array(array($this,'__invoke'), func_get_args());
+	}
+	
+	/**
+	 * Call with an array of arguments rather than an argument list.
+	 * 
+	 * @param array $arguments
+	 * @return any
+	 */
+	function apply($arguments = array()) {
+		return call_user_func_array(array($this,'__invoke'), $arguments);
 	}
 }

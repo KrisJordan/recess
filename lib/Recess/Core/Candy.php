@@ -1,5 +1,6 @@
 <?php
-namespace recess\lang;
+namespace Recess\Core;
+
 /**
  * Turn callables into delicious Candy.
  * Candied callables that can be wrapped in the all the decorators you desire.
@@ -52,34 +53,15 @@ namespace recess\lang;
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
  * @since Recess 5.3
- * @copyright RecessFramework.org 2009
+ * @copyright RecessFramework.org 2009, 2010
  * @license MIT
  */
-class Candy {
-	
-	/**
-	 * @var Closure or Callable
-	 */
-	protected $callable;
+class Candy extends Callable {
 	
 	/**
 	 * @var array
 	 */
 	protected $wrappers = array();
-	
-	/**
-	 * Turn a callable into Candy with the constructor.
-	 * 
-	 * @param $callable Callable the function being wrapped.
-	 * @return Candy
-	 */
-	function __construct($callable) {
-		if(is_callable($callable)) {
-			$this->callable = $callable;
-		} else {
-			throw new \Exception('Candy can only be used on callables.');
-		}
-	}
 	
 	/**
 	 * Wrap the candy with a callback wrapper. The wrapper's first parameter
@@ -100,7 +82,7 @@ class Candy {
 	 * __invoke begins the unwrapping of candy with any callablees that wrap
 	 * the candied callable.
 	 * 
-	 * @return variable
+	 * @return any
 	 */
 	function __invoke() {
 		$args = func_get_args();
@@ -108,20 +90,7 @@ class Candy {
 		// Base case optimization
 		// 	If there are no wrappers, let's have some candy!
 		if(empty($this->wrappers)) {
-			$callable = $this->callable;
-			if(is_string($callable) || $callable instanceof \Closure) {
-				switch(count($args)) {
-					case 0:	return $callable();
-					case 1:	return $callable($args[0]);
-					case 2: return $callable($args[0],$args[1]);
-					case 3: return $callable($args[0],$args[1],$args[2]);
-					case 4: return $callable($args[0],$args[1],$args[2],$args[3]);
-					case 5: return $callable($args[0],$args[1],$args[2],$args[3],$args[4]);
-					default: return call_user_func_array($callable,$args);
-				}
-			} else {
-				return call_user_func_array($callable, $args);
-			}
+			return call_user_func_array('parent::__invoke', $args);
 		} else {
 			$wrappers = $this->wrappers;
 		}
@@ -140,10 +109,12 @@ class Candy {
 				$isCandy = false;
 			}
 			
+			$argOffset = 0;
 			if(!$isCandy) {
 				$isCandy = true;
 				if($next !== false) {
 					array_unshift($args, $unwrap);
+					$argOffset = 1;
 				}
 			} else {
 				// We've reached the candy
@@ -151,20 +122,8 @@ class Candy {
 					array_shift($args);
 				}
 			}
-			
-			if(is_string($current) || $current instanceof \Closure) {
-				switch(count($args)) {
-					case 0:	return $current();
-					case 1:	return $current($args[0]);
-					case 2: return $current($args[0],$args[1]);
-					case 3: return $current($args[0],$args[1],$args[2]);
-					case 4: return $current($args[0],$args[1],$args[2],$args[3]);
-					case 5: return $current($args[0],$args[1],$args[2],$args[3],$args[4]);
-					default: return call_user_func_array($current,$args);
-				}
-			} else {
-				return call_user_func_array($current, $args);
-			} 
+						
+			return call_user_func_array($current, $args);
 		};
 		
 		do {

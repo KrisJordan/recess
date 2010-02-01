@@ -1,16 +1,22 @@
 <?php
-namespace recess\lang;
+namespace Recess\Core;
 
-require __DIR__.'/Event.class.php';
-require __DIR__.'/Candy.class.php';
+DEFINE('NAMESPACE_SEPARATOR','\\');
+
+require __DIR__.'/Event.php';
+require __DIR__.'/Callable.php';
+require __DIR__.'/Candy.php';
 
 /**
  * ClassLoader is a simple autoloader for including class files. Class files
- * end with a '.class.php' extension and classes must share the same name as
+ * end with a '.php' extension and classes must share the same name as
  * their containing class file. ClassLoader can be used in conjunction with 
  * the SPL autoloader chain. Its load function can be candied and wrapped 
  * with wrapLoad(). After successfully loading a class it will trigger the 
  * onLoad event.
+ * 
+ * ClassLoader implements http://groups.google.com/group/php-standards/web/psr-0-final-proposal
+ * for painless interoperability with other PHP libraries.
  * 
  * Usage:
  * spl_autoload_register(array('recess\core\ClassLoader','load'));
@@ -35,7 +41,7 @@ require __DIR__.'/Candy.class.php';
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
  * @since Recess 5.3
- * @copyright RecessFramework.org 2009
+ * @copyright RecessFramework.org 2009, 2010
  * @license MIT
  */
 abstract class ClassLoader {
@@ -43,7 +49,7 @@ abstract class ClassLoader {
 	/**
 	 * @var string
 	 */
-	public static $extension = '.class.php';
+	public static $extension = '.php';
 	
 	/**
 	 * @var recess\core\Event
@@ -109,15 +115,36 @@ abstract class ClassLoader {
 		if(self::$loader === null) {
 			$onLoad = self::onLoad();
 			$extension = self::$extension;
-			self::$loader = function($class) use (&$onLoad, &$extension) {
-				if(!class_exists($class)) {
-					$classFile = str_replace('\\','/',$class).$extension;
-					include $classFile;
-					$onLoad($class);
+			self::$loader = function($fullyQualifiedClass) use (&$onLoad, &$extension) {
+				if(class_exists($fullyQualifiedClass, false)) { return true; }
+								
+				$class = $fullyQualifiedClass;
+				$namespace = '';
+				
+				$lastNamespaceSeparator = strripos($fullyQualifiedClass, NAMESPACE_SEPARATOR);
+				if($lastNamespaceSeparator !== false) {
+					$namespace = substr($fullyQualifiedClass, 0, $lastNamespaceSeparator + 1);
+                	$class = substr($fullyQualifiedClass, $lastNamespaceSeparator + 1);
 				}
-				return true;
+				
+				$classFile = str_replace(NAMESPACE_SEPARATOR, DIRECTORY_SEPARATOR, $namespace) .
+							 str_replace('_', DIRECTORY_SEPARATOR, $class) .
+							 $extension;
+				
+				if(file_exists($classFile) && is_readable($classFile)) {
+					require $classFile;
+				} else {
+					return false;
+				}
+
+				if(class_exists($fullyQualifiedClass, false)) {
+					$onLoad($fullyQualifiedClass);
+					return true;
+				} else {
+					throw new \Exception("'$classFile' does not contain definition for $class.");
+				}
 			};
-		}		
+		}
 		return self::$loader;
-	}
+	}	
 }

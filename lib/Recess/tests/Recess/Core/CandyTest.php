@@ -1,11 +1,11 @@
 <?php
 require_once 'PHPUnit/Framework.php';
 
-include_once __DIR__ . '/../../../recess/lang/Candy.class.php';
-use recess\lang\Candy;
+include_once __DIR__ . '/../../../../Recess/Core/Candy.php';
+use recess\core\Candy;
 
 class CandyTest extends PHPUnit_Framework_TestCase {
-	
+
 	function testConstructor() {
 		$candy = new Candy(function() { return 'Hello world!'; });
 		$this->assertEquals('Hello world!',$candy());
@@ -42,10 +42,6 @@ class CandyTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, $candy(1));
 		
 		$candy = new Candy(function($num) { return $num; });
-		$candy->wrap(function($candy, &$num) { $num += 1; return $candy(); });
-		$this->assertEquals(2, $candy(1));
-		
-		$candy = new Candy(function($num) { return $num; });
 		$candy->wrap(function($candy, $num) { $num += 1; return $candy($num); });
 		$this->assertEquals(2, $candy(1));
 	}
@@ -65,11 +61,11 @@ class CandyTest extends PHPUnit_Framework_TestCase {
 	
 	function testLazyLinks() {
 		$candy = new Candy(function($num) { return $num + 1; });
-		$candy->wrap(function($candy, &$num) { $num += 1; })
+		$candy->wrap(function($candy, $num) { return $candy($num+1); })
 			  ->wrap(function($candy, $num) { /* echo or log something */ });
 		$this->assertEquals(3, $candy(1));
 	}
-	
+
 	function testNonCallableException() {
 		try {
 			$candy = new Candy('unknownFunc');

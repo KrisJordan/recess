@@ -117,7 +117,7 @@ abstract class ClassLoader {
 			$extension = self::$extension;
 			self::$loader = function($fullyQualifiedClass) use (&$onLoad, &$extension) {
 				if(class_exists($fullyQualifiedClass, false)) { return true; }
-								
+
 				$class = $fullyQualifiedClass;
 				$namespace = '';
 				
@@ -131,17 +131,23 @@ abstract class ClassLoader {
 							 str_replace('_', DIRECTORY_SEPARATOR, $class) .
 							 $extension;
 				
-				if(file_exists($classFile) && is_readable($classFile)) {
-					require $classFile;
-				} else {
-					return false;
+				$paths = explode(PATH_SEPARATOR, get_include_path());
+				$found = false;
+				foreach($paths as $path) {
+					$classFilePath = $path.DIRECTORY_SEPARATOR.$classFile;
+					if(file_exists($classFilePath) && is_readable($classFilePath)) {
+						$found = true;
+						require $classFilePath;
+					}
 				}
-
-				if(class_exists($fullyQualifiedClass, false)) {
-					$onLoad($fullyQualifiedClass);
-					return true;
+				if($found === false) return false;
+				
+				$onLoad($fullyQualifiedClass);
+				return true;
+				if(class_exists($fullyQualifiedClass, false) 
+					|| interface_exists($fullyQualifiedClass, false)) {
 				} else {
-					throw new \Exception("'$classFile' does not contain definition for $class.");
+					throw new \Exception("'$classFile' does not contain a definition of $class.");
 				}
 			};
 		}

@@ -1,26 +1,25 @@
 <?php
 namespace Recess\Core;
+/** @addtogroup Core *//** @{ */
 
-/**
+/** 
  * When something important happens, let others know with an Event.
  * 
  * Events are a variation on the delegate/observable pattern. Events pass
  * their arguments to any callables who register to be called back when the
  * event is triggered.
  * 
- * =========
- *   Usage
- * =========
  * One Callback, With No Arguments
- * -------------------------------
+ * @code
  * $onLoad = new Event();
  * $onLoad->callback(function() { echo 'Event triggered!'; });
  * echo 'Calling onLoad...';
  * $onLoad();
  * // Output: Calling onLoad... Event triggered!
+ * @endcode
  * 
  * Many Callbacks
- * --------------
+ * @code
  * $onLoad = new Event();
  * $onLoad->callback(function() { echo 'First callback. '; })
  *        ->callback(function() { echo 'Second callback.'; });
@@ -28,21 +27,24 @@ namespace Recess\Core;
  * // Output: First callback. Second callback.
  * // Note: Though callables are called FIFO, this is not a behavior that
  * //       should be relied upon.
+ * @endcode
  * 
  * Using Arguments
- * ---------------
+ * @code
  * $onSavePerson = new Event();
  * $onSavePerson->callback(function($person) { echo 'Saving '.$person->name.'!'; });
  * $aPerson = new Person('Kris');
  * $onSavePerson($aPerson);
  * // Output: Saving Kris!
+ * @endcode
  * 
  * @author Kris Jordan <krisjordan@gmail.com>
  * @since Recess 5.3
  * @copyright RecessFramework.org 2009, 2010
  * @license MIT
  */
-class Event {
+class Event implements ICallable {
+/** @} */
 	
 	protected $callbacks = array();
 	

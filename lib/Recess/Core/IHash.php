@@ -1,7 +1,9 @@
 <?php
 namespace Recess\Core;
+/** @addtogroup Core *//** @{ */
 
 interface IHash extends \ArrayAccess, \Countable, \Iterator, \IteratorAggregate {
+/** @} */
 	
 	/* Hash Specific Functions */
 	function toArray();

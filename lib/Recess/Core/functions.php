@@ -1,5 +1,6 @@
 <?php
 namespace Recess\Core;
+/** @addtogroup Core *//** @{ */
 
 function map($array, $mapFn) {
 	$results = array();
@@ -38,3 +39,4 @@ function filter($array, $filterFn) {
 	}
 	return $results;
 }
+/**@}*/

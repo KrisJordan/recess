@@ -1,7 +1,9 @@
 <?php
 require_once 'PHPUnit/Framework.php';
 
-include_once __DIR__ . '/../../../../Recess/Core/Callable.php';
+require_once __DIR__ . '/../../../Core/ICallable.php';
+require_once __DIR__ . '/../../../Core/Callable.php';
+
 use Recess\Core\Callable;
 
 class CallableTest extends PHPUnit_Framework_TestCase {

@@ -1,11 +1,13 @@
 <?php
 namespace Recess\Core;
+/** @addtogroup Core *//** @{ */
 
 DEFINE('NAMESPACE_SEPARATOR','\\');
 
+require __DIR__.'/ICallable.php';
 require __DIR__.'/Event.php';
 require __DIR__.'/Callable.php';
-require __DIR__.'/Candy.php';
+require __DIR__.'/Wrappable.php';
 
 /**
  * ClassLoader is a simple autoloader for including class files. Class files
@@ -39,12 +41,13 @@ require __DIR__.'/Candy.php';
  * $someClass = new Class;
  * // Output: Before load some\Class! some\Class loaded! After load some\Class!
  * 
- * @author Kris Jordan <krisjordan@gmail.com>
- * @since Recess 5.3
- * @copyright RecessFramework.org 2009, 2010
+ * @author Kris Jordan <http://krisjordan.com>
+ * @copyright RecessFramework.org 2008-2010
  * @license MIT
+ * @since Recess 5.3
  */
 abstract class ClassLoader {
+/** @} */
 	
 	/**
 	 * @var string
@@ -57,7 +60,7 @@ abstract class ClassLoader {
 	private static $onLoad = null;
 	
 	/**
-	 * @var recess\core\Candy or \Closure
+	 * @var recess\core\Wrappable or \Closure
 	 */
 	private static $loader = null;
 	
@@ -94,14 +97,14 @@ abstract class ClassLoader {
 	 * ClassLoader::wrapLoad(function($load,$class) { echo "loading $class"; $load($class); });
 	 * 
 	 * @param $wrapper
-	 * @return recess\core\Candy
+	 * @return recess\core\Wrappable
 	 */
 	static public function wrapLoad($wrapper) {
 		if(self::$loader === null) {
-			self::$loader = new Candy(self::loader());
+			self::$loader = new Wrappable(self::loader());
 		}
-		if(!self::$loader instanceof Candy) {
-			self::$loader = new Candy(self::$loader);
+		if(!self::$loader instanceof Wrappable) {
+			self::$loader = new Wrappable(self::$loader);
 		}
 		return self::$loader->wrap($wrapper);
 	}

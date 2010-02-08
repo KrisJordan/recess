@@ -4,6 +4,14 @@ require_once 'PHPUnit/Framework.php';
 include_once __DIR__ . '/../../../../Recess/Core/Hash.php';
 use Recess\Core\Hash;
 
+/** 
+ * @see Recess\Core\Hash
+ * 
+ * @author Kris Jordan <krisjordan@gmail.com>
+ * @since Recess 5.3
+ * @copyright RecessFramework.org 2008-2010
+ * @license MIT
+ */
 class HashTest extends PHPUnit_Framework_TestCase {
 	
 	function testEmptyConstructor() {
@@ -67,6 +75,47 @@ class HashTest extends PHPUnit_Framework_TestCase {
 			$this->assertEquals($key + 1, $value);
 		}
 		$this->assertEquals(4,$count);
+	}
+	
+	function testForeachIterator() {
+		$hash = new Hash(1,2,3,4);
+		$count = 0;
+		foreach($hash->getIterator() as $key => $value) {
+			$count += 1;
+			$this->assertEquals($key + 1, $value);
+		}
+		$this->assertEquals(4,$count);
+	}
+	
+	function testIsSet() {
+		$hash = new Hash(1,2,3,4);
+		$this->assertTrue(isset($hash[0]));
+		$this->assertFalse(isset($hash[4]));		
+	}
+	
+	function testOffsetGet() {
+		$hash = new Hash(1,2,3,4);
+		$this->assertEquals(1,$hash[0]);
+		$this->assertEquals(2,$hash[1]);
+		$this->assertEquals(3,$hash[2]);
+		$this->assertEquals(4,$hash[3]);
+	}
+	
+	function testOffsetSet() {
+		$hash = new Hash();
+		$this->assertEquals(0,count($hash));
+		$hash[0] = 1;
+		$this->assertEquals(1,count($hash));
+		$this->assertEquals(1,$hash[0]);
+	}
+	
+	function testOffsetUnset() {
+		$hash = new Hash(1);
+		$this->assertEquals(1,count($hash));
+		$this->assertEquals(1,$hash[0]);
+		unset($hash[0]);
+		$this->assertEquals(0,count($hash));
+		$this->assertFalse(isset($hash[0]));
 	}
 	
 }

@@ -1,41 +1,39 @@
 <?php
-namespace Recess\Core;
+namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
 /**
- * Turns any PHP value which is_callable into a directly callable object. Note:
- * does not work with functions requiring arguments passed by reference.
+ * Turns any PHP value which is_callable into an invocable object/closure with call() and apply() methods. 
  * 
- * =========
- *   Usage
- * =========
- * function foo() { echo "bar\n"; }
- * $callable = new Callable('foo');
- * $callable(); // bar
- * $callable->call(); // bar
- * $callable->apply(array()); // bar
+ * Note: Callable does not support passing arguments by-reference.
  * 
- * function fooz($bar) { echo "$bar\n"; }
- * $callable = new Callable('fooz');
- * $callable('baz'); // baz
- * $callable->call('baz'); // baz
- * $callable->apply(array('baz')); // baz
+ * @include examples/Recess/Core/Callable.php
  * 
- * @author Kris Jordan <krisjordan@gmail.com>
+ * To run the example code from the command line: 
+ * @code php lib/Recess/examples/Recess/Core/Callable.php @endcode
+ * 
+ * @author Kris Jordan <http://www.krisjordan.com>
+ * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
  * @since Recess 5.3
- * @copyright RecessFramework.org 2009, 2010
- * @license MIT
  */
-class Callable {
+class Callable implements ICallable {
+/** @} */
 	
+	/** The is_callable value being wrapped. */
 	protected $callable;
 
 	/**
-	 * The $callable argument must return true to PHP's is_callable. Styles accepted:
-	 * 	'string' => Stand-alone function.
-	 * 	array($object,'method') => Instance method.
-	 *  array('Class','method') => Static method.
-	 *  function(){} => Closure / lambda.
-	 *  $object => An object that implements an __invoke function.
+	 * Constructor's argument requires an is_callable() value. 
+	 * 
+	 * Values accepted:
+	 * 
+	 * @code
+	 * 'string'                ;// User or PHP function
+	 * array($object,'method') ;// Instance method
+	 * array('Class','method') ;// Static method
+	 * 'Class::method'         ;// Static method
+	 * function(){}            ;// Closure
+	 * $object                 ;// Object with an __invoke method
+	 * @endcode
 	 *  
 	 * @param is_callable $callable
 	 */
@@ -47,34 +45,43 @@ class Callable {
 	}
 	
 	/**
-	 * Magic method which invokes the callable using all arguments passed in.
+	 * Magic method that invokes the is_callable() value the instance was constructed with.
 	 * 
-	 * @param variable
-	 * @return any
+	 * @code
+	 * $printf = new Callable('printf');
+	 * $printf("Hello world"); // Magic for: $printf->__invoke("Hello world"); 
+	 * @endcode
+	 * 
+	 * @param ... Arguments expected by the is_callable the Callable was constructed with.
+	 * @return mixed
 	 */
 	function __invoke() {
 		$callable = $this->callable;
 		return call_user_func_array($callable,func_get_args());
 	}
-	
+
 	/**
-	 * Helper method alias for __invoke() that can be chained.
+	 * An alias of __invoke() called with an array of arguments.
 	 * 
-	 * @see Callable::__invoke
-	 * @return any
-	 */
-	function call() {
-		return call_user_func_array(array($this,'__invoke'), func_get_args());
-	}
-	
-	/**
-	 * Call with an array of arguments rather than an argument list.
+	 * @code $add->apply(array(1,2)); @endcode
 	 * 
 	 * @param array $arguments
-	 * @return any
+	 * @return mixed
 	 */
 	function apply($arguments = array()) {
 		return call_user_func_array(array($this,'__invoke'), $arguments);
+	}
+	
+	/**
+	 * An alias of __invoke(). 
+	 * 
+	 * @code $add->call(1,2); @endcode
+	 * 
+	 * @param ... Arguments expected by the is_callable the Callable was constructed with.
+	 * @return mixed
+	 */
+	function call() {
+		return call_user_func_array(array($this,'__invoke'), func_get_args());
 	}
 	
 }

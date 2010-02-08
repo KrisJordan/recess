@@ -2,7 +2,7 @@
 namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
 /**
- * Turns any PHP value which is_callable into an invocable object/closure with call() and apply() methods. 
+ * Turns any PHP value which is_callable() into an invocable object/closure with call() and apply() methods. 
  * 
  * Note: Callable does not support passing arguments by-reference.
  * 
@@ -13,7 +13,7 @@ namespace Recess\Core; /** @addtogroup Core *//** @{ */
  * 
  * @author Kris Jordan <http://www.krisjordan.com>
  * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
- * @since Recess 5.3
+ * @since Recess PHP Framework 5.3
  */
 class Callable implements ICallable {
 /** @} */
@@ -73,7 +73,7 @@ class Callable implements ICallable {
 	}
 	
 	/**
-	 * An alias of __invoke(). 
+	 * An alias of __invoke().
 	 * 
 	 * @code $add->call(1,2); @endcode
 	 * 

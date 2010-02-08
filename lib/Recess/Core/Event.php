@@ -1,75 +1,24 @@
 <?php
-namespace Recess\Core;
-/** @addtogroup Core *//** @{ */
+namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
 /** 
- * When something important happens, let others know with an Event.
+ * A lightweight, functional variation on the delegate/observable pattern. 
+ * Events pass their arguments to any callables registered with callback() 
+ * when the Event is triggered.
  * 
- * Events are a variation on the delegate/observable pattern. Events pass
- * their arguments to any callables who register to be called back when the
- * event is triggered.
+ * @include examples/Recess/Core/Event.php
  * 
- * One Callback, With No Arguments
- * @code
- * $onLoad = new Event();
- * $onLoad->callback(function() { echo 'Event triggered!'; });
- * echo 'Calling onLoad...';
- * $onLoad();
- * // Output: Calling onLoad... Event triggered!
- * @endcode
+ * To run the example code from the command line:
+ * @code php lib/Recess/examples/Recess/Core/Event.php @endcode
  * 
- * Many Callbacks
- * @code
- * $onLoad = new Event();
- * $onLoad->callback(function() { echo 'First callback. '; })
- *        ->callback(function() { echo 'Second callback.'; });
- * $onLoad();
- * // Output: First callback. Second callback.
- * // Note: Though callables are called FIFO, this is not a behavior that
- * //       should be relied upon.
- * @endcode
- * 
- * Using Arguments
- * @code
- * $onSavePerson = new Event();
- * $onSavePerson->callback(function($person) { echo 'Saving '.$person->name.'!'; });
- * $aPerson = new Person('Kris');
- * $onSavePerson($aPerson);
- * // Output: Saving Kris!
- * @endcode
- * 
- * @author Kris Jordan <krisjordan@gmail.com>
- * @since Recess 5.3
- * @copyright RecessFramework.org 2009, 2010
- * @license MIT
+ * @author Kris Jordan <http://www.krisjordan.com>
+ * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
+ * @since Recess PHP Framework 5.3
  */
 class Event implements ICallable {
 /** @} */
 	
 	protected $callbacks = array();
-	
-	/**
-	 * Register a callback with an event.
-	 * 
-	 * @param $callable Callable to be called when event occurs.
-	 * @return Event
-	 */
-	function callback($callback) {
-		if(!is_callable($callback)) {
-			throw new \Exception("Event's constructor requires an is_callable value.");
-		}
-		$this->callbacks[] = $callback;
-		return $this;
-	}
-	
-	/**
-	 * Return the array of registered callbacks.
-	 * 
-	 * @return array of callables
-	 */
-	function callbacks() {
-		return $this->callbacks;
-	}
 	
 	/**
 	 * Call each callback with arguments passed to __invoke 
@@ -85,22 +34,46 @@ class Event implements ICallable {
 	}
 	
 	/**
-	 * Helper method alias for __invoke() that can be chained.
+	 * An alias of __invoke() called with an array of arguments.
+	 * 
+	 * @param array $arguments
+	 * @return mixed
+	 */
+	function apply($arguments = array()) {
+		return call_user_func_array(array($this,'__invoke'), $arguments);
+	}
+		
+	/**
+	 * An alias of __invoke().
 	 * 
 	 * @see Event::__invoke
-	 * @return any
+	 * @return mixed
 	 */
 	function call() {
 		return call_user_func_array(array($this,'__invoke'), func_get_args());
 	}
 	
 	/**
-	 * Call with an array of arguments rather than an argument list.
+	 * Register a callback with the event.
 	 * 
-	 * @param array $arguments
-	 * @return any
+	 * @param is_callable $callback to be called when the event is triggered.
+	 * @return Event
 	 */
-	function apply($arguments = array()) {
-		return call_user_func_array(array($this,'__invoke'), $arguments);
+	function callback($callback) {
+		if(!is_callable($callback)) {
+			throw new \Exception("Event's constructor requires an is_callable value.");
+		}
+		$this->callbacks[] = $callback;
+		return $this;
 	}
+	
+	/**
+	 * Return the array of registered callbacks.
+	 * 
+	 * @return array
+	 */
+	function callbacks() {
+		return $this->callbacks;
+	}
+
 }

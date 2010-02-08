@@ -1,6 +1,5 @@
 <?php
-namespace Recess\Core;
-/** @addtogroup Core *//** @{ */
+namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
 DEFINE('NAMESPACE_SEPARATOR','\\');
 
@@ -10,17 +9,21 @@ require __DIR__.'/Callable.php';
 require __DIR__.'/Wrappable.php';
 
 /**
- * ClassLoader is a simple autoloader for including class files. Class files
- * end with a '.php' extension and classes must share the same name as
- * their containing class file. ClassLoader can be used in conjunction with 
- * the SPL autoloader chain. Its load function can be candied and wrapped 
- * with wrapLoad(). After successfully loading a class it will trigger the 
- * onLoad event.
+ * An SPL class loader for automatically including class and interface files. 
  * 
  * ClassLoader implements http://groups.google.com/group/php-standards/web/psr-0-final-proposal
  * for painless interoperability with other PHP libraries.
  * 
- * Usage:
+ * Class files end with a '.php' extension and classes must share the same name as
+ * their containing class file. 
+ * 
+ * ClassLoader can be used in conjunction with the SPL autoloader chain. 
+ * Its load function can be wrapped with wrapLoad(). After successfully loading 
+ * a class or interface it will trigger the onLoad event.
+ * 
+ * Example usage:
+ * 
+ * @code
  * spl_autoload_register(array('recess\core\ClassLoader','load'));
  * use recess\core\ClassLoader;
  * // Register a call back with the onLoad Event
@@ -40,34 +43,46 @@ require __DIR__.'/Wrappable.php';
  * use some\Class;
  * $someClass = new Class;
  * // Output: Before load some\Class! some\Class loaded! After load some\Class!
+ * @endcode
  * 
- * @author Kris Jordan <http://krisjordan.com>
- * @copyright RecessFramework.org 2008-2010
- * @license MIT
- * @since Recess 5.3
+ * @author Kris Jordan <http://www.krisjordan.com>
+ * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
+ * @since Recess PHP Framework 5.3
  */
 abstract class ClassLoader {
 /** @} */
 	
-	/**
-	 * @var string
-	 */
-	public static $extension = '.php';
+	/** @var string */
+	private static $extension = '.php';
 	
-	/**
-	 * @var recess\core\Event
-	 */
+	/** @var Recess\Core\Event */
 	private static $onLoad = null;
 	
-	/**
-	 * @var recess\core\Wrappable or \Closure
-	 */
+	/** @var Recess\Core\Wrappable or \Closure */
 	private static $loader = null;
+
+	/**
+	 * Load a class by passing a fully qualified classname.
+	 * @param $class string fully qualified classname
+	 * @return boolean
+	 */
+	static public function load($class) {
+		if(self::$loader === null) {
+			$loader = self::loader();
+		} else {
+			$loader = self::$loader;
+		}
+		return $loader($class);
+	}	
 	
 	/**
-	 * Returns a reference to the onLoad Event for interested parties
-	 * to register callbacks with.
-	 * @return recess\core\Event
+	 * Returns a reference to the onLoad Event that callbacks can be registered on.
+	 * 
+	 * @code
+	 * ClassLoader::onLoad()->callback(function($class){echo "$class loaded!";});
+	 * @endcode
+	 * 
+	 * @return Event
 	 */
 	static public function onLoad() {
 		if(self::$onLoad === null) {
@@ -77,24 +92,12 @@ abstract class ClassLoader {
 	}
 	
 	/**
-	 * Load a class by passing a fully qualified classname.
-	 * @param $class string fully qualified classname
-	 * @return bool
-	 */
-	static public function load($class) {
-		if(self::$loader === null) {
-			$loader = self::loader();
-		} else {
-			$loader = self::$loader;
-		}
-		return $loader($class);
-	}
-	
-	/**
-	 * Load is candied and can be wrapped by passing a wrapper to this method.
+	 * Load is wrappable by passing a wrapper to this method.
 	 * The wrapper should have two parameters: $load and $class. Usage:
 	 * 
+	 * @code
 	 * ClassLoader::wrapLoad(function($load,$class) { echo "loading $class"; $load($class); });
+	 * @endcode
 	 * 
 	 * @param $wrapper
 	 * @return recess\core\Wrappable
@@ -146,9 +149,9 @@ abstract class ClassLoader {
 				if($found === false) return false;
 				
 				$onLoad($fullyQualifiedClass);
-				return true;
 				if(class_exists($fullyQualifiedClass, false) 
-					|| interface_exists($fullyQualifiedClass, false)) {
+				   || interface_exists($fullyQualifiedClass, false)) {
+					return true;
 				} else {
 					throw new \Exception("'$classFile' does not contain a definition of $class.");
 				}

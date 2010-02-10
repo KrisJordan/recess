@@ -3,15 +3,18 @@ namespace Recess\Core;
 /** @addtogroup Core *//** @{ */
 
 /**
- * An object-oriented PHP array with functional methods like map(),each(),filter(). 
+ * An object-oriented PHP array with higher-order methods like map(), each(), & filter(). 
  * Hash implements IHash (which extends ArrayAccess) so it can be used as an array.
- * IHash also implies higher order methods: 
+ * IHash also requires higher-order methods: 
  * 	- map()
  * 	- reduce()
  *	- each()
  *	- filter()
  * 
- * @include examples/Recess/Core/Wrappable.php
+ * @include examples/Recess/Core/Hash.php
+ * 
+ * To run this example code from the command line:
+ * @code php lib/Recess/examples/Recess/Core/Hash.php @endcode
  * 
  * @author Kris Jordan <http://krisjordan.com>
  * @copyright RecessFramework.org 2008-2010

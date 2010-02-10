@@ -18,10 +18,11 @@ namespace Recess\Core; /** @addtogroup Core *//** @{ */
 class Event implements ICallable {
 /** @} */
 	
+	/** Listeners registered to receive notice of the event trigger. */
 	protected $callbacks = array();
 	
 	/**
-	 * Call each callback with arguments passed to __invoke 
+	 * Trigger the event and call each callback with arguments passed to __invoke. 
 	 */
 	function __invoke() {
 		if(!empty($this->callbacks)) {

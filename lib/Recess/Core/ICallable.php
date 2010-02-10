@@ -1,8 +1,8 @@
 <?php
-namespace Recess\Core;
+namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
 interface ICallable {
-	
+/** @} */
 	/**
 	 * Magic method that invokes the is_callable() value the instance was constructed with.
 	 * 

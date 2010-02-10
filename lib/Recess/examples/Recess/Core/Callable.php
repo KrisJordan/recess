@@ -28,7 +28,11 @@ $foobaz();
 //> baz
 
 // ==== Closures
-$callable = new Callable(function($value = 'Closure') { print("$value!\n"); });
+$callable = new Callable(
+	function($value = 'Closure') { 
+		print("$value!\n"); 
+	}
+);
 $callable();
 //> Closure!
 

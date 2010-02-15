@@ -2,6 +2,13 @@
 namespace Recess\Core;
 /** @addtogroup Core *//** @{ */
 
+/**
+ * 
+ * @see ArrayAccess http://php.net/manual/class.arrayaccess.php
+ * @see Countable http://php.net/manual/class.countable.php
+ * @see Iterator http://php.net/manual/class.iterator.php
+ * @see IteratorAggregate http://php.net/manual/class.iteratoraggregate.php
+ */
 interface IHash extends \ArrayAccess, \Countable, \Iterator, \IteratorAggregate {
 /** @} */
 	

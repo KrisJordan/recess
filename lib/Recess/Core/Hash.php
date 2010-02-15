@@ -3,13 +3,8 @@ namespace Recess\Core;
 /** @addtogroup Core *//** @{ */
 
 /**
- * An object-oriented PHP array with higher-order methods like map(), each(), & filter(). 
- * Hash implements IHash (which extends ArrayAccess) so it can be used as an array.
- * IHash also requires higher-order methods: 
- * 	- map()
- * 	- reduce()
- *	- each()
- *	- filter()
+ * An object-oriented wrapper around PHP's array with higher-order methods like map(), 
+ * each(), & filter().
  * 
  * @include examples/Recess/Core/Hash.php
  * 
@@ -24,7 +19,6 @@ namespace Recess\Core;
 class Hash implements IHash {
 /** @} */
 	
-	/** @var array The PHP array the Hash wraps. */
 	protected $elements;
 	
 	/**
@@ -32,8 +26,8 @@ class Hash implements IHash {
 	 * with a first-class array.
 	 * 
 	 * @code
-	 * new Hash(array('key'=>'value'));
-	 * new Hash(1,2,3,4);
+	 * $hash = new Hash(array('key'=>'value'));
+	 * $hash = new Hash(1,2,3,4);
 	 * @endcode
 	 * 
 	 * @param $elements or list
@@ -43,38 +37,46 @@ class Hash implements IHash {
 		$this->elements = isset($arguments[1]) || !is_array($elements) ?
 			$arguments : $elements;
 	}
-	
-	/**
-	 * Convert the Hash into a PHP array.
-	 * @return array
-	 */
-	function toArray() {
-		return $this->elements;
-	}
-	
-	/**
-	 * Map a callable over the values in the hash.
+
+	/** 
+ 	 * Count all elements elements in a Hash with <code>count($hash)</code>. 
+	 * Implementation for the SPL <code>Countable</code> interface.
 	 * 
-	 * @param $callable
-	 * @return Hash
-	 */
-	function map($callable) {
-		return new Hash(map($this->elements,$callable));
-	}
-	
-	/**
-	 * Reduce the values of a hash to a single value using a callable.
+	 * @code
+	 * $hash = new Hash(1,2,3,4);
+	 * echo count($hash);
+	 * //> 4
+	 * @endcode
 	 * 
-	 * @param $callable
-	 * @param $identity The value to use if the Hash contains 1 or less element.
-	 * @return varies
+	 * @see http://php.net/manual/class.countable.php
+	 * 
+ 	 * @return int Number of elements in the Hash.
+ 	 */
+ 	function count() {
+ 		return count($this->elements);
+ 	}
+ 	
+	/**
+	 * Return the current element with <code>current($hash)</code>. 
+	 * Implementation for the SPL <code>Iterator</code> interface.
+	 * Also used internally during a <code>foreach</code> over elements in the Hash.
+	 * 
+	 * @see Iterator::current http://php.net/manual/iterator.current.php
+	 * 
+	 * @return mixed The value of the Hash's internal pointer points to.
 	 */
-	function reduce($callable, $identity) {
-		return reduce($this->elements, $callable, $identity);
+	function current() {
+		return current($this->elements);
 	}
 	
 	/**
-	 * Invoke a callable on each element of the hash.
+	 * Invoke a callable on each element of the Hash.
+	 * 
+	 * @code
+	 * $hash = new Hash(1,2,3,4);
+	 * $hash->each(function($elem) { echo "-$elem-"; });
+	 * //> -1--2--3--4-
+	 * @endcode
 	 * 
 	 * @param $callable 
 	 * @return Hash self referential for chaining.
@@ -85,14 +87,14 @@ class Hash implements IHash {
 	}
 	
 	/**
-	 * Returns a new hash consisting of the elements of the old hash
-	 * who, when passed to the callable, return true.
+	 * Return a Hash containing of the elements of the original Hash
+	 * who, when passed to the filter callable, return true.
 	 * 
-	 * Example:
 	 * @code
 	 * $hash = new Hash(1,2,3,4);
-	 * print_r($hash->filter(function($x) { return $x % 2 === 0; }));
-	 * // array ( 2, 4 )
+	 * $evens = $hash->filter(function($x) { return $x % 2 === 0; }));
+	 * var_export($evens);
+	 * //> array(2,4)
 	 * @endcode
 	 * 
 	 * @param $callable
@@ -103,90 +105,163 @@ class Hash implements IHash {
 	}
 	
 	/**
-	 * Implementation of \ArrayAccess interface that enables:
-	 * is_set($hash[0])
+	 * Return an external Iterator to traverse the elements of the Hash. Implementation
+	 * for PHP's IteratorAggregate interface.
 	 * 
-	 * @see \ArrayAccess::offsetExists
-	 * @param $offset
-	 * @return varies
+	 * @see IteratorAggregate http://php.net/manual/class.iteratoraggregate.php
+	 * 
+	 * @return Iterator http://php.net/manual/class.iterator.php
+	 */
+ 	function getIterator() {
+ 		return new \ArrayIterator($this->elements);
+ 	}
+	
+	/**
+	 * Return the key of the current element.
+	 * 
+	 * @see Iterator::key http://php.net/manual/iterator.key.php
+	 * 
+	 * @return scalar
+	 */
+ 	function key() {
+ 		return key($this->elements);
+ 	}
+	
+	/**
+	 * Return a Hash containing the return values of $callable called on
+	 * each element of the Hash.
+	 * 
+	 * @code
+	 * $hash = new Hash(1,2,3,4);
+	 * $doubled = $hash->map(function($elem) { return $elem * 2; });
+	 * var_export($doubled);
+	 * //> array(2,4,6,8);
+	 * @endcode
+	 * 
+	 * @param $callable
+	 * @return Hash
+	 */
+	function map($callable) {
+		return new Hash(map($this->elements,$callable));
+	}
+
+	/**
+	 * Move forward to the next element.
+	 * 
+	 * @see Iterator::next http://php.net/manual/iterator.next.php
+	 */
+ 	function next() {
+ 		next($this->elements);
+ 	}
+	
+	/**
+	 * Whether an offset exists. This method is executed when using isset() or empty().
+	 * 
+	 * @code
+	 * $hash = new Hash(1);
+	 * echo isset($hash[0]) ? "t" : "f";
+	 * //> t
+	 * echo isset($hash[1]) ? "t" : "f";
+	 * //> f
+	 * @endcode
+	 * 
+	 * @see ArrayAccess::offsetExists http://php.net/manual/arrayaccess.offsetexists.php
+	 * @param mixed $offset An offset to check for.
+	 * @return boolean
 	 */
 	function offsetExists($offset) {
 		return isset($this->elements[$offset]);
 	}
 	
 	/**
-	 * Implementation of \ArrayAccess interface that enables:
-	 * echo $hash[0];
+	 * Return the value at the specified offset. This method is executed when chicking if offset is empty().
 	 * 
-	 * @see \ArrayAccess::offsetGet
-	 * @param $offset
-	 * @return varies
+	 * @see ArrayAccess::offsetGet http://php.net/manual/arrayaccess.offsetget.php
+	 * @param mixed $offset The offset to retrieve.
+	 * @return mixed
 	 */
 	function offsetGet($offset) { 
 		return $this->elements[$offset];
 	}
 	
 	/**
-	 * Implementation of \ArrayAccess interface that enables:
-	 * $hash[0] = 1;
+	 * Assigns a value to the specified offset.
 	 * 
-	 * @see \ArrayAccess::offsetSet
-	 * @param $offset
-	 * @param $value
+	 * @code
+	 * $hash = new Hash();
+	 * $hash[0] = 1;
+	 * @endcode
+	 * 
+	 * @see ArrayAccess::offsetSet http://php.net/manual/arrayaccess.offsetset.php
+	 * @param $offset The offset to assign the value to.
+	 * @param $value The value to set.
 	 */
 	function offsetSet($offset, $value) {
 		$this->elements[$offset] = $value;
 	}
 	
 	/**
-	 * Implementation of \ArrayAccess interface that enables:
-	 * unset($hash[0]);
+	 * Unset an offset.
 	 * 
-	 * @see \ArrayAccess::offsetUnset
-	 * @param $offset
+	 * @code
+	 * $hash = new Hash(1);
+	 * unset($hash[0]);
+	 * echo isset($hash[0]) ? 't' : 'f';
+	 * //> f
+	 * @endcode
+	 * 
+	 * @see ArrayAccess::offsetUnset http://php.net/manual/arrayaccess.offsetunset.php
+	 * @param $offset The offset to unset.
 	 */
 	function offsetUnset($offset) {
 		unset($this->elements[$offset]);
+	}	
+	
+	/**
+	 * Reduce the values of a hash to a single value using a callable.
+	 * 
+	 * @code
+	 * $hash = new Hash(1,2,3,4);
+	 * $sum = $hash->reduce(function($a,$b){return $a + $b;},0);
+	 * echo $sum;
+	 * //> 10
+	 * @endcode
+	 * 
+	 * @param $callable The function combining elements of the hash.
+	 * @param $identity The value to use if the Hash contains 1 or less element.
+	 * @return mixed
+	 */
+	function reduce($callable, $identity) {
+		return reduce($this->elements, $callable, $identity);
 	}
 	
- 	/** 
- 	 * Implementation of \Countable interface that enables:
- 	 * count($hash);
- 	 * 
- 	 * @see \Countable::count
- 	 */
- 	function count() {
- 		return count($this->elements);
- 	}
- 	
-	/** @see \Iterator::current */
-	function current() {
-		return current($this->elements);
-	}
-	
-	/** @see \Iterator::key */
- 	function key() {
- 		return key($this->elements);
- 	}
- 	
- 	/** @see \Iterator::next */
- 	function next() {
- 		return next($this->elements);
- 	}
- 	
- 	/** @see \Iterator::rewind */
+	/**
+	 * Rewind the internal pointer to the first element of the Hash.
+	 * 
+	 * @see Iterator::rewind http://php.net/manual/iterator.rewind.php
+	 */
  	function rewind() {
  		return reset($this->elements);
  	}
- 	
- 	/** @see \Iterator::valid */
+	
+	/**
+	 * Return the elements of a Hash as a native PHP array.
+	 * 
+	 * @return array
+	 */
+	function toArray() {
+		return $this->elements;
+	}
+	
+ 	/**
+ 	 * Checks if the internal pointer's current position is valid. This method is called
+ 	 * after rewind() and next() to check if the current position is valid.
+ 	 * 
+ 	 * @see Iterator::valid http://php.net/manual/iterator.valid.php
+ 	 * 
+ 	 * @return boolean
+ 	 */
  	function valid() {
  		return key($this->elements) !== NULL;
  	}
- 	
- 	/* @see \IteratorAggregate::getIterator */
- 	function getIterator() {
- 		return new \ArrayIterator($this->elements);
- 	}
- 	
 }

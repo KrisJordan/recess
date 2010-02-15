@@ -74,9 +74,7 @@ function map($array, $callable) {
  * will be returned.
  * 
  * @code
- * var_export(
- * 	reduce(array(1,2,3,4), function($x,$y) { return $x + $y; }, 1)
- * );
+ * echo reduce(array(1,2,3,4), function($x,$y) { return $x + $y; }, 1);
  * //> 10
  * @endcode
  * 

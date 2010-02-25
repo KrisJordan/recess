@@ -41,10 +41,9 @@ namespace Recess\Core;
  * 
  * @include examples/Recess/Core/Wrappable.php
  * 
- * @author Kris Jordan <http://krisjordan.com>
- * @copyright RecessFramework.org 2008-2010
- * @license MIT
- * @since Recess 5.3
+ * @author Kris Jordan <http://www.krisjordan.com>
+ * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
+ * @since Recess PHP Framework 5.3
  */
 class Wrappable extends Callable {
 /** @} */

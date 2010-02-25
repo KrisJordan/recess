@@ -1,6 +1,5 @@
 <?php
-namespace Recess\Core;
-/** @addtogroup Core *//** @{ */
+namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
 /**
  * An object-oriented wrapper around PHP's array with higher-order methods like map(), 
@@ -11,10 +10,9 @@ namespace Recess\Core;
  * To run this example code from the command line:
  * @code php lib/Recess/examples/Recess/Core/Hash.php @endcode
  * 
- * @author Kris Jordan <http://krisjordan.com>
- * @copyright RecessFramework.org 2008-2010
- * @license MIT
- * @since Recess 5.3
+ * @author Kris Jordan <http://www.krisjordan.com>
+ * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
+ * @since Recess PHP Framework 5.3
  */
 class Hash implements IHash {
 /** @} */
@@ -98,7 +96,7 @@ class Hash implements IHash {
 	 * @endcode
 	 * 
 	 * @param $callable
-	 * @return Hash
+	 * @return IHash
 	 */
 	function filter($callable) {
 		return new Hash(filter($this->elements, $callable));
@@ -139,7 +137,7 @@ class Hash implements IHash {
 	 * @endcode
 	 * 
 	 * @param $callable
-	 * @return Hash
+	 * @return IHash
 	 */
 	function map($callable) {
 		return new Hash(map($this->elements,$callable));

@@ -1,6 +1,13 @@
 <?php
 namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
+/**
+ * The interface for lambda/closure/callable objects in Recess.
+ * 
+ * @author Kris Jordan <http://www.krisjordan.com>
+ * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
+ * @since Recess PHP Framework 5.3
+ */
 interface ICallable {
 /** @} */
 	/**

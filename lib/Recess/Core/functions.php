@@ -3,6 +3,12 @@ namespace Recess\Core;
 /** @addtogroup Core *//** @{ */
 
 /**
+ * @author Kris Jordan <http://www.krisjordan.com>
+ * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
+ * @since Recess PHP Framework 5.3
+ */
+
+/**
  * Invoke a callable one-by-one over an array of values.
  * 
  * @code

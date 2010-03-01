@@ -8,7 +8,7 @@ namespace Recess\Core; /** @addtogroup Core *//** @{ */
  * @include examples/Recess/Core/Hash.php
  * 
  * To run this example code from the command line:
- * @code php lib/Recess/examples/Recess/Core/Hash.php @endcode
+ * @code php lib/Recess/docs/examples/Recess/Core/Hash.php @endcode
  * 
  * @author Kris Jordan <http://www.krisjordan.com>
  * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)

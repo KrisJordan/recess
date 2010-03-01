@@ -9,7 +9,7 @@ namespace Recess\Core; /** @addtogroup Core *//** @{ */
  * @include examples/Recess/Core/Event.php
  * 
  * To run the example code from the command line:
- * @code php lib/Recess/examples/Recess/Core/Event.php @endcode
+ * @code php lib/Recess/docs/examples/Recess/Core/Event.php @endcode
  * 
  * @author Kris Jordan <http://www.krisjordan.com>
  * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)

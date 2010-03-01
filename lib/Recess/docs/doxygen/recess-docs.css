@@ -1,0 +1,152 @@
+code { padding-left: .5em; padding-right: .5em; }
+pre, code { border: 1px solid gray; background: #000; 
+	    -webkit-box-shadow: 2px 2px 2px #ddd;
+	    -moz-box-shadow: 2px 2px 2px #ddd;
+	    box-shadow: 2px 2px 2px #ddd;
+	    -webkit-border-radius: 4px;
+	    -moz-border-radius: 4px;
+	    border-radius: 4px;
+	}
+	
+pre { padding: 1em; }
+
+/* Default fonts and colors. */
+body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea { font-family: Georgia, 'Lucida Grande', Tahoma, Helvetica, Arial, Geneva, sans-serif; }
+pre, code, tt { font-family: Menlo, Monaco, 'Courier New', monospace; color: #fff; font-weight: 700; }
+
+/* Headings
+-------------------------------------------------------------- */
+
+h1,h2,h3,h4,h5,h6 { font-weight: normal; text-shadow: #ccc 2px 2px 1px; }
+
+h1 { font-size: 3em; line-height: 1; margin-bottom: 1em; letter-spacing: -0.05em; }
+h2 { font-size: 2em; margin-bottom: 0.75em;  }
+h3 { font-size: 1.5em; line-height: 1; margin-bottom: 1em; }
+td.memName, h4 { font-size: 1.3em; line-height: 1.25; margin-bottom: 1.25em; margin-top: 1.25em; }
+h5 { font-size: 1em; margin-bottom: 1.5em; }
+h6 { font-size: 1em; }
+
+
+/* Text elements
+-------------------------------------------------------------- */
+
+p { margin: 0 0 1.5em; line-height: 1.4em;  }
+
+#navigation {
+	/*-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+	filter: alpha(opacity=10);
+	opacity: .1;*/
+	text-align: center;
+}
+#navigation h2 { margin-top: .25em; margin-bottom: 0; color: #000; letter-spacing:-.05em; text-align: center; }
+#navigation p { font-size: 2em; margin-top: .25em;}
+#navigation ul { margin-left: 0; list-style-type: none; padding: 0; line-height: 1.5em; text-align: center; }
+#navigation ul ul { padding-left: .5em; font-size: .9em;}
+#navigation li, #sidebar ul { display: inline; margin-left: 2em; }
+#navigation > li { margin-left: 0; padding-left: 0; margin-bottom: 1em;}
+p.intro:first-letter { font-size: 1.25em; }
+
+ul { list-style-type: circle; }
+ol { list-style-type: decimal; }
+
+dl { margin: 0 0 1.5em 0; }
+dl dt { font-weight: bold; }
+dl dd { margin-left: 1.5em; }
+
+abbr, acronym { border-bottom: 1px dotted #000; }
+address { margin-top: 1.5em; font-style: italic; }
+del { color: #000; }
+
+a { color: #009; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+blockquote { margin: 1.5em; }
+strong { font-weight: bold; }
+em, dfn { font-style: italic; }
+dfn { font-weight: bold; }
+pre, code { margin: 1.5em 0; white-space: pre; }
+pre, code, tt { font-size: 13px; } 
+tt { display: block; margin: 1.5em 0; line-height: 1.5; }
+
+
+/* Tables
+-------------------------------------------------------------- */
+
+table { margin-bottom: 0; }
+th { border-bottom: 2px solid #ddd; font-weight: bold; }
+tfoot { font-style: italic; }
+caption { background: #ffc; }
+
+
+/* Some default classes
+-------------------------------------------------------------- */
+
+.small { font-size: .8em; margin-bottom: 1.875em; line-height: 1.875em; }
+.large { font-size: 1.2em; line-height: 2.5em; margin-bottom: 1.25em; }
+.quiet { color: #999; }
+
+.hide { display: none; }
+.highlight { background: #ffc; }
+
+.top { margin-top: 0; padding-top: 0; }
+.bottom { margin-bottom: 0; padding-bottom: 0; }
+
+table { border-collapse: collapse; }
+td.memItemLeft, td.memItemRight, td.indexKey, td.indexValue { border-top: 1px solid #ddd; vertical-align: top; padding: 4px 10px 4px 0; }
+.mdescRight { padding: 0 10px 4px 1em; }
+.navigation div:first-child { font-size: 125%; }
+.navigation ul { margin: 0; padding: .5em 0 0 0;  border-bottom: 1px solid #ddd; }
+.navigation li { margin: 0 1em 0 0; padding: 0; display: inline }
+
+h2 { margin: 0; }
+p { margin: .5em 0; }
+dl { margin-bottom: 0; }
+
+a.code { color: #66f; text-decoration: underline }
+span.keyword {color: #fff}
+span.keywordtype { color: #fff }
+span.keywordflow { color: #ddd }
+span.comment { color: #0f0; }
+span.preprocessor {color: #806020}
+span.stringliteral {color: #aaf}
+span.charliteral {color: #008080}
+.memdoc { border-bottom: 1px solid #ddd; }
+.memdoc p { margin: .5em 0 .5em 1em; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+body {
+	margin: 0;
+	text-align: center;
+}
+
+.container {
+	position: relative;
+	width: 38em;
+	margin: 0 auto;
+	text-align: left;
+}
+
+.header {
+	
+}
+
+.footer {
+	font-size: 75%;
+}

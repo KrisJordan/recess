@@ -4,6 +4,9 @@ require_once 'PHPUnit/Framework.php';
 include_once __DIR__ . '/../../../../Recess/Core/Event.php';
 use Recess\Core\Event;
 
+/**
+ * @group Recess\Core
+ */
 class EventTest extends PHPUnit_Framework_TestCase {
 	
 	function testCallback() {

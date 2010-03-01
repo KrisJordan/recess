@@ -6,7 +6,14 @@ use Recess\Core\ClassLoader;
 
 set_include_path(__DIR__.'/../../../'.PATH_SEPARATOR.get_include_path());
 
+/**
+ * @group Recess\Core
+ */
 class ClassLoaderTest extends PHPUnit_Framework_TestCase {
+	
+	function setup(){
+		ClassLoader::reset();
+	}
 	
 	function testOnLoad() {
 		$onLoad = ClassLoader::onLoad();

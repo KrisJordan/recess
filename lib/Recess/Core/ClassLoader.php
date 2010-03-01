@@ -1,12 +1,14 @@
 <?php
 namespace Recess\Core; /** @addtogroup Core *//** @{ */
 
-DEFINE('NAMESPACE_SEPARATOR','\\');
+if(!defined('NAMESPACE_SEPARATOR')) {
+	define('NAMESPACE_SEPARATOR','\\');
+}
 
-require __DIR__.'/ICallable.php';
-require __DIR__.'/Event.php';
-require __DIR__.'/Callable.php';
-require __DIR__.'/Wrappable.php';
+require_once __DIR__.'/ICallable.php';
+require_once __DIR__.'/Event.php';
+require_once __DIR__.'/Callable.php';
+require_once __DIR__.'/Wrappable.php';
 
 /**
  * An SPL class loader for automatically including class and interface files. 
@@ -60,7 +62,7 @@ abstract class ClassLoader {
 	
 	/** @var Recess\Core\Wrappable or \Closure */
 	private static $loader = null;
-
+	
 	/**
 	 * Load a class by passing a fully qualified classname.
 	 * @param $class string fully qualified classname
@@ -122,7 +124,8 @@ abstract class ClassLoader {
 			$onLoad = self::onLoad();
 			$extension = self::$extension;
 			self::$loader = function($fullyQualifiedClass) use (&$onLoad, &$extension) {
-				if(class_exists($fullyQualifiedClass, false)) { return true; }
+				if(class_exists($fullyQualifiedClass, false)
+					|| interface_exists($fullyQualifiedClass, false)) { return true; }
 
 				$class = $fullyQualifiedClass;
 				$namespace = '';
@@ -143,7 +146,7 @@ abstract class ClassLoader {
 					$classFilePath = $path.DIRECTORY_SEPARATOR.$classFile;
 					if(file_exists($classFilePath) && is_readable($classFilePath)) {
 						$found = true;
-						require $classFilePath;
+						require_once $classFilePath;
 					}
 				}
 				if($found === false) return false;
@@ -158,5 +161,13 @@ abstract class ClassLoader {
 			};
 		}
 		return self::$loader;
-	}	
+	}
+	
+	/**
+	 * Reset internal state, only useful for unit testing.
+	 */
+	static public function reset() {
+		self::$onLoad = null;
+		self::$loader = null;
+	}
 }

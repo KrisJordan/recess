@@ -4,6 +4,9 @@ require_once 'PHPUnit/Framework.php';
 include_once __DIR__ . '/../../../../Recess/Core/Wrappable.php';
 use recess\core\Wrappable;
 
+/**
+ * @group Recess\Core
+ */
 class WrappableTest extends PHPUnit_Framework_TestCase {
 
 	function testConstructor() {

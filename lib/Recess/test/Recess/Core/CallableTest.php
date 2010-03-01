@@ -6,6 +6,9 @@ require_once __DIR__ . '/../../../Core/Callable.php';
 
 use Recess\Core\Callable;
 
+/**
+ * @group Recess\Core
+ */
 class CallableTest extends PHPUnit_Framework_TestCase {
 	
 	protected $simple;

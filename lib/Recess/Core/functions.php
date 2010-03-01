@@ -94,10 +94,10 @@ function reduce($array, $callable, $identity) {
 		$out = $identity;
 	} else if(count($array) > 1) {
 		$out = array_shift($array);
-		do {
+		while(!empty($array)) {
 			$next = array_shift($array);
 			$out = $callable($out, $next);
-		} while(!empty($array));
+		}
 	}
 	return $out;
 }

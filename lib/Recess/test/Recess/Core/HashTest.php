@@ -4,13 +4,8 @@ require_once 'PHPUnit/Framework.php';
 include_once __DIR__ . '/../../../../Recess/Core/Hash.php';
 use Recess\Core\Hash;
 
-/** 
- * @see Recess\Core\Hash
- * 
- * @author Kris Jordan <krisjordan@gmail.com>
- * @since Recess 5.3
- * @copyright RecessFramework.org 2008-2010
- * @license MIT
+/**
+ * @group Recess\Core
  */
 class HashTest extends PHPUnit_Framework_TestCase {
 	

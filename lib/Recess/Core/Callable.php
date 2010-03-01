@@ -6,10 +6,10 @@ namespace Recess\Core; /** @addtogroup Core *//** @{ */
  * 
  * Note: Callable does not support passing arguments by-reference.
  * 
- * @include examples/Recess/Core/Callable.php
+ * @include docs/examples/Recess/Core/Callable.php
  * 
  * To run the example code from the command line: 
- * @code php lib/Recess/examples/Recess/Core/Callable.php @endcode
+ * @code php lib/Recess/docs/examples/Recess/Core/Callable.php @endcode
  * 
  * @author Kris Jordan <http://www.krisjordan.com>
  * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)

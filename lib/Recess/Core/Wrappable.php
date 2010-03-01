@@ -39,7 +39,7 @@ namespace Recess\Core;
  * 
  * More detailed examples:
  * 
- * @include examples/Recess/Core/Wrappable.php
+ * @include lib/Recess/docs/examples/Recess/Core/Wrappable.php
  * 
  * @author Kris Jordan <http://www.krisjordan.com>
  * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)

@@ -92,16 +92,6 @@ abstract class RecessConf {
 		Library::init();
 		Library::beginNamedRun('recess');
 		
-		Library::import('recess.framework.Application');
-		foreach(self::$applications as $key => $app) {
-			if(!Library::classExists($app)) {
-				die('Application "' . $app . '" does not exist. Remove it from recess-conf.php, RecessConf::$applications array.');
-			} else {
-				$app = Library::getClassName($app);
-				self::$applications[$key] = new $app;
-			}
-		}
-		
 		Library::import('recess.database.Databases');
 		Library::import('recess.database.orm.ModelDataSource');
 		
@@ -148,6 +138,16 @@ abstract class RecessConf {
 		if(!empty(RecessConf::$namedDatabases)) {
 			foreach(RecessConf::$namedDatabases as $name => $sourceInfo) {
 				Databases::addSource($name, new ModelDataSource($sourceInfo));
+			}
+		}
+
+                Library::import('recess.framework.Application');
+		foreach(self::$applications as $key => $app) {
+			if(!Library::classExists($app)) {
+				die('Application "' . $app . '" does not exist. Remove it from recess-conf.php, RecessConf::$applications array.');
+			} else {
+				$app = Library::getClassName($app);
+				self::$applications[$key] = new $app;
 			}
 		}
 		

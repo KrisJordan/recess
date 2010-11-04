@@ -118,7 +118,7 @@ class PdoDataSet implements Iterator, Countable, ArrayAccess, ISqlSelectOptions,
 	}
 	
 	public function count() {
-		return iterator_count($this); 
+		return $this->source->getResultCount($this->sqlBuilder);
 	}
 	
 	public function exists() {

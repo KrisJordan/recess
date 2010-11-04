@@ -90,7 +90,19 @@ class PdoDataSource extends PDO {
 			return new PdoDataSet($this);
 		}
 	}
-	
+
+	/* optimizes performance by NOT actually getting results
+	 * useful for paging large result sets
+	 * @param SqlBuilder $builder
+	 * @param string $className
+	 * @return integer $resultCount
+	 * */
+	function getResultCount(SqlBuilder $builder) {
+			$statement = $this->provider->getStatementForBuilder($builder, 'select', $this);
+			$statement->execute();
+			return $statement->rowCount();		
+	}
+
 	/**
 	 * Takes the SQL and arguments (array of Criterion) and returns an array
 	 * of objects of type $className.

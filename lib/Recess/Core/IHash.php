@@ -13,7 +13,7 @@ namespace Recess\Core; /** @addtogroup Core *//** @{ */
  * @author Copyright &copy; RecessFramework.org 2008-2010 (MIT License)
  * @since Recess PHP Framework 5.3
  */
-interface IHash extends \ArrayAccess, \Countable, \Iterator, \IteratorAggregate {
+interface IHash extends \ArrayAccess, \Countable, \Iterator {
 /** @} */
 	
 	/**

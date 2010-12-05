@@ -1,8 +1,6 @@
 <?php
 namespace Recess\Core;
 
-require_once 'PHPUnit/Framework.php';
-
 require_once __DIR__ . '/../../../Core/functions.php';
 
 /**

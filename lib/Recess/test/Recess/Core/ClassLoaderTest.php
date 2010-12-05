@@ -1,6 +1,4 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-
 include_once __DIR__ . '/../../../../Recess/Core/ClassLoader.php';
 use Recess\Core\ClassLoader;
 

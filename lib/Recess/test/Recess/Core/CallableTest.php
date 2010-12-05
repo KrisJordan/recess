@@ -1,6 +1,4 @@
 <?php
-require_once 'PHPUnit/Framework.php';
-
 require_once __DIR__ . '/../../../Core/ICallable.php';
 require_once __DIR__ . '/../../../Core/Callable.php';
 
